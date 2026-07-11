@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Engenharia Elétrica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Painel Lateral Esquerdo -->
+        <nav class="sidebar">
+            <h2 class="logo-title">Engenharia IFF</h2>
+            <ul class="menu">
+                <li class="menu-item">
+                    <span class="menu-title">Análise CA</span>
+                    <ul class="submenu">
+                        <li><a href="#" onclick="carregarConteudo('circuito-rl')">Circuito RL</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Área Principal à Direita -->
+        <main class="main-area">
+
+            <!-- NOVO: Cabeçalho Fixo Superior -->
+            <header class="top-header">
+                <h2>Sistema Didático para Aprendizagem de Temas da Engenharia Elétrica</h2>
+                <p><strong>Autor:</strong> Professor Helder Siqueira Carvalho, MSc</p>
+                <p>Instituto Federal Fluminense - SETEC/MEC</p>
+            </header>
+
+            <!-- Painel de Conteúdo Dinâmico -->
+            <div id="painel-dinamico" class="content-panel">
+                <h1>Bem-vindo ao Sistema</h1>
+                <p>Selecione um módulo no menu lateral para iniciar seus estudos.</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+<!-- JANELA MODAL PARA OS GRÁFICOS -->
+    <div id="modal-graficos" class="modal">
+        <div class="modal-conteudo">
+            <div class="modal-cabecalho">
+                <h3 id="modal-titulo">Visualização de Gráficos</h3>
+                <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-corpo">
+                <p id="msg-carregando" style="display:none; text-align:center;">Gerando gráficos matemáticos...</p>
+                <img id="img-grafico" src="" alt="Gráfico do Circuito" style="display:none; width:100%; height:auto; border-radius: 4px;">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
