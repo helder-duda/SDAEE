@@ -8,7 +8,7 @@ function carregarConteudo(modulo) {
             <div class="grid-4-partes">
                 <!-- QUADRANTE 1: Imagem (Série) -->
                 <div class="quadrante">
-                    <h3>Circuito RL - Série</h3>
+                    <h3>RL - Série</h3>
                     <div class="container-imagem">
                         <img src="/static/imagens/rl_serie.jpg" alt="Esquema Circuito RL Série" class="imagem-circuito">
                     </div>
@@ -16,7 +16,7 @@ function carregarConteudo(modulo) {
 
                 <!-- QUADRANTE 2: Imagem (Paralelo) -->
                 <div class="quadrante">
-                    <h3>Circuito RL - Paralelo</h3>
+                    <h3>RL - Paralelo</h3>
                     <div class="container-imagem">
                         <img src="/static/imagens/rl_paralelo.jpg" alt="Esquema Circuito RL Paralelo" class="imagem-circuito">
                     </div>
