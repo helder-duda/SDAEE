@@ -13,15 +13,23 @@
         <nav class="sidebar">
             <h2 class="logo-title">Engenharia IFF</h2>
             <ul class="menu">
+                <!-- NOVO: Menu Início -->
                 <li class="menu-item">
-                    <span class="menu-title">Análise CA</span>
-                    <ul class="submenu">
+                    <span class="menu-title" onclick="carregarConteudo('inicio')">Início</span>
+                </li>
+                <li class="menu-item">
+                    <!-- Adicionamos o onclick e um cursor apontador -->
+                    <span class="menu-title" onclick="toggleMenu('submenu-ca')">Análise CA ▼</span>
+                    <!-- Adicionamos o ID 'submenu-ca' -->
+                    <ul class="submenu" id="submenu-ca">
                         <li><a href="#" onclick="carregarConteudo('circuito-rl')">Circuito RL</a></li>
+                        <li><a href="#" onclick="carregarConteudo('circuito-rc')">Circuito RC</a></li>
+                        <!-- NOVO: Link do RLC -->
+                        <li><a href="#" onclick="carregarConteudo('circuito-rlc')">Circuito RLC</a></li>
                     </ul>
                 </li>
             </ul>
         </nav>
-
         <!-- Área Principal à Direita -->
         <main class="main-area">
 
