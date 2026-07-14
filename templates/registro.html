@@ -1,0 +1,20 @@
+<!-- Copie o mesmo código do login.html, mas mude o action do form e o botão -->
+<!-- ... cabeçalho igual ... -->
+    <div class="login-container">
+        <h2>Nova Conta</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/registro">
+            <input type="text" name="username" placeholder="Escolha um Usuário" required>
+            <input type="password" name="password" placeholder="Crie uma Senha" required>
+            <input type="password" name="codigo_convite" placeholder="Código de Convite" required>
+            <button type="submit">Registrar</button>
+        </form>
+        <a href="/login">Já tenho conta</a>
+    </div>
+</body>
+</html>

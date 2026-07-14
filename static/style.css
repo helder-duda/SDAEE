@@ -299,16 +299,17 @@ button {
 /* === TELA INICIAL (CAPA) ================== */
 /* ========================================== */
 .container-inicio {
-    flex: 1; /* Força o contêiner a esticar e ocupar todo o painel vazio */
+    flex: 1;
     display: flex;
+    justify-content: center; /* Centraliza a imagem na horizontal */
+    align-items: center; /* Centraliza a imagem na vertical */
     width: 100%;
-    border-radius: 8px;
-    overflow: hidden; /* Impede que a imagem vaze das bordas arredondadas */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .imagem-inicio {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Faz a imagem preencher todo o espaço sem distorcer, cortando apenas as sobras */
+    width: 90%; /* Ocupa 80% da largura disponível */
+    height: 90%; /* Ocupa 80% da altura disponível */
+    object-fit: contain; /* Garante que a imagem inteira apareça sem distorcer */
+    border-radius: 8px; /* Mantém as bordas arredondadas */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Sombra em volta da imagem para dar destaque */
 }

@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="Ponto Perfeito - Menu Análise CA - Circuito RL OK">
+    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="Ponto Perfeito - Menus início, Análise CA - Circuito RL, RC e RLC OK">
+      <change afterPath="$PROJECT_DIR$/criar_admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/alterar_senha.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/cadastro.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/exercicios.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/registro.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/script.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
@@ -20,6 +26,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -36,6 +43,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Python.app.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -107,7 +115,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783799653274</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Ponto Perfeito - Menus início, Análise CA - Circuito RL, RC e RLC OK">
+      <option name="closed" value="true" />
+      <created>1783826889692</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1783826889692</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -123,6 +139,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Ponto Perfeito - Menu Análise CA - Circuito RL OK" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ponto Perfeito - Menu Análise CA - Circuito RL OK" />
+    <MESSAGE value="Ponto Perfeito - Menus início, Análise CA - Circuito RL, RC e RLC OK" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ponto Perfeito - Menus início, Análise CA - Circuito RL, RC e RLC OK" />
   </component>
 </project>

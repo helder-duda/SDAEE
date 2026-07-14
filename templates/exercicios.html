@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Exercícios - Engenharia Elétrica</title>
+    <style>
+        body { background-color: #525659; font-family: Arial, sans-serif; padding: 20px; }
+
+        .folha-a4 {
+            background-color: white; width: 210mm; min-height: 297mm;
+            padding: 20mm; box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            box-sizing: border-box; margin: 0 auto 30px auto;
+        }
+
+        .cabecalho { text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 30px; }
+        .cabecalho h1 { font-size: 22px; margin: 5px 0; }
+        .cabecalho p { font-size: 14px; margin: 3px 0; }
+
+        .aluno-box { border: 1px solid #000; padding: 10px; margin-bottom: 30px; font-size: 14px; }
+
+        .questao { margin-bottom: 40px; line-height: 1.6; font-size: 15px; text-align: justify; }
+
+        .botoes-acao { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+        .btn { background-color: #2980b9; color: white; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+        .btn:hover { background-color: #1a5276; }
+        .btn-voltar { background-color: #e74c3c; }
+
+        /* Flexbox para o Gabarito (Texto + Gráfico lado a lado) */
+        .gabarito-item {
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px dashed #ccc; padding: 15px 0; font-size: 14px;
+        }
+
+        /* Oculta botões e faz quebras de página perfeitas na hora de imprimir */
+        @media print {
+            body { background-color: white; padding: 0; }
+            .folha-a4 { box-shadow: none; width: 100%; min-height: auto; padding: 0; margin: 0; }
+            .botoes-acao { display: none !important; }
+            .quebra-pagina { page-break-before: always; margin-top: 20mm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="botoes-acao">
+        <button class="btn" onclick="window.print()">Salvar como PDF</button>
+        <button class="btn" onclick="window.location.reload()">Sortear Novos Valores</button>
+        <button class="btn btn-voltar" onclick="window.close()">Fechar</button>
+    </div>
+
+    <!-- FOLHA 1: PROVA DO ALUNO -->
+    <div class="folha-a4">
+        <div class="cabecalho">
+            <h1>Instituto Federal Fluminense - SETEC/MEC</h1>
+            <p><strong>Sistema Didático para Aprendizagem de Engenharia Elétrica</strong></p>
+            <p>Prof. Helder Siqueira Carvalho, MSc</p>
+        </div>
+
+        <div class="aluno-box">
+            <p><strong>Nome do Aluno:</strong> </p>
+            <p><strong>Data:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma:</strong> </p>
+        </div>
+
+        <h3 style="text-align: center; margin-bottom: 25px;">Lista de Exercícios - Circuitos CA</h3>
+
+        {% for item in dados %}
+            <div class="questao">
+                <strong>Questão {{ loop.index }}:</strong> {{ item.pergunta }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- FOLHA 2: GABARITO DO PROFESSOR -->
+    <div class="folha-a4 quebra-pagina">
+        <div class="cabecalho">
+            <h1>Gabarito Automático</h1>
+            <p><strong>Uso Exclusivo do Professor (Valores e Fasores Resumo)</strong></p>
+        </div>
+
+        {% for item in dados %}
+            <div class="gabarito-item">
+                <div style="flex: 1;">
+                    <strong>Questão {{ loop.index }}:</strong><br><br>
+                    {{ item.resposta | safe }}
+                </div>
+                {% if item.grafico %}
+                <div style="margin-left: 20px;">
+                    <img src="data:image/png;base64,{{ item.grafico }}" alt="Gráfico de Fasores" style="max-width: 250px;">
+                </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
