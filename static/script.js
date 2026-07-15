@@ -18,6 +18,40 @@ function carregarConteudo(modulo) {
                 <img src="/static/imagens/capa.jpeg" alt="Página Inicial" class="imagem-inicio">
             </div>
         `;
+    }
+    // NOVO: Módulo do Gerador Customizado de Exercícios (com inputs de quantidade e tipo)
+    else if (modulo === 'exercicios') {
+        painel.innerHTML = `
+            <div class="quadrante" style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: Arial, sans-serif;">Gerador de Exercícios Customizado</h3>
+
+                <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; font-family: Arial, sans-serif;">
+                    <!-- Campo para digitar o número de questões -->
+                    <div class="input-item" style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-weight: bold; color: #34495e;">Número de Questões (1 a 30):</label>
+                        <input type="number" id="num-questoes" value="10" min="1" max="30" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; width: 100%; box-sizing: border-box;">
+                    </div>
+
+                    <!-- Campo para selecionar o tipo de circuito -->
+                    <div class="input-item" style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-weight: bold; color: #34495e;">Tipo de Circuito:</label>
+                        <select id="tipo-circuito" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; background-color: white; width: 100%; box-sizing: border-box;">
+                            <option value="todos">Todos (Mesclado)</option>
+                            <option value="RL">Apenas RL</option>
+                            <option value="RC">Apenas RC</option>
+                            <option value="RLC">Apenas RLC</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botão que envia a requisição e abre a nova aba -->
+                <div style="text-align: center;">
+                    <button class="btn-calc" onclick="enviarGerarExercicios()" style="background-color: #2980b9; color: white; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                        Gerar Lista de Exercícios
+                    </button>
+                </div>
+            </div>
+        `;
     } else if (modulo === 'circuito-rl') {
         painel.innerHTML = `
             <h2>Análise de Circuitos RL</h2>
@@ -216,6 +250,22 @@ function carregarConteudo(modulo) {
 }
 
 // ==========================================
+// === AUXILIAR DE GERAÇÃO EXERCÍCIOS =======
+// ==========================================
+function enviarGerarExercicios() {
+    const qtd = document.getElementById('num-questoes').value;
+    const tipo = document.getElementById('tipo-circuito').value;
+
+    if (!qtd || qtd <= 0) {
+        alert("Por favor, digite uma quantidade de questões válida.");
+        return;
+    }
+
+    // Abre a folha em uma NOVA ABA passando as variáveis digitadas/escolhidas por parâmetro
+    window.open(`/gerar_exercicios?qtd=${qtd}&tipo=${tipo}`, '_blank');
+}
+
+// ==========================================
 // === CÁLCULOS DO CIRCUITO RL =============
 // ==========================================
 function calcularSerie() {
@@ -384,15 +434,6 @@ function abrirGraficosSerie() {
     const f = document.getElementById('f-serie').value;
     if (!v || !r || !l || !f) { alert("Calcule os parâmetros primeiro."); return; }
     exibirGraficoGenerico('/graficos_serie', { v: v, r: r, l: l, f: f });
-}
-
-function abrirGraficosParalelo() {
-    const v = document.getElementById('v-paralelo').value;
-    const r = document.getElementById('r-paralelo').value;
-    const l = document.getElementById('l-paralelo').value;
-    const f = document.getElementById('f-paralelo').value;
-    if (!v || !r || !l || !f) { alert("Calcule os parâmetros primeiro."); return; }
-    exibirGraficoGenerico('/graficos_paralelo', { v: v, r: r, l: l, f: f });
 }
 
 // Gráficos RC

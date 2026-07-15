@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Lista de Exercícios - Engenharia Elétrica</title>
     <style>
-        body { background-color: #525659; font-family: Arial, sans-serif; padding: 20px; }
+        body { background-color: #525659; font-family: Arial, sans-serif; padding: 20px; margin: 0; }
 
         .folha-a4 {
             background-color: white; width: 210mm; min-height: 297mm;
@@ -21,17 +21,24 @@
         .questao { margin-bottom: 40px; line-height: 1.6; font-size: 15px; text-align: justify; }
 
         .botoes-acao { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-        .btn { background-color: #2980b9; color: white; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+        .btn { background-color: #2980b9; color: white; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 14px; }
         .btn:hover { background-color: #1a5276; }
-        .btn-voltar { background-color: #e74c3c; }
 
-        /* Flexbox para o Gabarito (Texto + Gráfico lado a lado) */
+        .btn-gerar { background-color: #f39c12; }
+        .btn-gerar:hover { background-color: #d35400; }
+
+        .btn-gabarito { background-color: #27ae60; }
+        .btn-gabarito:hover { background-color: #1e8449; }
+        .btn-fechar { background-color: #e74c3c; }
+        .btn-fechar:hover { background-color: #c0392b; }
+
+        #secao-gabarito { display: none; }
+
         .gabarito-item {
             display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px dashed #ccc; padding: 15px 0; font-size: 14px;
         }
 
-        /* Oculta botões e faz quebras de página perfeitas na hora de imprimir */
         @media print {
             body { background-color: white; padding: 0; }
             .folha-a4 { box-shadow: none; width: 100%; min-height: auto; padding: 0; margin: 0; }
@@ -39,16 +46,40 @@
             .quebra-pagina { page-break-before: always; margin-top: 20mm; }
         }
     </style>
+    <script>
+        function toggleGabarito() {
+            const gabarito = document.getElementById('secao-gabarito');
+            if (gabarito.style.display === 'none' || gabarito.style.display === '') {
+                gabarito.style.display = 'block';
+                // Rola suavemente até o gabarito
+                gabarito.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                gabarito.style.display = 'none';
+            }
+        }
+
+        function fecharJanela() {
+            window.close();
+        }
+
+        // NOVO: Função para regerar valores aleatórios na mesma aba
+        function regerarValores() {
+            // Recarrega a página atual com os mesmos parâmetros que foram passados inicialmente
+            window.location.reload();
+        }
+    </script>
 </head>
 <body>
 
+    <!-- BOTÕES DE CONTROLE LATERAIS -->
     <div class="botoes-acao">
+        <button class="btn btn-gerar" onclick="regerarValores()">Gerar Novos Valores</button>
         <button class="btn" onclick="window.print()">Salvar como PDF</button>
-        <button class="btn" onclick="window.location.reload()">Sortear Novos Valores</button>
-        <button class="btn btn-voltar" onclick="window.close()">Fechar</button>
+        <button class="btn btn-gabarito" onclick="toggleGabarito()">Gerar Gabarito</button>
+        <button class="btn btn-fechar" onclick="fecharJanela()">Fechar Aba</button>
     </div>
 
-    <!-- FOLHA 1: PROVA DO ALUNO -->
+    <!-- FOLHA DO ALUNO -->
     <div class="folha-a4">
         <div class="cabecalho">
             <h1>Instituto Federal Fluminense - SETEC/MEC</h1>
@@ -70,26 +101,28 @@
         {% endfor %}
     </div>
 
-    <!-- FOLHA 2: GABARITO DO PROFESSOR -->
-    <div class="folha-a4 quebra-pagina">
-        <div class="cabecalho">
-            <h1>Gabarito Automático</h1>
-            <p><strong>Uso Exclusivo do Professor (Valores e Fasores Resumo)</strong></p>
-        </div>
-
-        {% for item in dados %}
-            <div class="gabarito-item">
-                <div style="flex: 1;">
-                    <strong>Questão {{ loop.index }}:</strong><br><br>
-                    {{ item.resposta | safe }}
-                </div>
-                {% if item.grafico %}
-                <div style="margin-left: 20px;">
-                    <img src="data:image/png;base64,{{ item.grafico }}" alt="Gráfico de Fasores" style="max-width: 250px;">
-                </div>
-                {% endif %}
+    <!-- FOLHA DO GABARITO (FICA OCULTA ATÉ PRESSIONAR O BOTÃO) -->
+    <div id="secao-gabarito">
+        <div class="folha-a4 quebra-pagina">
+            <div class="cabecalho">
+                <h1>Gabarito Automático</h1>
+                <p><strong>Uso Exclusivo do Professor (Gabarito de Respostas)</strong></p>
             </div>
-        {% endfor %}
+
+            {% for item in dados %}
+                <div class="gabarito-item">
+                    <div style="flex: 1;">
+                        <strong>Questão {{ loop.index }}:</strong><br><br>
+                        {{ item.resposta | safe }}
+                    </div>
+                    {% if item.grafico %}
+                    <div style="margin-left: 20px;">
+                        <img src="data:image/png;base64,{{ item.grafico }}" alt="Gráfico de Fasores" style="max-width: 250px;">
+                    </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
 </body>

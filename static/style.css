@@ -9,13 +9,13 @@
 body {
     background-color: #f4f7f6;
     color: #333;
-    overflow: hidden; /* Garante que não haverá barras de rolagem */
+    overflow: hidden; /* Garante que não haverá barras de rolagem no PC */
 }
 
 /* Estrutura principal */
 .container {
     display: flex;
-    height: 100vh; /* Trava a altura exata da tela */
+    height: 100vh; /* Trava a altura exata da tela no PC */
 }
 
 /* Menu Lateral (Sidebar) - REDUZIDO */
@@ -26,6 +26,9 @@ body {
     padding: 15px;
     display: flex;
     flex-direction: column;
+    height: 100vh;             /* Mantém a altura da tela no PC */
+    overflow-y: auto;          /* LIBERA A ROLAGEM VERTICAL SE PRECISAR */
+    -webkit-overflow-scrolling: touch; /* Deixa a rolagem suave no celular (iOS/Android) */
 }
 
 .logo-title {
@@ -90,7 +93,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Evita que o conteúdo empurre a tela */
+    overflow: hidden; /* Evita que o conteúdo empurre a tela no PC */
 }
 
 .top-header {
@@ -312,4 +315,73 @@ button {
     object-fit: contain; /* Garante que a imagem inteira apareça sem distorcer */
     border-radius: 8px; /* Mantém as bordas arredondadas */
     box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Sombra em volta da imagem para dar destaque */
+}
+
+
+/* ========================================== */
+/* === AJUSTES DE RESPONSIVIDADE (CELULAR) == */
+/* ========================================== */
+@media (max-width: 768px) {
+    /* Libera a rolagem vertical na tela inteira do celular */
+    body {
+        overflow: auto !important;
+    }
+
+    /* O container passa a empilhar os elementos verticalmente em vez de lado a lado */
+    .container {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+
+    /* Ajusta o Menu Lateral para virar uma barra no topo da tela */
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        overflow-y: visible !important;
+        position: relative !important;
+    }
+
+    /* Permite que a área de conteúdo cresça verticalmente e role sem travas */
+    .main-area {
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    .content-panel {
+        padding: 10px !important;
+        height: auto !important;
+    }
+
+    /* Transforma a grade de 2 colunas em 1 única coluna (os módulos ficam empilhados) */
+    .grid-4-partes {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    .quadrante {
+        height: auto !important; /* Permite que cada quadrante se estique se necessário */
+    }
+
+    /* Reduz as colunas de entrada de dados para 2 colunas no celular para caber o texto */
+    .form-linha {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .form-linha-5 {
+        grid-template-columns: repeat(2, 1fr) !important; /* No celular, os 5 inputs viram 2 por linha + 1 abaixo */
+        gap: 10px !important;
+    }
+
+    /* Melhora a exibição dos resultados para não cortar as fórmulas de cálculo */
+    .resultados-linha {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+    }
+
+    .resultados-linha p {
+        white-space: normal !important; /* Agora o texto quebra de linha em vez de sumir da tela */
+    }
 }

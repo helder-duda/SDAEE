@@ -24,13 +24,16 @@
                         <li><a href="#" onclick="carregarConteudo('circuito-rl')">Circuito RL</a></li>
                         <li><a href="#" onclick="carregarConteudo('circuito-rc')">Circuito RC</a></li>
                         <li><a href="#" onclick="carregarConteudo('circuito-rlc')">Circuito RLC</a></li>
-                        <li><a href="/gerar_exercicios" target="_blank">Exercícios (PDF)</a></li>
+                        <!-- MODIFICADO: Agora aponta para a função interna de carregamento dinâmico -->
+                        <!-- Correção: Adicionado target="_blank" e rel para segurança -->
+                        <a class="nav-link" href="{{ url_for('gerar_exercicios') }}" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-book"></i> Gerar Exercícios
+                        </a>
                     </ul>
                 </li>
 
-
                 <!-- ========================================== -->
-                <!-- MENU EXCLUSIVO DO ADMINISTRADOR (NOVO)     -->
+                <!-- MENU EXCLUSIVO DO ADMINISTRADOR            -->
                 <!-- ========================================== -->
                 {% if current_user.is_authenticated and current_user.is_admin %}
                 <li class="menu-item">
@@ -43,11 +46,11 @@
                 <!-- ========================================== -->
 
             </ul>
-                <div style="margin-top: auto; padding: 20px 0; text-align: center;">
-                    <p style="color: #bdc3c7; font-size: 0.85rem; margin-bottom: 5px;">Olá, {{ current_user.username }}</p>
-                    <a href="/alterar_senha" style="color: #3498db; text-decoration: none; font-size: 0.85rem; display: block; margin-bottom: 10px;">[ Alterar Senha ]</a>
-                    <a href="/logout" style="color: #e74c3c; text-decoration: none; font-weight: bold;">[ Sair do Sistema ]</a>
-                </div>
+            <div style="margin-top: auto; padding: 20px 0; text-align: center;">
+                <p style="color: #bdc3c7; font-size: 0.85rem; margin-bottom: 5px;">Olá, {{ current_user.username }}</p>
+                <a href="/alterar_senha" style="color: #3498db; text-decoration: none; font-size: 0.85rem; display: block; margin-bottom: 10px;">[ Alterar Senha ]</a>
+                <a href="/logout" style="color: #e74c3c; text-decoration: none; font-weight: bold;">[ Sair do Sistema ]</a>
+            </div>
         </nav>
 
         <!-- Área Principal à Direita -->
@@ -65,6 +68,50 @@
                 <h1>Bem-vindo ao Sistema</h1>
                 <p>Selecione um módulo no menu lateral para iniciar seus estudos.</p>
             </div>
+
+            <!-- ========================================== -->
+            <!-- NOVA SEÇÃO: TEMPLATE DO GERADOR DE EXERCÍCIOS -->
+            <!-- ========================================== -->
+            <!-- Nota: Esta div fica oculta por padrão e serve como gabarito estrutural
+                 para o seu script.js injetar dentro do #painel-dinamico quando solicitado -->
+            <div id="template-exercicios" style="display: none;">
+                <h2>Gerador Dinâmico de Exercícios</h2>
+                <p>Escolha os filtros abaixo para gerar sua lista personalizada de questões.</p>
+
+                <!-- Formulário de Filtros -->
+                <div class="quadrante" style="margin-top: 15px; margin-bottom: 20px;">
+                    <div class="form-linha">
+                        <!-- Campo: Número de Questões -->
+                        <div class="input-item">
+                            <label for="num-questoes">Nº de Questões</label>
+                            <input type="number" id="num-questoes" min="1" max="50" value="5">
+                        </div>
+
+                        <!-- Campo: Tipo de Circuito (Combobox) -->
+                        <div class="input-item">
+                            <label for="tipo-circuito">Tipo de Circuito</label>
+                            <select id="tipo-circuito" style="width: 100%; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; height: 28px;">
+                                <option value="todos">Todos (Misturado)</option>
+                                <option value="RL">Apenas RL Série</option>
+                                <option value="RC">Apenas RC Série</option>
+                                <option value="RLC">Apenas RLC Série</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="botoes-acao" style="margin-top: 15px;">
+                        <button type="button" class="btn-graf" id="btn-gerar-lista" onclick="requisitarQuestoes()">Gerar Nova Lista</button>
+                        <button type="button" class="btn-calc" id="btn-exibir-gabarito" style="display: none;" onclick="mostrarGabaritoSistema()">Exibir Gabarito</button>
+                    </div>
+                </div>
+
+                <!-- Área onde as questões geradas vão aparecer via JavaScript -->
+                <div id="zona-questoes-geradas">
+                    <p style="text-align: center; color: #777; margin-top: 20px;">Nenhuma lista gerada. Selecione os filtros acima e clique em "Gerar Nova Lista".</p>
+                </div>
+            </div>
+            <!-- ========================================== -->
 
         </main>
     </div>

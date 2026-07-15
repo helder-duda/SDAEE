@@ -1,17 +1,16 @@
+import base64
+import io
+import math
+import random
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User  # Importa o banco do seu arquivo models.py
-
-import random
-import math
 import numpy as np
-import io
-import base64
 import matplotlib
-
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+from models import db, User  # Importa o banco do seu arquivo models.py
 
 app = Flask(__name__)
 
@@ -27,19 +26,21 @@ db.init_app(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
 with app.app_context():
     db.create_all()
-
 
 # ==========================================
 # === ROTAS DE LOGIN E PROTEÇÃO ============
 # ==========================================
+@app.route('/')
+@login_required
+def index():
+    return render_template('index.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -64,23 +65,13 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-
-# ROTA PRINCIPAL PROTEGIDA PELO @login_required
-@app.route('/')
-@login_required
-def index():
-    return render_template('index.html')
-
-
 @app.route('/cadastro', methods=['GET', 'POST'])
-@login_required  # 1. Primeira trava: Obriga a pessoa a estar logada no sistema
+@login_required
 def cadastro():
-    # 2. Segunda trava: Verifica se o usuário logado NÃO é um administrador
     if not current_user.is_admin:
         flash('Acesso negado. Apenas administradores podem cadastrar novos usuários.')
-        return redirect(url_for('index'))  # Expulsa o usuário comum de volta para a página inicial
+        return redirect(url_for('index'))
 
-    # Daqui para baixo, o código flui normalmente, pois sabemos que é o admin
     if request.method == 'POST':
         nome_usuario = request.form.get('username')
         senha_digitada = request.form.get('password')
@@ -91,7 +82,6 @@ def cadastro():
             return redirect(url_for('cadastro'))
 
         senha_criptografada = generate_password_hash(senha_digitada)
-
         novo_usuario = User(username=nome_usuario, password=senha_criptografada)
 
         db.session.add(novo_usuario)
@@ -110,33 +100,34 @@ def alterar_senha():
         nova_senha = request.form.get('nova_senha')
         confirmar_senha = request.form.get('confirmar_senha')
 
-        # 1. Verifica se a senha atual digitada está correta
         if not check_password_hash(current_user.password, senha_atual):
             flash('Erro: A senha atual está incorreta.')
             return redirect(url_for('alterar_senha'))
 
-        # 2. Verifica se a nova senha e a confirmação são iguais
         if nova_senha != confirmar_senha:
             flash('Erro: A nova senha e a confirmação não coincidem.')
             return redirect(url_for('alterar_senha'))
 
-        # 3. Criptografa a nova senha e atualiza o banco de dados
         current_user.password = generate_password_hash(nova_senha)
         db.session.commit()
 
         flash('Senha alterada com sucesso!')
         return redirect(url_for('index'))
 
-    # Se for GET, apenas mostra a página com o formulário
     return render_template('alterar_senha.html')
 
+# ==========================================
+# === ROTA DE GERAÇÃO DE EXERCÍCIOS ATUALIZADA ===
+# ==========================================
 
-# ==========================================
-# === ROTA DE GERAÇÃO DE EXERCÍCIOS ========
-# ==========================================
 @app.route('/gerar_exercicios')
 @login_required
 def gerar_exercicios():
+    # CAPTURA OS PARÂMETROS ENVIADOS PELO JAVASCRIPT
+    # Se não forem informados, assume o padrão de 10 questões e tipo 'todos'
+    qtd = int(request.args.get('qtd', 10))
+    tipo_selecionado = request.args.get('tipo', 'todos').upper()
+
     def sortear():
         return {
             'v': random.choice([12, 24, 110, 127, 220]),
@@ -147,37 +138,25 @@ def gerar_exercicios():
         }
 
     def plot_fasores(fasores):
-        """ Desenha fasores normalizados qualitativamente para evitar disparidade de grandezas """
-        if not fasores: return None
+        if not fasores:
+            return None
         plt.figure(figsize=(3, 3))
         ax = plt.subplot(111)
-
-        # Dicionário para controlar sobreposições no mesmo ângulo
         angulos_usados = {}
 
         for mag, ang, label, color in fasores:
-            if mag == 0: continue
-
-            # Arredonda o ângulo para checar se já existe uma seta naquela posição
+            if mag == 0:
+                continue
             ang_arredondado = round(ang, 1)
             angulos_usados[ang_arredondado] = angulos_usados.get(ang_arredondado, 0) + 1
-
-            # NORMALIZAÇÃO: O tamanho visual base é 1.0.
-            # Se houver outra seta no mesmo ângulo, diminui 0.2 (0.8, 0.6...) para não esconder a seta de baixo
             plot_mag = 1.0 - (angulos_usados[ang_arredondado] - 1) * 0.22
-
             rad = math.radians(ang)
             x = plot_mag * math.cos(rad)
             y = plot_mag * math.sin(rad)
-
             ax.annotate("", xy=(x, y), xytext=(0, 0), arrowprops=dict(arrowstyle="->", color=color, lw=2))
-
-            # Posição do texto sempre empurrada para fora da ponta da seta
             offset = 1.35
-            ax.text(x * offset, y * offset, f"{label}", color=color, ha='center', va='center', fontsize=9,
-                    fontweight='bold')
+            ax.text(x * offset, y * offset, f"{label}", color=color, ha='center', va='center', fontsize=9, fontweight='bold')
 
-        # Como todos os fasores foram reescalados, o limite do gráfico passa a ser fixo
         limit = 1.5
         ax.set_xlim(-limit, limit)
         ax.set_ylim(-limit, limit)
@@ -185,8 +164,6 @@ def gerar_exercicios():
         ax.axvline(0, color='black', linewidth=1)
         ax.grid(color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
         ax.set_aspect('equal')
-
-        # Remove bordas externas e números dos eixos
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_visible(False)
@@ -198,272 +175,75 @@ def gerar_exercicios():
         plt.savefig(img, format='png', transparent=True, bbox_inches='tight')
         plt.close()
         return base64.b64encode(img.getvalue()).decode('utf8')
-    dados = []
 
-    # ---------------------------------------------------------
-    # --- CIRCUITOS RL (1 a 3)
-    # ---------------------------------------------------------
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    z_mag = math.hypot(q['r'], xl)
-    z_ang = math.degrees(math.atan2(xl, q['r']))
-    i_mag = q['v'] / z_mag
-    i_ang = -z_ang
-    dados.append({
-        'pergunta': f"Em um circuito RL série, uma fonte de {q['v']}V e frequência {q['f']}Hz alimenta um resistor de {q['r']}Ω e um indutor de {q['l']}mH. Calcule a impedância total (Z) e a corrente do circuito.",
-        'resposta': f"<strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}°",
-        'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
-    })
+    # Bancos de questões individuais para filtragem
+    questoes_rl = []
+    questoes_rc = []
+    questoes_rlc = []
 
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    ir = q['v'] / q['r']
-    il = q['v'] / xl
-    it_mag = math.hypot(ir, il)
-    it_ang = math.degrees(math.atan2(-il, ir))
-    dados.append({
-        'pergunta': f"Um circuito RL paralelo é composto por um resistor de {q['r']}Ω e um indutor de {q['l']}mH ligados a uma fonte de {q['v']}V / {q['f']}Hz. Determine as correntes nos ramos e a corrente total.",
-        'resposta': f"<strong>IR</strong> = {ir:.2f}A ∠0° <br> <strong>IL</strong> = {il:.2f}A ∠-90° <br> <strong>IT</strong> = {it_mag:.2f}A ∠{it_ang:.1f}°",
-        'grafico': plot_fasores(
-            [(q['v'], 0, 'V', 'black'), (ir, 0, 'IR', 'green'), (il, -90, 'IL', 'red'), (it_mag, it_ang, 'IT', 'blue')])
-    })
+    # Geramos uma amostragem grande o suficiente para o sorteador extrair
+    for _ in range(40):
+        # Gerador RL
+        q = sortear()
+        xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
+        z_mag = math.hypot(q['r'], xl)
+        z_ang = math.degrees(math.atan2(xl, q['r']))
+        i_mag = q['v'] / z_mag
+        i_ang = -z_ang
+        questoes_rl.append({
+            'pergunta': f"Em um circuito RL série, uma fonte de {q['v']}V e frequência {q['f']}Hz alimenta um resistor de {q['r']}Ω e um indutor de {q['l']}mH. Calcule a impedância total (Z) e a corrente do circuito.",
+            'resposta': f"<strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}°",
+            'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
+        })
 
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    z = math.hypot(q['r'], xl)
-    i = q['v'] / z
-    vr = i * q['r']
-    vl = i * xl
-    dados.append({
-        'pergunta': f"Em um circuito RL série (R = {q['r']}Ω, L = {q['l']}mH, V = {q['v']}V, f = {q['f']}Hz), determine a queda de tensão específica sobre o resistor (VR) e sobre o indutor (VL).",
-        'resposta': f"<strong>I (Ref)</strong> = {i:.2f}A <br> <strong>VR</strong> = {vr:.2f}V ∠0° (em fase com I) <br> <strong>VL</strong> = {vl:.2f}V ∠90°",
-        'grafico': plot_fasores([(i, 0, 'I(ref)', 'blue'), (vr, 0, 'VR', 'green'), (vl, 90, 'VL', 'red'),
-                                 (q['v'], math.degrees(math.atan2(vl, vr)), 'V_Fonte', 'black')])
-    })
+        # Gerador RC
+        q = sortear()
+        xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
+        z_mag = math.hypot(q['r'], xc)
+        z_ang = math.degrees(math.atan2(-xc, q['r']))
+        i_mag = q['v'] / z_mag
+        i_ang = -z_ang
+        questoes_rc.append({
+            'pergunta': f"Dado um circuito RC série com R = {q['r']}Ω e C = {q['c']}μF, alimentado por {q['v']}V a {q['f']}Hz. Encontre a reatância capacitiva (Xc) e a corrente total.",
+            'resposta': f"<strong>Xc</strong> = {xc:.2f}Ω <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}°",
+            'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
+        })
 
-    # ---------------------------------------------------------
-    # --- CIRCUITOS RC (4 a 6)
-    # ---------------------------------------------------------
-    q = sortear()
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    z_mag = math.hypot(q['r'], xc)
-    z_ang = math.degrees(math.atan2(-xc, q['r']))
-    i_mag = q['v'] / z_mag
-    i_ang = -z_ang
-    dados.append({
-        'pergunta': f"Dado um circuito RC série com R = {q['r']}Ω e C = {q['c']}μF, alimentado por {q['v']}V a {q['f']}Hz. Encontre a reatância capacitiva (Xc) e a corrente total.",
-        'resposta': f"<strong>Xc</strong> = {xc:.2f}Ω <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}°",
-        'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
-    })
+        # Gerador RLC
+        q = sortear()
+        xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
+        xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
+        x_tot = xl - xc
+        z_mag = math.hypot(q['r'], x_tot)
+        z_ang = math.degrees(math.atan2(x_tot, q['r']))
+        i_mag = q['v'] / z_mag
+        i_ang = -z_ang
+        questoes_rlc.append({
+            'pergunta': f"Um resistor de {q['r']}Ω, um indutor de {q['l']}mH e um capacitor de {q['c']}μF estão ligados em série. A fonte fornece {q['v']}V em {q['f']}Hz. Qual é a impedância do circuito e a corrente total?",
+            'resposta': f"<strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}°",
+            'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
+        })
 
-    q = sortear()
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    ir = q['v'] / q['r']
-    ic = q['v'] / xc
-    it_mag = math.hypot(ir, ic)
-    it_ang = math.degrees(math.atan2(ic, ir))
-    dados.append({
-        'pergunta': f"Considere um circuito RC paralelo onde R = {q['r']}Ω, C = {q['c']}μF e a fonte é de {q['v']}V / {q['f']}Hz. Calcule a corrente total e o ângulo de defasagem.",
-        'resposta': f"<strong>IT</strong> = {it_mag:.2f}A <br> <strong>Ângulo</strong> = {it_ang:.1f}° (Adiantado)",
-        'grafico': plot_fasores(
-            [(q['v'], 0, 'V', 'black'), (ir, 0, 'IR', 'green'), (ic, 90, 'IC', 'red'), (it_mag, it_ang, 'IT', 'blue')])
-    })
+    # Filtragem com base na escolha do usuário
+    banco_filtrado = []
+    if tipo_selecionado == 'RL':
+        banco_filtrado = questoes_rl
+    elif tipo_selecionado == 'RC':
+        banco_filtrado = questoes_rc
+    elif tipo_selecionado == 'RLC':
+        banco_filtrado = questoes_rlc
+    else:
+        # Mistura tudo e embaralha os tipos
+        banco_filtrado = questoes_rl + questoes_rc + questoes_rlc
+        random.shuffle(banco_filtrado)
 
-    q = sortear()
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    z = math.hypot(q['r'], xc)
-    i = q['v'] / z
-    vr = i * q['r']
-    vc = i * xc
-    dados.append({
-        'pergunta': f"Em um circuito RC série (R = {q['r']}Ω, C = {q['c']}μF, V = {q['v']}V, f = {q['f']}Hz), calcule a queda de tensão sobre o resistor (VR) e sobre o capacitor (VC).",
-        'resposta': f"<strong>I (Ref)</strong> = {i:.2f}A <br> <strong>VR</strong> = {vr:.2f}V ∠0° <br> <strong>VC</strong> = {vc:.2f}V ∠-90°",
-        'grafico': plot_fasores([(i, 0, 'I(ref)', 'blue'), (vr, 0, 'VR', 'green'), (vc, -90, 'VC', 'red'),
-                                 (q['v'], math.degrees(math.atan2(-vc, vr)), 'V_Fonte', 'black')])
-    })
+    # Garante o sorteio aleatório das questões filtradas
+    random.shuffle(banco_filtrado)
+    dados_finais = banco_filtrado[:qtd]
 
-    # ---------------------------------------------------------
-    # --- CIRCUITOS RLC SÉRIE E PARALELO (7 a 15)
-    # ---------------------------------------------------------
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    x_tot = xl - xc
-    z_mag = math.hypot(q['r'], x_tot)
-    z_ang = math.degrees(math.atan2(x_tot, q['r']))
-    i_mag = q['v'] / z_mag
-    i_ang = -z_ang
-    dados.append({
-        'pergunta': f"Um resistor de {q['r']}Ω, um indutor de {q['l']}mH e um capacitor de {q['c']}μF estão ligados em série. A fonte fornece {q['v']}V em {q['f']}Hz. Qual é a impedância do circuito e a corrente total?",
-        'resposta': f"<strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}°",
-        'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
-    })
+    # Passamos qtd e tipo adiante para a template saber como re-gerar a lista
+    return render_template('exercicios.html', dados=dados_finais, qtd=qtd, tipo=tipo_selecionado)
 
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    ir = q['v'] / q['r']
-    il = q['v'] / xl
-    ic = q['v'] / xc
-    it_mag = math.hypot(ir, ic - il)
-    it_ang = math.degrees(math.atan2(ic - il, ir))
-    dados.append({
-        'pergunta': f"Para um circuito RLC paralelo com R = {q['r']}Ω, L = {q['l']}mH e C = {q['c']}μF ligado em {q['v']}V / {q['f']}Hz, determine a corrente em cada componente e a corrente total.",
-        'resposta': f"<strong>IR</strong>={ir:.2f}A, <strong>IL</strong>={il:.2f}A, <strong>IC</strong>={ic:.2f}A <br> <strong>IT</strong> = {it_mag:.2f}A ∠{it_ang:.1f}°",
-        'grafico': plot_fasores(
-            [(ir, 0, 'IR', 'green'), (il, -90, 'IL', 'red'), (ic, 90, 'IC', 'orange'), (it_mag, it_ang, 'IT', 'blue')])
-    })
-
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    z = math.hypot(q['r'], xl - xc)
-    i = q['v'] / z
-    vr = i * q['r']
-    vl = i * xl
-    vc = i * xc
-    comportamento = "Indutivo" if xl > xc else "Capacitivo"
-    dados.append({
-        'pergunta': f"Circuito RLC série (R = {q['r']}Ω, L = {q['l']}mH, C = {q['c']}μF, V = {q['v']}V / {q['f']}Hz). Calcule as tensões VR, VL e VC, e indique o comportamento do circuito.",
-        'resposta': f"<strong>VR</strong>={vr:.2f}V, <strong>VL</strong>={vl:.2f}V, <strong>VC</strong>={vc:.2f}V <br> <strong>Comportamento:</strong> {comportamento}",
-        'grafico': plot_fasores([(vr, 0, 'VR', 'green'), (vl, 90, 'VL', 'red'), (vc, -90, 'VC', 'orange'),
-                                 (q['v'], math.degrees(math.atan2(vl - vc, vr)), 'V_Tot', 'black')])
-    })
-
-    q = sortear()
-    fr = 1 / (2 * math.pi * math.sqrt((q['l'] / 1000) * (q['c'] / 1000000)))
-    i_max = q['v'] / q['r']
-    dados.append({
-        'pergunta': f"Calcule a frequência de ressonância (fr) para um circuito RLC com L = {q['l']}mH e C = {q['c']}μF. Se R = {q['r']}Ω e V = {q['v']}V, qual será a corrente máxima?",
-        'resposta': f"<strong>Frequência (fr)</strong> = {fr:.1f}Hz <br> <strong>Corrente Máx</strong> = {i_max:.2f}A ∠0°",
-        'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_max, 0, 'I', 'blue')])
-    })
-
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    ir, il, ic = q['v'] / q['r'], q['v'] / xl, q['v'] / xc
-    it = math.hypot(ir, ic - il)
-    fp = ir / it
-    classificacao = "Adiantado" if ic > il else "Atrasado"
-    dados.append({
-        'pergunta': f"Em um circuito RLC paralelo (V={q['v']}V, f={q['f']}Hz, R={q['r']}Ω, L={q['l']}mH, C={q['c']}μF). Determine o fator de potência (FP) e classifique-o.",
-        'resposta': f"<strong>FP</strong> = {fp:.3f} ({classificacao})",
-        'grafico': plot_fasores([(ir, 0, 'IR', 'green'), (it, math.degrees(math.atan2(ic - il, ir)), 'IT', 'blue')])
-    })
-
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    z = math.hypot(q['r'], xl - xc)
-    i = q['v'] / z
-    p = (i ** 2) * q['r']
-    ql = (i ** 2) * xl
-    qc = (i ** 2) * xc
-    q_tot = ql - qc
-    s = (i ** 2) * z
-    dados.append({
-        'pergunta': f"Dado um circuito RLC série (R = {q['r']}Ω, L = {q['l']}mH, C = {q['c']}μF, V = {q['v']}V / {q['f']}Hz). Calcule a potência ativa (P), reativa (Q) e aparente (S).",
-        'resposta': f"<strong>P</strong> = {p:.1f} W <br> <strong>Q</strong> = {q_tot:.1f} VAr <br> <strong>S</strong> = {s:.1f} VA",
-        'grafico': plot_fasores([(p, 0, 'P(W)', 'green'), (q_tot, 90 if q_tot > 0 else -90, 'Q(VAr)', 'red'),
-                                 (s, math.degrees(math.atan2(q_tot, p)), 'S(VA)', 'black')])
-    })
-
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    defasagem = math.degrees(math.atan2(xl - xc, q['r']))
-    dados.append({
-        'pergunta': f"Qual é o ângulo de defasagem entre a tensão e a corrente total em um circuito RLC série (R = {q['r']}Ω, L = {q['l']}mH, C = {q['c']}μF, f = {q['f']}Hz)?",
-        'resposta': f"<strong>Defasagem (θ_Z)</strong> = {defasagem:.2f}°",
-        'grafico': plot_fasores([(q['r'], 0, 'R', 'green'), (xl - xc, 90 if xl > xc else -90, 'X', 'red'),
-                                 (math.hypot(q['r'], xl - xc), defasagem, 'Z', 'blue')])
-    })
-
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    g, bl, bc = 1 / q['r'], 1 / xl, 1 / xc
-    y_mag = math.hypot(g, bc - bl)
-    zeq = 1 / y_mag
-    dados.append({
-        'pergunta': f"Encontre a impedância equivalente (Zeq) e a admitância total (Y) de um circuito RLC paralelo (R = {q['r']}Ω, L = {q['l']}mH, C = {q['c']}μF, f = {q['f']}Hz).",
-        'resposta': f"<strong>Y</strong> = {y_mag:.4f} S <br> <strong>Zeq</strong> = {zeq:.2f} Ω",
-        'grafico': plot_fasores([(g, 0, 'G', 'green'), (bc - bl, 90 if bc > bl else -90, 'B_liq', 'red'),
-                                 (y_mag, math.degrees(math.atan2(bc - bl, g)), 'Y', 'blue')])
-    })
-
-    q = sortear()
-    xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    xtot = xl - xc
-    estado = "atrasada" if xtot > 0 else "adiantada"
-    dados.append({
-        'pergunta': f"Considere um RLC série (R = {q['r']}Ω, L = {q['l']}mH, C = {q['c']}μF). Determine a reatância total (X) em {q['f']}Hz e explique a relação V x I.",
-        'resposta': f"<strong>X_Total</strong> = {xtot:.2f} Ω <br> A corrente está <strong>{estado}</strong> em relação à tensão.",
-        'grafico': plot_fasores(
-            [(xl, 90, 'XL', 'red'), (xc, -90, 'XC', 'orange'), (abs(xtot), 90 if xtot > 0 else -90, 'X_Liq', 'blue')])
-    })
-
-    # ---------------------------------------------------------
-    # --- QUESTÕES INVERSAS (16 a 20)
-    # ---------------------------------------------------------
-    q = sortear()
-    xl16 = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    z16 = math.hypot(q['r'], xl16)
-    i16 = q['v'] / z16
-    dados.append({
-        'pergunta': f"Em um circuito RL série ({q['v']}V, {q['f']}Hz), o indutor é de {q['l']}mH e a corrente medida é de {i16:.2f}A. Calcule a resistência do resistor.",
-        'resposta': f"<strong>R</strong> = {q['r']} Ω",
-        'grafico': plot_fasores(
-            [(q['v'], 0, 'V', 'black'), (i16, -math.degrees(math.atan2(xl16, q['r'])), 'I', 'blue')])
-    })
-
-    q = sortear()
-    ir17 = q['v'] / q['r']
-    xc17 = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    ic17 = q['v'] / xc17
-    it17 = math.hypot(ir17, ic17)
-    dados.append({
-        'pergunta': f"Um circuito RC paralelo é alimentado por {q['v']}V / {q['f']}Hz. O resistor possui {q['r']}Ω e a corrente total é de {it17:.2f}A. Determine a capacitância em μF.",
-        'resposta': f"<strong>C</strong> = {q['c']} μF",
-        'grafico': plot_fasores([(ir17, 0, 'IR', 'green'), (ic17, 90, 'IC', 'red'),
-                                 (it17, math.degrees(math.atan2(ic17, ir17)), 'IT', 'blue')])
-    })
-
-    q = sortear()
-    fr18 = 1 / (2 * math.pi * math.sqrt((q['l'] / 1000) * (q['c'] / 1000000)))
-    dados.append({
-        'pergunta': f"Deseja-se sintonizar um RLC série para ressonância exata em {fr18:.1f}Hz. Se o capacitor tem {q['c']}μF, qual deve ser a indutância (mH)?",
-        'resposta': f"<strong>L</strong> = {q['l']} mH",
-        'grafico': plot_fasores([(1, 90, 'XL', 'red'), (1, -90, 'XC', 'orange')])
-    })
-
-    q = sortear()
-    xl19 = 2 * math.pi * q['f'] * (q['l'] / 1000)
-    z19 = math.hypot(q['r'], xl19)
-    i19 = q['v'] / z19
-    vr19, vl19 = i19 * q['r'], i19 * xl19
-    dados.append({
-        'pergunta': f"Em um RL série ({q['f']}Hz), a queda no indutor de {q['l']}mH é {vl19:.2f}V e no resistor é {vr19:.2f}V. Determine a corrente, R e a tensão da fonte (V).",
-        'resposta': f"<strong>I</strong>={i19:.2f}A, <strong>R</strong>={q['r']}Ω, <strong>V_Fonte</strong>={q['v']}V",
-        'grafico': plot_fasores([(vr19, 0, 'VR', 'green'), (vl19, 90, 'VL', 'red'),
-                                 (q['v'], math.degrees(math.atan2(vl19, vr19)), 'V_Fonte', 'black')])
-    })
-
-    q = sortear()
-    xc20 = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
-    pot_ativa = (q['v'] ** 2) / q['r']
-    pot_reativa = (q['v'] ** 2) / xc20
-    dados.append({
-        'pergunta': f"Um RC paralelo ({q['v']}V, {q['f']}Hz) consome P = {pot_ativa:.1f}W e Qc = {pot_reativa:.1f}VAr. Calcule os valores do resistor (Ω) e capacitor (μF).",
-        'resposta': f"<strong>R</strong> = {q['r']} Ω <br> <strong>C</strong> = {q['c']} μF",
-        'grafico': plot_fasores([(pot_ativa, 0, 'P(W)', 'green'), (pot_reativa, -90, 'Qc(VAr)', 'red'),
-                                 (math.hypot(pot_ativa, pot_reativa), math.degrees(math.atan2(-pot_reativa, pot_ativa)),
-                                  'S(VA)', 'blue')])
-    })
-
-    return render_template('exercicios.html', dados=dados)
 # ==========================================
 # === CÁLCULOS: MÓDULO RL ==================
 # ==========================================
@@ -497,7 +277,6 @@ def calcular_serie():
     except (TypeError, ValueError):
         return jsonify({'sucesso': False, 'erro': 'Valores inválidos.'})
 
-
 @app.route('/calcular_paralelo', methods=['POST'])
 def calcular_paralelo():
     dados = request.get_json()
@@ -526,7 +305,6 @@ def calcular_paralelo():
         })
     except (TypeError, ValueError):
         return jsonify({'sucesso': False, 'erro': 'Valores inválidos.'})
-
 
 # ==========================================
 # === CÁLCULOS: MÓDULO RC ==================
@@ -562,7 +340,6 @@ def calcular_rc_serie():
     except (TypeError, ValueError):
         return jsonify({'sucesso': False, 'erro': 'Valores inválidos.'})
 
-
 @app.route('/calcular_rc_paralelo', methods=['POST'])
 def calcular_rc_paralelo():
     dados = request.get_json()
@@ -593,6 +370,75 @@ def calcular_rc_paralelo():
     except (TypeError, ValueError):
         return jsonify({'sucesso': False, 'erro': 'Valores inválidos.'})
 
+# ==========================================
+# === CÁLCULOS: MÓDULO RLC =================
+# ==========================================
+@app.route('/calcular_rlc_serie', methods=['POST'])
+def calcular_rlc_serie():
+    try:
+        dados = request.json
+        v = float(dados['v'])
+        r = float(dados['r'])
+        l_mH = float(dados['l'])
+        c_uF = float(dados['c'])
+        f = float(dados['f'])
+
+        if f <= 0 or c_uF <= 0:
+            return jsonify({'sucesso': False, 'erro': 'Frequência e Capacitância devem ser maiores que zero.'})
+
+        l = l_mH * 1e-3
+        c = c_uF * 1e-6
+        w = 2 * math.pi * f
+
+        xl = w * l
+        xc = 1 / (w * c)
+        z = math.sqrt(r**2 + (xl - xc)**2)
+        i = v / z if z != 0 else 0
+
+        return jsonify({
+            'sucesso': True,
+            'z': f"{z:.2f}",
+            'i': f"{i:.2f}",
+            'xl': f"{xl:.2f}",
+            'xc': f"{xc:.2f}"
+        })
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)})
+
+@app.route('/calcular_rlc_paralelo', methods=['POST'])
+def calcular_rlc_paralelo():
+    try:
+        dados = request.json
+        v = float(dados['v'])
+        r = float(dados['r'])
+        l_mH = float(dados['l'])
+        c_uF = float(dados['c'])
+        f = float(dados['f'])
+
+        if f <= 0 or r == 0 or l_mH == 0 or c_uF <= 0:
+            return jsonify({'sucesso': False, 'erro': 'Os valores devem ser maiores que zero.'})
+
+        l = l_mH * 1e-3
+        c = c_uF * 1e-6
+        w = 2 * math.pi * f
+
+        xl = w * l
+        xc = 1 / (w * c)
+        ir = v / r
+        il = v / xl
+        ic = v / xc
+        it = math.sqrt(ir**2 + (il - ic)**2)
+        z = v / it if it != 0 else 0
+
+        return jsonify({
+            'sucesso': True,
+            'z': f"{z:.2f}",
+            'it': f"{it:.2f}",
+            'il': f"{il:.2f}",
+            'ic': f"{ic:.2f}"
+        })
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)})
 
 # ==========================================
 # === GRÁFICOS: MÓDULO RL ==================
@@ -617,7 +463,23 @@ def graficos_serie():
         theta_rad = math.atan2(xl, r)
         theta_deg = math.degrees(theta_rad)
         i_mag = v / z_mag if z_mag != 0 else 0
-        fator_escala = round(z_mag, 1)
+
+        amp_vr = i_mag * r
+        amp_vl = i_mag * xl
+        min_v_visual = 0.15 * v
+
+        amp_vr_visual = max(amp_vr, min_v_visual) if amp_vr > 0.01 else 0
+        amp_vl_visual = max(amp_vl, min_v_visual) if amp_vl > 0.01 else 0
+
+        escala_vr = amp_vr_visual / amp_vr if amp_vr > 0.01 else 1.0
+        escala_vl = amp_vl_visual / amp_vl if amp_vl > 0.01 else 1.0
+
+        label_vr = "VR" if escala_vr <= 1.05 else f"VR (escala x{escala_vr:.1f})"
+        label_vl = "VL" if escala_vl <= 1.05 else f"VL (escala x{escala_vl:.1f})"
+
+        amp_i_visual = 0.6 * v
+        escala_i = amp_i_visual / i_mag if i_mag > 0 else 1.0
+        label_i = f"I (escala x{escala_i:.1f})"
 
         fig = plt.figure(figsize=(12, 5))
 
@@ -628,17 +490,18 @@ def graficos_serie():
         t_ms = t * 1000
 
         v_t = v * np.sin(w * t)
-        i_t_escalada = (i_mag * fator_escala) * np.sin(w * t - theta_rad)
-        vr_t = (i_mag * r) * np.sin(w * t - theta_rad)
-        vl_t = (i_mag * xl) * np.sin(w * t - theta_rad + np.pi / 2)
+        vr_t = amp_vr_visual * np.sin(w * t - theta_rad)
+        vl_t = amp_vl_visual * np.sin(w * t - theta_rad + np.pi / 2)
+        i_t_escalada = amp_i_visual * np.sin(w * t - theta_rad)
 
-        ax1.plot(t_ms, v_t, label='V (Fonte)', color='blue', linewidth=2)
-        ax1.plot(t_ms, i_t_escalada, label=f'I (escala x{fator_escala})', color='red', linestyle='--')
-        ax1.plot(t_ms, vr_t, label='VR', color='green')
-        ax1.plot(t_ms, vl_t, label='VL', color='purple')
+        ax1.plot(t_ms, v_t, label='V (Fonte)', color='blue', linewidth=2.5)
+        ax1.plot(t_ms, vr_t, label=label_vr, color='green', linewidth=1.5)
+        ax1.plot(t_ms, vl_t, label=label_vl, color='purple', linewidth=1.5)
+        ax1.plot(t_ms, i_t_escalada, label=label_i, color='red', linestyle='--', linewidth=2)
+
         ax1.set_title("Domínio do Tempo", fontsize=14, fontweight='bold')
         ax1.set_xlabel("Tempo (ms)")
-        ax1.set_ylabel("Amplitude")
+        ax1.set_ylabel("Amplitude Visual")
         ticks_ms = np.linspace(0, 2 * periodo_ms, 9)
         ax1.set_xticks(ticks_ms)
         ax1.set_xticklabels([f"{tick:.3f}" for tick in ticks_ms])
@@ -646,24 +509,23 @@ def graficos_serie():
         ax1.legend(loc='upper right')
 
         ax2 = fig.add_subplot(122)
-        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V (0.0°)')
+        i_visual = 0.5 * v
 
-        vr_x = (i_mag * r) * math.cos(-theta_rad)
-        vr_y = (i_mag * r) * math.sin(-theta_rad)
-        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green',
-                   label=f'VR ({-theta_deg:.1f}°)')
+        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)', width=0.005)
 
-        vl_x = (i_mag * xl) * math.cos(-theta_rad + np.pi / 2)
-        vl_y = (i_mag * xl) * math.sin(-theta_rad + np.pi / 2)
-        ax2.quiver(0, 0, vl_x, vl_y, angles='xy', scale_units='xy', scale=1, color='purple',
-                   label=f'VL ({-theta_deg + 90:.1f}°)')
+        vr_x = amp_vr_visual * math.cos(-theta_rad)
+        vr_y = amp_vr_visual * math.sin(-theta_rad)
+        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'VR ({amp_vr:.1f}V) ({-theta_deg:.1f}°)', width=0.005)
 
-        i_x = (i_mag * fator_escala) * math.cos(-theta_rad)
-        i_y = (i_mag * fator_escala) * math.sin(-theta_rad)
-        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red',
-                   label=f'I (x{fator_escala}) ({-theta_deg:.1f}°)', width=0.005)
+        vl_x = amp_vl_visual * math.cos(-theta_rad + np.pi / 2)
+        vl_y = amp_vl_visual * math.sin(-theta_rad + np.pi / 2)
+        ax2.quiver(0, 0, vl_x, vl_y, angles='xy', scale_units='xy', scale=1, color='purple', label=f'VL ({amp_vl:.1f}V) ({-theta_deg + 90:.1f}°)', width=0.005)
 
-        limite = max(v, i_mag * xl, i_mag * r) * 1.2
+        i_x = i_visual * math.cos(-theta_rad)
+        i_y = i_visual * math.sin(-theta_rad)
+        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'I ({i_mag:.2f}A) ({-theta_deg:.1f}°)', width=0.008)
+
+        limite = max(v, amp_vr_visual, amp_vl_visual) * 1.2
         ax2.set_xlim(-limite, limite)
         ax2.set_ylim(-limite, limite)
         ax2.axhline(0, color='black', linewidth=1)
@@ -683,7 +545,6 @@ def graficos_serie():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
-
 
 @app.route('/graficos_paralelo', methods=['POST'])
 def graficos_paralelo():
@@ -738,15 +599,12 @@ def graficos_paralelo():
 
         ax2 = fig.add_subplot(122)
         ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label='V (0.0°)')
-        ax2.quiver(0, 0, ir_mag * fator_escala, 0, angles='xy', scale_units='xy', scale=1, color='green',
-                   label='IR (0.0°)')
-        ax2.quiver(0, 0, 0, -il_mag * fator_escala, angles='xy', scale_units='xy', scale=1, color='purple',
-                   label='IL (-90.0°)')
+        ax2.quiver(0, 0, ir_mag * fator_escala, 0, angles='xy', scale_units='xy', scale=1, color='green', label='IR (0.0°)')
+        ax2.quiver(0, 0, 0, -il_mag * fator_escala, angles='xy', scale_units='xy', scale=1, color='purple', label='IL (-90.0°)')
 
         it_x = (it_mag * fator_escala) * math.cos(-theta_rad)
         it_y = (it_mag * fator_escala) * math.sin(-theta_rad)
-        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red',
-                   label=f'IT (x{fator_escala}) ({-theta_deg:.1f}°)', width=0.005)
+        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'IT (x{fator_escala}) ({-theta_deg:.1f}°)', width=0.005)
 
         limite = max(v, ir_mag * fator_escala, il_mag * fator_escala) * 1.2
         ax2.set_xlim(-limite, limite)
@@ -768,7 +626,6 @@ def graficos_paralelo():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
-
 
 # ==========================================
 # === GRÁFICOS: MÓDULO RC ==================
@@ -824,18 +681,15 @@ def graficos_rc_serie():
 
         vr_x = (i_mag * r) * math.cos(theta_rad)
         vr_y = (i_mag * r) * math.sin(theta_rad)
-        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green',
-                   label=f'VR ({theta_deg:.1f}°)')
+        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'VR ({theta_deg:.1f}°)')
 
         i_x = (i_mag * fator_escala) * math.cos(theta_rad)
         i_y = (i_mag * fator_escala) * math.sin(theta_rad)
-        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red',
-                   label=f'I (x{fator_escala}) ({theta_deg:.1f}°)', width=0.005)
+        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'I (x{fator_escala}) ({theta_deg:.1f}°)', width=0.005)
 
         vc_x = (i_mag * xc) * math.cos(theta_rad - np.pi / 2)
         vc_y = (i_mag * xc) * math.sin(theta_rad - np.pi / 2)
-        ax2.quiver(0, 0, vc_x, vc_y, angles='xy', scale_units='xy', scale=1, color='orange',
-                   label=f'VC ({theta_deg - 90:.1f}°)')
+        ax2.quiver(0, 0, vc_x, vc_y, angles='xy', scale_units='xy', scale=1, color='orange', label=f'VC ({theta_deg - 90:.1f}°)')
 
         limite = max(v, i_mag * xc, i_mag * r) * 1.2
         ax2.set_xlim(-limite, limite)
@@ -857,7 +711,6 @@ def graficos_rc_serie():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
-
 
 @app.route('/graficos_rc_paralelo', methods=['POST'])
 def graficos_rc_paralelo():
@@ -908,15 +761,12 @@ def graficos_rc_paralelo():
 
         ax2 = fig.add_subplot(122)
         ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label='V (0.0°)')
-        ax2.quiver(0, 0, ir_mag * fator_escala, 0, angles='xy', scale_units='xy', scale=1, color='green',
-                   label='IR (0.0°)')
-        ax2.quiver(0, 0, 0, ic_mag * fator_escala, angles='xy', scale_units='xy', scale=1, color='orange',
-                   label='IC (90.0°)')
+        ax2.quiver(0, 0, ir_mag * fator_escala, 0, angles='xy', scale_units='xy', scale=1, color='green', label='IR (0.0°)')
+        ax2.quiver(0, 0, 0, ic_mag * fator_escala, angles='xy', scale_units='xy', scale=1, color='orange', label='IC (90.0°)')
 
         it_x = (it_mag * fator_escala) * math.cos(theta_rad)
         it_y = (it_mag * fator_escala) * math.sin(theta_rad)
-        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red',
-                   label=f'IT (x{fator_escala}) ({theta_deg:.1f}°)', width=0.005)
+        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'IT (x{fator_escala}) ({theta_deg:.1f}°)', width=0.005)
 
         limite = max(v, ir_mag * fator_escala, ic_mag * fator_escala) * 1.2
         ax2.set_xlim(-limite, limite)
@@ -938,74 +788,10 @@ def graficos_rc_paralelo():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
-import math
 
-@app.route('/calcular_rlc_serie', methods=['POST'])
-def calcular_rlc_serie():
-    try:
-        dados = request.json
-        v = float(dados['v'])
-        r = float(dados['r'])
-        l_mH = float(dados['l'])
-        c_uF = float(dados['c'])
-        f = float(dados['f'])
-
-        # Conversão de unidades (mH para H e µF para F)
-        l = l_mH * 1e-3
-        c = c_uF * 1e-6
-        w = 2 * math.pi * f
-
-        # Cálculos Matemáticos
-        xl = w * l
-        xc = 1 / (w * c)
-        z = math.sqrt(r**2 + (xl - xc)**2)
-        i = v / z
-
-        return jsonify({
-            'sucesso': True,
-            'z': f"{z:.2f}",
-            'i': f"{i:.2f}",
-            'xl': f"{xl:.2f}",
-            'xc': f"{xc:.2f}"
-        })
-    except Exception as e:
-        return jsonify({'sucesso': False, 'erro': str(e)})
-
-@app.route('/calcular_rlc_paralelo', methods=['POST'])
-def calcular_rlc_paralelo():
-    try:
-        dados = request.json
-        v = float(dados['v'])
-        r = float(dados['r'])
-        l_mH = float(dados['l'])
-        c_uF = float(dados['c'])
-        f = float(dados['f'])
-
-        # Conversão de unidades
-        l = l_mH * 1e-3
-        c = c_uF * 1e-6
-        w = 2 * math.pi * f
-
-        # Cálculos Matemáticos
-        xl = w * l
-        xc = 1 / (w * c)
-        ir = v / r
-        il = v / xl
-        ic = v / xc
-        it = math.sqrt(ir**2 + (il - ic)**2)
-        z = v / it
-
-        return jsonify({
-            'sucesso': True,
-            'z': f"{z:.2f}",
-            'it': f"{it:.2f}",
-            'il': f"{il:.2f}",
-            'ic': f"{ic:.2f}"
-        })
-    except Exception as e:
-        return jsonify({'sucesso': False, 'erro': str(e)})
-
-
+# ==========================================
+# === GRÁFICOS: MÓDULO RLC =================
+# ==========================================
 @app.route('/graficos_rlc_serie', methods=['POST'])
 def graficos_rlc_serie():
     try:
@@ -1016,7 +802,6 @@ def graficos_rlc_serie():
         c_uF = float(dados['c'])
         f = float(dados['f'])
 
-        # Cálculos base
         l = l_mH * 1e-3
         c = c_uF * 1e-6
         w = 2 * np.pi * f
@@ -1026,25 +811,19 @@ def graficos_rlc_serie():
         x_total = xl - xc
         z = math.sqrt(r ** 2 + x_total ** 2)
 
-        i = v / z
+        i = v / z if z != 0 else 0
         vr = i * r
         vl = i * xl
         vc = i * xc
 
-        # Ângulo de defasagem da Tensão Total em relação à Corrente
         theta = math.degrees(math.atan2(vl - vc, vr))
 
-        # Criar imagem com 2 gráficos lado a lado
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
-        # ==========================================
-        # GRÁFICO 1: Triângulo de Impedância
-        # ==========================================
+        # Triângulo de Impedância
         ax1.quiver(0, 0, r, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'R = {r:.1f} Ω')
-        ax1.quiver(r, 0, 0, x_total, angles='xy', scale_units='xy', scale=1, color='red',
-                   label=f'X_L - X_C = {x_total:.1f} Ω')
-        ax1.quiver(0, 0, r, x_total, angles='xy', scale_units='xy', scale=1, color='green',
-                   label=f'Z = {z:.1f} Ω ∠ {theta:.1f}°')
+        ax1.quiver(r, 0, 0, x_total, angles='xy', scale_units='xy', scale=1, color='red', label=f'X_L - X_C = {x_total:.1f} Ω')
+        ax1.quiver(0, 0, r, x_total, angles='xy', scale_units='xy', scale=1, color='green', label=f'Z = {z:.1f} Ω ∠ {theta:.1f}°')
 
         lim_z = max(r, abs(x_total)) * 1.2
         ax1.set_xlim(-0.1 * lim_z, lim_z)
@@ -1055,22 +834,15 @@ def graficos_rlc_serie():
         ax1.set_title('Triângulo de Impedância')
         ax1.legend(loc='lower left')
 
-        # ==========================================
-        # GRÁFICO 2: Fasores (Com Escala e Ângulos)
-        # ==========================================
-        # Fator de escala para a Corrente I aparecer visível junto com as dezenas/centenas de Volts
+        # Diagrama Fasorial
         max_v = max(v, vr, vl, vc)
         fator_escala_i = (max_v * 0.7) / i if i > 0 else 1
 
-        # A corrente I é a referência (ângulo 0)
-        ax2.quiver(0, 0, i * fator_escala_i, 0, angles='xy', scale_units='xy', scale=1, color='purple', width=0.005,
-                   label=f'I = {i:.2f} A ∠ 0° (Ref, esc. x{fator_escala_i:.1f})')
+        ax2.quiver(0, 0, i * fator_escala_i, 0, angles='xy', scale_units='xy', scale=1, color='purple', width=0.005, label=f'I = {i:.2f} A ∠ 0° (Ref, esc. x{fator_escala_i:.1f})')
         ax2.quiver(0, 0, vr, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V_R = {vr:.1f} V ∠ 0°')
-        ax2.quiver(0, 0, 0, vl, angles='xy', scale_units='xy', scale=1, color='orange',
-                   label=f'V_L = {vl:.1f} V ∠ +90°')
+        ax2.quiver(0, 0, 0, vl, angles='xy', scale_units='xy', scale=1, color='orange', label=f'V_L = {vl:.1f} V ∠ +90°')
         ax2.quiver(0, 0, 0, -vc, angles='xy', scale_units='xy', scale=1, color='cyan', label=f'V_C = {vc:.1f} V ∠ -90°')
-        ax2.quiver(0, 0, vr, vl - vc, angles='xy', scale_units='xy', scale=1, color='green',
-                   label=f'V_T = {v:.1f} V ∠ {theta:.1f}°')
+        ax2.quiver(0, 0, vr, vl - vc, angles='xy', scale_units='xy', scale=1, color='green', label=f'V_T = {v:.1f} V ∠ {theta:.1f}°')
 
         lim_v = max(max_v, i * fator_escala_i) * 1.2
         ax2.set_xlim(-0.1 * lim_v, lim_v)
@@ -1081,7 +853,6 @@ def graficos_rlc_serie():
         ax2.set_title('Diagrama Fasorial (Série)')
         ax2.legend(loc='lower left')
 
-        # Salvar e enviar
         plt.tight_layout()
         buf = io.BytesIO()
         plt.savefig(buf, format='png', bbox_inches='tight')
@@ -1093,7 +864,6 @@ def graficos_rlc_serie():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
-
 @app.route('/graficos_rlc_paralelo', methods=['POST'])
 def graficos_rlc_paralelo():
     try:
@@ -1104,7 +874,6 @@ def graficos_rlc_paralelo():
         c_uF = float(dados['c'])
         f = float(dados['f'])
 
-        # Cálculos base
         l = l_mH * 1e-3
         c = c_uF * 1e-6
         w = 2 * np.pi * f
@@ -1118,20 +887,14 @@ def graficos_rlc_paralelo():
         i_reativa = ic - il
         it = math.sqrt(ir ** 2 + i_reativa ** 2)
 
-        # Ângulo de defasagem da Corrente Total em relação à Tensão
         theta = math.degrees(math.atan2(ic - il, ir))
 
-        # Criar imagem com 2 gráficos lado a lado
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
-        # ==========================================
-        # GRÁFICO 1: Triângulo de Correntes
-        # ==========================================
+        # Triângulo de Correntes
         ax1.quiver(0, 0, ir, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'I_R = {ir:.2f} A')
-        ax1.quiver(ir, 0, 0, i_reativa, angles='xy', scale_units='xy', scale=1, color='red',
-                   label=f'I_C - I_L = {i_reativa:.2f} A')
-        ax1.quiver(0, 0, ir, i_reativa, angles='xy', scale_units='xy', scale=1, color='green',
-                   label=f'I_T = {it:.2f} A ∠ {theta:.1f}°')
+        ax1.quiver(ir, 0, 0, i_reativa, angles='xy', scale_units='xy', scale=1, color='red', label=f'I_C - I_L = {i_reativa:.2f} A')
+        ax1.quiver(0, 0, ir, i_reativa, angles='xy', scale_units='xy', scale=1, color='green', label=f'I_T = {it:.2f} A ∠ {theta:.1f}°')
 
         lim_i = max(ir, abs(i_reativa)) * 1.2
         ax1.set_xlim(-0.1 * lim_i, lim_i)
@@ -1142,22 +905,15 @@ def graficos_rlc_paralelo():
         ax1.set_title('Triângulo de Correntes')
         ax1.legend(loc='lower left')
 
-        # ==========================================
-        # GRÁFICO 2: Fasores (Com Escala e Ângulos)
-        # ==========================================
-        # Fator de escala para a Tensão V aparecer visível junto com as pequenas Correntes
+        # Diagrama Fasorial
         max_i = max(it, ir, ic, il)
         fator_escala_v = (max_i * 0.7) / v if v > 0 else 1
 
-        # A tensão V é a referência (ângulo 0)
-        ax2.quiver(0, 0, v * fator_escala_v, 0, angles='xy', scale_units='xy', scale=1, color='purple', width=0.005,
-                   label=f'V = {v:.1f} V ∠ 0° (Ref, esc. x{fator_escala_v:.2f})')
+        ax2.quiver(0, 0, v * fator_escala_v, 0, angles='xy', scale_units='xy', scale=1, color='purple', width=0.005, label=f'V = {v:.1f} V ∠ 0° (Ref, esc. x{fator_escala_v:.2f})')
         ax2.quiver(0, 0, ir, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'I_R = {ir:.2f} A ∠ 0°')
-        ax2.quiver(0, 0, 0, ic, angles='xy', scale_units='xy', scale=1, color='orange',
-                   label=f'I_C = {ic:.2f} A ∠ +90°')
+        ax2.quiver(0, 0, 0, ic, angles='xy', scale_units='xy', scale=1, color='orange', label=f'I_C = {ic:.2f} A ∠ +90°')
         ax2.quiver(0, 0, 0, -il, angles='xy', scale_units='xy', scale=1, color='cyan', label=f'I_L = {il:.2f} A ∠ -90°')
-        ax2.quiver(0, 0, ir, i_reativa, angles='xy', scale_units='xy', scale=1, color='green',
-                   label=f'I_T = {it:.2f} A ∠ {theta:.1f}°')
+        ax2.quiver(0, 0, ir, i_reativa, angles='xy', scale_units='xy', scale=1, color='green', label=f'I_T = {it:.2f} A ∠ {theta:.1f}°')
 
         lim_fasor = max(v * fator_escala_v, max_i) * 1.2
         ax2.set_xlim(-0.1 * lim_fasor, lim_fasor)
@@ -1168,7 +924,6 @@ def graficos_rlc_paralelo():
         ax2.set_title('Diagrama Fasorial (Paralelo)')
         ax2.legend(loc='lower left')
 
-        # Salvar e enviar
         plt.tight_layout()
         buf = io.BytesIO()
         plt.savefig(buf, format='png', bbox_inches='tight')
@@ -1181,4 +936,4 @@ def graficos_rlc_paralelo():
         return jsonify({'sucesso': False, 'erro': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
