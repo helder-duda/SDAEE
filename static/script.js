@@ -1,35 +1,161 @@
 // ==========================================
+// BANCO DE DADOS DE EXERCÍCIOS (20 QUESTÕES)
+// ==========================================
+const bancoDeExercicios = {
+    "normal": [
+        {
+            "id": 1,
+            "tipo": "Normal (RLC)",
+            "enunciado": "Um circuito RLC série é alimentado por uma fonte de tensão de $V_s = 220\\angle{0^\\circ}\\text{ V}$. Os valores dos componentes são $R = 15\\ \\Omega$, $X_L = 30\\ \\Omega$ e $X_C = 10\\ \\Omega$. Calcule a impedância total do circuito ($Z_{eq}$) e a corrente total da fonte ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 25\\angle{53,13^\\circ}\\ \\Omega$ ; $I_s = 8,8\\angle{-53,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (15 + j20)\\ \\Omega$ ; $I_s = (5,28 - j7,04)\\text{ A}$"
+        },
+        {
+            "id": 2,
+            "tipo": "Normal (RC)",
+            "enunciado": "Um resistor de $R = 12\\ \\Omega$ está em paralelo com um capacitor de reatância $X_C = 16\\ \\Omega$. O circuito é alimentado por uma fonte de tensão de $V_s = 48\\angle{30^\\circ}\\text{ V}$. Determine a corrente em cada ramo ($I_R$, $I_C$) e a corrente total ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_R = 4\\angle{30^\\circ}\\text{ A}$ ; $I_C = 3\\angle{120^\\circ}\\text{ A}$ ; $I_s = 5\\angle{66,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $I_R = (3,46 + j2)\\text{ A}$ ; $I_C = (-1,5 + j2,6)\\text{ A}$ ; $I_s = (1,96 + j4,6)\\text{ A}$"
+        },
+        {
+            "id": 3,
+            "tipo": "Normal (RL)",
+            "enunciado": "Um circuito RL série possui uma fonte de tensão de $V_s = 100\\angle{0^\\circ}\\text{ V}$, um resistor de $R = 3\\ \\Omega$ e um indutor com reatância $X_L = 4\\ \\Omega$. Encontre a impedância equivalente total ($Z_{eq}$) do circuito e determine a intensidade da corrente total ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 5\\angle{53,13^\\circ}\\ \\Omega$ ; $I_s = 20\\angle{-53,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (3 + j4)\\ \\Omega$ ; $I_s = (12 - j16)\\text{ A}$"
+        },
+        {
+            "id": 4,
+            "tipo": "Normal (RC)",
+            "enunciado": "Considere um circuito RC série alimentado por $V_s = 120\\angle{-10^\\circ}\\text{ V}$. Sendo $R = 8\\ \\Omega$ e $X_C = 6\\ \\Omega$, determine a impedância equivalente em formato polar ($Z_{eq}$) e a corrente drenada pelo circuito ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 10\\angle{-36,87^\\circ}\\ \\Omega$ ; $I_s = 12\\angle{26,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (8 - j6)\\ \\Omega$ ; $I_s = (10,7 + j5,42)\\text{ A}$"
+        },
+        {
+            "id": 5,
+            "tipo": "Normal (RL)",
+            "enunciado": "Um circuito composto por um resistor de $R = 30\\ \\Omega$ em paralelo com um indutor de reatância $X_L = 40\\ \\Omega$ é ligado a uma fonte de $V_s = 60\\angle{0^\\circ}\\text{ V}$. Calcule os fasores da corrente no resistor ($I_R$), no indutor ($I_L$) e a corrente global de entrada ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_R = 2\\angle{0^\\circ}\\text{ A}$ ; $I_L = 1,5\\angle{-90^\\circ}\\text{ A}$ ; $I_s = 2,5\\angle{-36,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $I_R = (2 + j0)\\text{ A}$ ; $I_L = (0 - j1,5)\\text{ A}$ ; $I_s = (2 - j1,5)\\text{ A}$"
+        },
+        {
+            "id": 6,
+            "tipo": "Normal (RLC)",
+            "enunciado": "Um circuito RLC série possui uma impedância composta por $R = 40\\ \\Omega$, $X_L = 50\\ \\Omega$ e $X_C = 20\\ \\Omega$. Sabendo que o circuito está conectado a uma fonte de $V_s = 200\\angle{45^\\circ}\\text{ V}$, calcule a impedância equivalente ($Z_{eq}$) e o fasor de corrente ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 50\\angle{36,87^\\circ}\\ \\Omega$ ; $I_s = 4\\angle{8,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (40 + j30)\\ \\Omega$ ; $I_s = (3,96 + j0,57)\\text{ A}$"
+        },
+        {
+            "id": 7,
+            "tipo": "Normal (RLC)",
+            "enunciado": "Uma fonte senoidal de $V_s = 100\\angle{0^\\circ}\\text{ V}$ alimenta um circuito RLC paralelo com parâmetros $R = 20\\ \\Omega$, $X_L = 10\\ \\Omega$ e $X_C = 25\\ \\Omega$. Determine a corrente de entrada total ($I_s$) fornecida pela fonte de tensão.",
+            "resposta": "<b>Forma Polar:</b> $I_s = 7,81\\angle{-50,19^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $I_s = (5 - j6)\\text{ A}$"
+        },
+        {
+            "id": 8,
+            "tipo": "Normal (RL)",
+            "enunciado": "Uma bobina real é representada por um circuito série contendo resistência interna $R = 12\\ \\Omega$ e reatância indutiva $X_L = 5\\ \\Omega$. Se alimentada por uma fonte $V_s = 50\\angle{60^\\circ}\\text{ V}$, quais serão os fasores de impedância total ($Z_{eq}$) e corrente total ($I_s$)?",
+            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 13\\angle{22,62^\\circ}\\ \\Omega$ ; $I_s = 3,85\\angle{37,38^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (12 + j5)\\ \\Omega$ ; $I_s = (3,06 + j2,34)\\text{ A}$"
+        },
+        {
+            "id": 9,
+            "tipo": "Normal (RC)",
+            "enunciado": "Um circuito RC série com $R = 12\\ \\Omega$ e $X_C = 5\\ \\Omega$ é energizado por uma tensão alternada de $V_s = 110\\angle{0^\\circ}\\text{ V}$. Descubra os valores fasoriais correspondentes à impedância equivalente ($Z_{eq}$) e à corrente total do circuito ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 13\\angle{-22,62^\\circ}\\ \\Omega$ ; $I_s = 8,46\\angle{22,62^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (12 - j5)\\ \\Omega$ ; $I_s = (7,81 + j3,25)\\text{ A}$"
+        },
+        {
+            "id": 10,
+            "tipo": "Normal (RLC)",
+            "enunciado": "Determine a corrente fasorial total ($I_s$) e a impedância de malha ($Z_{eq}$) para um circuito RLC série alimentado por $V_s = 10\\angle{-20^\\circ}\\text{ V}$ cujos parâmetros são $R = 6\\ \\Omega$, $X_L = 15\\ \\Omega$ e $X_C = 7\\ \\Omega$.",
+            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 10\\angle{53,13^\\circ}\\ \\Omega$ ; $I_s = 1\\angle{-73,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (6 + j8)\\ \\Omega$ ; $I_s = (0,29 - j0,96)\\text{ A}$"
+        }
+    ],
+    "engenharia_reversa": [
+        {
+            "id": 11,
+            "tipo": "Engenharia Reversa (RLC)",
+            "enunciado": "Um engenheiro analisa um circuito RLC série desconhecido contendo $R = 10\\ \\Omega$, $X_L = 20\\ \\Omega$ e $X_C = 10\\ \\Omega$. Através de uma medição local direta, ele descobre que a tensão sobre o capacitor é de $V_C = 50\\angle{-45^\\circ}\\text{ V}$. Descubra os parâmetros físicos globais do circuito: a corrente da fonte ($I_s$) e a tensão da fonte ($V_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_s = 5\\angle{45^\\circ}\\text{ A}$ ; $V_s = 70,7\\angle{90^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (3,54 + j3,54)\\text{ A}$ ; $V_s = (0 + j70,7)\\text{ V}$"
+        },
+        {
+            "id": 12,
+            "tipo": "Engenharia Reversa (RL)",
+            "enunciado": "Em um circuito paralelo RL com $R = 20\\ \\Omega$ e $X_L = 15\\ \\Omega$, a corrente medida localmente no ramo do indutor é de $I_L = 8\\angle{-30^\\circ}\\text{ A}$. Realize a engenharia reversa para determinar a tensão nos terminais do circuito ($V_s$) e a corrente total gerada pela fonte de alimentação ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $V_s = 120\\angle{60^\\circ}\\text{ V}$ ; $I_s = 10\\angle{6,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (60 + j103,92)\\text{ V}$ ; $I_s = (9,93 + j1,20)\\text{ A}$"
+        },
+        {
+            "id": 13,
+            "tipo": "Engenharia Reversa (Misto)",
+            "enunciado": "Consulte um circuito misto onde uma fonte de tensão desconhecida alimenta um resistor $R_1 = 5\\ \\Omega$ em série com um paralelo composto por um capacitor de $X_C = 10\\ \\Omega$ e um indutor de $X_L = 10\\ \\Omega$. Sabendo que a corrente medida no capacitor é de $I_C = 4\\angle{90^\\circ}\\text{ A}$, determine a corrente de entrada ($I_s$) e a tensão total da fonte ($V_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_s = 0\\angle{0^\\circ}\\text{ A}$ (Ressonância Paralela) ; $V_s = 40\\angle{0^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (0 + j0)\\text{ A}$ ; $V_s = (40 + j0)\\text{ V}$"
+        },
+        {
+            "id": 14,
+            "tipo": "Engenharia Reversa (RL)",
+            "enunciado": "A partir de um circuito RL série desconhecido com $R = 8\\ \\Omega$ e $X_L = 6\\ \\Omega$, mediu-se sobre o resistor uma queda de tensão local de $V_R = 16\\angle{20^\\circ}\\text{ V}$. Por meio de engenharia reversa, deduza a corrente total da malha ($I_s$) e a tensão aplicada pela fonte de alimentação ($V_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_s = 2\\angle{20^\\circ}\\text{ A}$ ; $V_s = 20\\angle{56,87^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (1,88 + j0,68)\\text{ A}$ ; $V_s = (10,93 + j16,75)\\text{ V}$"
+        },
+        {
+            "id": 15,
+            "tipo": "Engenharia Reversa (RC)",
+            "enunciado": "No diagnóstico de um circuito RC série onde $R = 15\\ \\Omega$ e $X_C = 20\\ \\Omega$, obteve-se um registro de corrente no capacitor de $I_C = 4\\angle{30^\\circ}\\text{ A}$. Descubra os parâmetros físicos de excitação total do circuito: a corrente da fonte ($I_s$) e a tensão da fonte ($V_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_s = 4\\angle{30^\\circ}\\text{ A}$ ; $V_s = 100\\angle{-23,13^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (3,46 + j2)\\text{ A}$ ; $V_s = (91,96 - j39,28)\\text{ V}$"
+        },
+        {
+            "id": 16,
+            "tipo": "Engenharia Reversa (RC)",
+            "enunciado": "Em um circuito paralelo RC composto por $R = 10\\ \\Omega$ e $X_C = 10\\ \\Omega$, o instrumento de teste acusa uma corrente local no resistor de $I_R = 5\\angle{45^\\circ}\\text{ A}$. Calcule fasorialmente a tensão da fonte de alimentação global ($V_s$) e a corrente total consumida pelo circuito ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $V_s = 50\\angle{45^\\circ}\\text{ V}$ ; $I_s = 7,07\\angle{90^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (35,36 + j35,36)\\text{ V}$ ; $I_s = (0 + j7,07)\\text{ A}$"
+        },
+        {
+            "id": 17,
+            "tipo": "Engenharia Reversa (RL)",
+            "enunciado": "Em uma malha série RL composta por $R = 50\\ \\Omega$ e $X_L = 120\\ \\Omega$, uma ponta de prova acusa que a tensão desenvolvida especificamente nos terminais do indutor vale $V_L = 240\\angle{120^\\circ}\\text{ V}$. Calcule por engenharia reversa a corrente total do circuito ($I_s$) e a tensão fornecida pela fonte principal ($V_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_s = 2\\angle{30^\\circ}\\text{ A}$ ; $V_s = 260\\angle{97,38^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (1,73 + j1)\\text{ A}$ ; $V_s = (-33,40 + j257,85)\\text{ V}$"
+        },
+        {
+            "id": 18,
+            "tipo": "Engenharia Reversa (RLC)",
+            "enunciado": "Um circuito série com parâmetros $R = 4\\ \\Omega$, $X_L = 12\\ \\Omega$ e $X_C = 9\\ \\Omega$ é alimentado por uma fonte desconhecida. Um multímetro de bancada afere que a tensão de queda no resistor é $V_R = 12\\angle{-15^\\circ}\\text{ V}$. Encontre a corrente total ($I_s$) e a tensão fasorial da fonte de alimentação ($V_s$).",
+            "resposta": "<b>Forma Polar:</b> $I_s = 3\\angle{-15^\\circ}\\text{ A}$ ; $V_s = 15\\angle{21,87^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (2,90 - j0,78)\\text{ A}$ ; $V_s = (13,92 + j5,59)\\text{ V}$"
+        },
+        {
+            "id": 19,
+            "tipo": "Engenharia Reversa (RLC)",
+            "enunciado": "Um circuito paralelo possui ramos com $R = 30\\ \\Omega$, $X_L = 15\\ \\Omega$ e $X_C = 15\\ \\Omega$. A medição da corrente sobre o indutor revelou o valor $I_L = 10\\angle{-45^\\circ}\\text{ A}$. Determine, empregando conceitos de circuitos ressonantes, a tensão do barramento ($V_s$) e a corrente fornecida pela fonte principal ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $V_s = 150\\angle{45^\\circ}\\text{ V}$ ; $I_s = 5\\angle{45^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (106,07 + j106,07)\\text{ V}$ ; $I_s = (3,54 + j3,54)\\text{ A}$"
+        },
+        {
+            "id": 20,
+            "tipo": "Engenharia Reversa (Misto)",
+            "enunciado": "Um circuito possui uma carga indutiva equivalente a $Z_L = 50\\angle{36,87^\\circ}\\ \\Omega$ conectada em paralelo com um capacitor de reatância $X_C = 50\\ \\Omega$ ($Z_C = 50\\angle{-90^\\circ}\\ \\Omega$). A corrente de ramo medida na carga indutiva é $I_{Z} = 2\\angle{0^\\circ}\\text{ A}$. Faça a engenharia reversa para encontrar a tensão de nó ($V_s$) e o fasor de corrente total ($I_s$).",
+            "resposta": "<b>Forma Polar:</b> $V_s = 100\\angle{36,87^\\circ}\\text{ V}$ ; $I_s = 1,79\\angle{63,43^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (80 + j60)\\text{ V}$ ; $I_s = (0,80 + j1,60)\\text{ A}$"
+        }
+    ]
+};
+
+// ==========================================
 // === CONTROLE DO MENU LATERAL =============
 // ==========================================
 function toggleMenu(idMenu) {
     const menu = document.getElementById(idMenu);
-    // O toggle liga a classe se estiver desligada, e desliga se estiver ligada
     menu.classList.toggle('ativo');
 }
 
 function carregarConteudo(modulo) {
     const painel = document.getElementById('painel-dinamico');
 
-    // NOVO: Condição para a página inicial
     if (modulo === 'inicio') {
         painel.innerHTML = `
             <div class="container-inicio">
-                <!-- Lembre-se de colocar uma imagem chamada capa.jpg na sua pasta static/imagens -->
                 <img src="/static/imagens/capa.jpeg" alt="Página Inicial" class="imagem-inicio">
             </div>
         `;
     }
-    // NOVO: Módulo do Gerador Customizado de Exercícios (com inputs de quantidade e tipo)
     else if (modulo === 'exercicios') {
         painel.innerHTML = `
             <div class="quadrante" style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                 <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: Arial, sans-serif;">Gerador de Exercícios Customizado</h3>
 
                 <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; font-family: Arial, sans-serif;">
-                    <!-- Campo para digitar o número de questões -->
+                    <!-- Campo para digitar o número de questões (Máximo 20) -->
                     <div class="input-item" style="display: flex; flex-direction: column; gap: 8px;">
-                        <label style="font-weight: bold; color: #34495e;">Número de Questões (1 a 30):</label>
-                        <input type="number" id="num-questoes" value="10" min="1" max="30" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; width: 100%; box-sizing: border-box;">
+                        <label style="font-weight: bold; color: #34495e;">Número de Questões (1 a 20):</label>
+                        <input type="number" id="num-questoes" value="20" min="1" max="20" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; width: 100%; box-sizing: border-box;">
                     </div>
 
                     <!-- Campo para selecionar o tipo de circuito -->
@@ -37,14 +163,12 @@ function carregarConteudo(modulo) {
                         <label style="font-weight: bold; color: #34495e;">Tipo de Circuito:</label>
                         <select id="tipo-circuito" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; background-color: white; width: 100%; box-sizing: border-box;">
                             <option value="todos">Todos (Mesclado)</option>
-                            <option value="RL">Apenas RL</option>
-                            <option value="RC">Apenas RC</option>
-                            <option value="RLC">Apenas RLC</option>
+                            <option value="reversa">Apenas Engenharia Reversa</option>
+                            <option value="normal">Apenas Circuitos Clássicos</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Botão que envia a requisição e abre a nova aba -->
                 <div style="text-align: center;">
                     <button class="btn-calc" onclick="enviarGerarExercicios()" style="background-color: #2980b9; color: white; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
                         Gerar Lista de Exercícios
@@ -57,7 +181,6 @@ function carregarConteudo(modulo) {
             <h2>Análise de Circuitos RL</h2>
 
             <div class="grid-4-partes">
-                <!-- QUADRANTE 1: Imagem (Série) -->
                 <div class="quadrante">
                     <h3>RL - Série</h3>
                     <div class="container-imagem">
@@ -65,7 +188,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 2: Imagem (Paralelo) -->
                 <div class="quadrante">
                     <h3>RL - Paralelo</h3>
                     <div class="container-imagem">
@@ -73,7 +195,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 3: Controles Série -->
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -94,7 +215,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 4: Controles Paralelo -->
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -121,7 +241,6 @@ function carregarConteudo(modulo) {
             <h2>Análise de Circuitos RC</h2>
 
             <div class="grid-4-partes">
-                <!-- QUADRANTE 1: Imagem (Série) -->
                 <div class="quadrante">
                     <h3>RC - Série</h3>
                     <div class="container-imagem">
@@ -129,7 +248,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 2: Imagem (Paralelo) -->
                 <div class="quadrante">
                     <h3>RC - Paralelo</h3>
                     <div class="container-imagem">
@@ -137,7 +255,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 3: Controles Série RC -->
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -158,7 +275,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 4: Controles Paralelo RC -->
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -185,7 +301,6 @@ function carregarConteudo(modulo) {
             <h2>Análise de Circuitos RLC</h2>
 
             <div class="grid-4-partes">
-                <!-- QUADRANTE 1: Imagem (Série) -->
                 <div class="quadrante">
                     <h3>RLC - Série</h3>
                     <div class="container-imagem">
@@ -193,7 +308,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 2: Imagem (Paralelo) -->
                 <div class="quadrante">
                     <h3>RLC - Paralelo</h3>
                     <div class="container-imagem">
@@ -201,7 +315,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 3: Controles Série RLC -->
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha-5">
@@ -223,7 +336,6 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <!-- QUADRANTE 4: Controles Paralelo RLC -->
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha-5">
@@ -250,6 +362,86 @@ function carregarConteudo(modulo) {
 }
 
 // ==========================================
+// === GERADOR E RENDERIZADOR DE EXERCÍCIOS =
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("conteudo-exercicios");
+    if (container) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const qtd = parseInt(urlParams.get('qtd')) || 5;
+
+        const tipo = urlParams.get('tipo') || 'todos';
+
+        gerarFolhaDeExercicios(container, qtd, tipo);
+    }
+});
+
+function gerarFolhaDeExercicios(container, quantidade, tipoFiltro) {
+    container.innerHTML = "";
+    let poolQuestoes = [];
+
+    if (tipoFiltro === "normal") {
+        poolQuestoes = [...bancoDeExercicios.normal];
+    } else if (tipoFiltro === "reversa") {
+        poolQuestoes = [...bancoDeExercicios.engenharia_reversa];
+    } else {
+        poolQuestoes = [...bancoDeExercicios.normal, ...bancoDeExercicios.engenharia_reversa];
+    }
+
+    poolQuestoes.sort(() => Math.random() - 0.5);
+
+    const selecionados = poolQuestoes.slice(0, Math.min(quantidade, poolQuestoes.length));
+
+    selecionados.forEach((exercicio, index) => {
+        const card = document.createElement("div");
+        card.className = "card mb-4 shadow-sm border-left-primary";
+        card.style.borderLeft = "5px solid #2980b9";
+
+        card.innerHTML = `
+            <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                <span class="badge badge-info text-uppercase font-weight-bold" style="padding: 6px 12px; background-color: #34495e; color: white;">${exercicio.tipo}</span>
+                <span class="text-muted small" style="font-weight: bold;">Questão ${index + 1}</span>
+            </div>
+            <div class="card-body" style="padding: 20px; font-family: Arial, sans-serif;">
+                <p class="card-text text-dark" style="font-size: 1.1rem; line-height: 1.6;">
+                    ${exercicio.enunciado}
+                </p>
+                <hr style="border-top: 1px dashed #ddd;">
+                <div class="resposta-container mt-3">
+                    <button class="btn btn-sm btn-outline-secondary btn-ver-resposta" onclick="toggleResposta(this)" style="padding: 6px 12px; cursor: pointer; border: 1px solid #7f8c8d; border-radius: 4px; background: transparent; transition: all 0.2s;">
+                        <i class="fas fa-eye mr-1"></i> Mostrar Gabarito
+                    </button>
+                    <div class="resposta-conteudo d-none mt-2 p-3 bg-success-light text-success border border-success rounded" style="display: none; margin-top: 10px; padding: 15px; background-color: #e8f8f5; color: #27ae60; border-radius: 4px; border: 1px solid #2ecc71; font-weight: normal; line-height: 1.8;">
+                        <span style="font-size: 1.1rem; display: block; margin-bottom: 5px;"><strong>Gabarito Oficial:</strong></span>
+                        ${exercicio.resposta}
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    if (typeof MathJax !== "undefined") {
+        MathJax.typesetPromise();
+    }
+}
+
+function toggleResposta(botao) {
+    const containerResposta = botao.nextElementSibling;
+    if (containerResposta.style.display === "none" || containerResposta.style.display === "") {
+        containerResposta.style.display = "block";
+        botao.innerHTML = `<i class="fas fa-eye-slash mr-1"></i> Ocultar Gabarito`;
+        botao.style.backgroundColor = "#7f8c8d";
+        botao.style.color = "white";
+    } else {
+        containerResposta.style.display = "none";
+        botao.innerHTML = `<i class="fas fa-eye mr-1"></i> Mostrar Gabarito`;
+        botao.style.backgroundColor = "transparent";
+        botao.style.color = "inherit";
+    }
+}
+
+// ==========================================
 // === AUXILIAR DE GERAÇÃO EXERCÍCIOS =======
 // ==========================================
 function enviarGerarExercicios() {
@@ -261,7 +453,6 @@ function enviarGerarExercicios() {
         return;
     }
 
-    // Abre a folha em uma NOVA ABA passando as variáveis digitadas/escolhidas por parâmetro
     window.open(`/gerar_exercicios?qtd=${qtd}&tipo=${tipo}`, '_blank');
 }
 
@@ -426,7 +617,6 @@ function exibirGraficoGenerico(rota_url, dados_json) {
     });
 }
 
-// Gráficos RL
 function abrirGraficosSerie() {
     const v = document.getElementById('v-serie').value;
     const r = document.getElementById('r-serie').value;
@@ -436,7 +626,6 @@ function abrirGraficosSerie() {
     exibirGraficoGenerico('/graficos_serie', { v: v, r: r, l: l, f: f });
 }
 
-// Gráficos RC
 function abrirGraficosSerieRC() {
     const v = document.getElementById('v-rc-serie').value;
     const r = document.getElementById('r-rc-serie').value;
@@ -542,11 +731,16 @@ function abrirGraficosParaleloRLC() {
     if (!v || !r || !l || !c || !f) { alert("Calcule os parâmetros primeiro."); return; }
     exibirGraficoGenerico('/graficos_rlc_paralelo', { v: v, r: r, l: l, c: c, f: f });
 }
+
 // ==========================================
-// === CONTROLES DA JANELA MODAL ============
+// === CONTROLES DA JANELA MODAL E FECHAMENTO
 // ==========================================
 function fecharModal() {
     document.getElementById('modal-graficos').style.display = "none";
+}
+
+function fecharJanela() {
+    window.close();
 }
 
 // ==========================================
