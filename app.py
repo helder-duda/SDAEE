@@ -179,7 +179,11 @@ def gerar_exercicios():
     questoes_rlc = []
 
     for _ in range(40):
-        # Gerador RL
+        # ==========================================
+        # GERADORES SÉRIE
+        # ==========================================
+
+        # Gerador RL Série
         q = sortear()
         xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
         z_mag = math.hypot(q['r'], xl)
@@ -192,7 +196,7 @@ def gerar_exercicios():
             'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
         })
 
-        # Gerador RC
+        # Gerador RC Série
         q = sortear()
         xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
         z_mag = math.hypot(q['r'], xc)
@@ -205,7 +209,7 @@ def gerar_exercicios():
             'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
         })
 
-        # Gerador RLC
+        # Gerador RLC Série
         q = sortear()
         xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
         xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
@@ -218,6 +222,64 @@ def gerar_exercicios():
             'pergunta': f"Um resistor de {q['r']}Ω, um indutor de {q['l']}mH e um capacitor de {q['c']}μF estão ligados em série. A fonte fornece {q['v']}V em {q['f']}Hz. Qual é a impedância do circuito e a corrente total?",
             'resposta': f"<strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}°",
             'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
+        })
+
+        # ==========================================
+        # GERADORES PARALELO
+        # ==========================================
+
+        # Gerador RL Paralelo
+        q = sortear()
+        xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
+        ir_mag = q['v'] / q['r']
+        il_mag = q['v'] / xl
+        i_mag = math.hypot(ir_mag, il_mag)
+        i_ang = math.degrees(math.atan2(-il_mag, ir_mag))
+        z_mag = q['v'] / i_mag
+        z_ang = -i_ang
+        questoes_rl.append({
+            'pergunta': f"Em um circuito RL paralelo, uma fonte de {q['v']}V e frequência {q['f']}Hz alimenta um resistor de {q['r']}Ω e um indutor de {q['l']}mH. Calcule a impedância total equivalente (Z) e a corrente total do circuito.",
+            'resposta': f"<strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}° <br> (I_R = {ir_mag:.2f}A ∠0°, I_L = {il_mag:.2f}A ∠-90°)",
+            'grafico': plot_fasores(
+                [(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I_tot', 'blue'), (ir_mag, 0, 'Ir', 'green'),
+                 (il_mag, -90, 'Il', 'purple')])
+        })
+
+        # Gerador RC Paralelo
+        q = sortear()
+        xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
+        ir_mag = q['v'] / q['r']
+        ic_mag = q['v'] / xc
+        i_mag = math.hypot(ir_mag, ic_mag)
+        i_ang = math.degrees(math.atan2(ic_mag, ir_mag))
+        z_mag = q['v'] / i_mag
+        z_ang = -i_ang
+        questoes_rc.append({
+            'pergunta': f"Dado um circuito RC paralelo com R = {q['r']}Ω e C = {q['c']}μF, alimentado por {q['v']}V a {q['f']}Hz. Encontre a reatância capacitiva (Xc), a impedância equivalente (Z) e a corrente total.",
+            'resposta': f"<strong>Xc</strong> = {xc:.2f}Ω <br> <strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}° <br> (I_R = {ir_mag:.2f}A ∠0°, I_C = {ic_mag:.2f}A ∠90°)",
+            'grafico': plot_fasores(
+                [(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I_tot', 'blue'), (ir_mag, 0, 'Ir', 'green'),
+                 (ic_mag, 90, 'Ic', 'orange')])
+        })
+
+        # Gerador RLC Paralelo
+        q = sortear()
+        xl = 2 * math.pi * q['f'] * (q['l'] / 1000)
+        xc = 1 / (2 * math.pi * q['f'] * (q['c'] / 1000000))
+        ir_mag = q['v'] / q['r']
+        il_mag = q['v'] / xl
+        ic_mag = q['v'] / xc
+        i_reativa = ic_mag - il_mag
+        i_mag = math.hypot(ir_mag, i_reativa)
+        i_ang = math.degrees(math.atan2(i_reativa, ir_mag))
+        z_mag = q['v'] / i_mag
+        z_ang = -i_ang
+        questoes_rlc.append({
+            'pergunta': f"Um resistor de {q['r']}Ω, um indutor de {q['l']}mH e um capacitor de {q['c']}μF estão ligados em paralelo. A fonte fornece {q['v']}V em {q['f']}Hz. Qual é a impedância equivalente do circuito e a corrente total?",
+            'resposta': f"<strong>Z</strong> = {z_mag:.2f}Ω ∠{z_ang:.1f}° <br> <strong>I</strong> = {i_mag:.2f}A ∠{i_ang:.1f}° <br> (I_R = {ir_mag:.2f}A ∠0°, I_L = {il_mag:.2f}A ∠-90°, I_C = {ic_mag:.2f}A ∠90°)",
+            'grafico': plot_fasores(
+                [(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I_tot', 'blue'), (ir_mag, 0, 'Ir', 'green'),
+                 (il_mag, -90, 'Il', 'purple'), (ic_mag, 90, 'Ic', 'orange')])
         })
 
     banco_filtrado = []
