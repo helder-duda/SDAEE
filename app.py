@@ -123,8 +123,6 @@ def alterar_senha():
 @app.route('/gerar_exercicios')
 @login_required
 def gerar_exercicios():
-    # CAPTURA OS PARÂMETROS ENVIADOS PELO JAVASCRIPT
-    # Se não forem informados, assume o padrão de 10 questões e tipo 'todos'
     qtd = int(request.args.get('qtd', 20))
     tipo_selecionado = request.args.get('tipo', 'todos').upper()
 
@@ -176,12 +174,10 @@ def gerar_exercicios():
         plt.close()
         return base64.b64encode(img.getvalue()).decode('utf8')
 
-    # Bancos de questões individuais para filtragem
     questoes_rl = []
     questoes_rc = []
     questoes_rlc = []
 
-    # Geramos uma amostragem grande o suficiente para o sorteador extrair
     for _ in range(40):
         # Gerador RL
         q = sortear()
@@ -224,7 +220,6 @@ def gerar_exercicios():
             'grafico': plot_fasores([(q['v'], 0, 'V', 'black'), (i_mag, i_ang, 'I', 'blue')])
         })
 
-    # Filtragem com base na escolha do usuário
     banco_filtrado = []
     if tipo_selecionado == 'RL':
         banco_filtrado = questoes_rl
@@ -233,15 +228,12 @@ def gerar_exercicios():
     elif tipo_selecionado == 'RLC':
         banco_filtrado = questoes_rlc
     else:
-        # Mistura tudo e embaralha os tipos
         banco_filtrado = questoes_rl + questoes_rc + questoes_rlc
         random.shuffle(banco_filtrado)
 
-    # Garante o sorteio aleatório das questões filtradas
     random.shuffle(banco_filtrado)
     dados_finais = banco_filtrado[:qtd]
 
-    # Passamos qtd e tipo adiante para a template saber como re-gerar a lista
     return render_template('exercicios.html', dados=dados_finais, qtd=qtd, tipo=tipo_selecionado)
 
 # ==========================================
@@ -477,7 +469,7 @@ def graficos_serie():
         label_vr = "VR" if escala_vr <= 1.05 else f"VR (escala x{escala_vr:.1f})"
         label_vl = "VL" if escala_vl <= 1.05 else f"VL (escala x{escala_vl:.1f})"
 
-        amp_i_visual = 0.6 * v
+        amp_i_visual = 0.5 * v
         escala_i = amp_i_visual / i_mag if i_mag > 0 else 1.0
         label_i = f"I (escala x{escala_i:.1f})"
 
@@ -499,7 +491,7 @@ def graficos_serie():
         ax1.plot(t_ms, vl_t, label=label_vl, color='purple', linewidth=1.5)
         ax1.plot(t_ms, i_t_escalada, label=label_i, color='red', linestyle='--', linewidth=2)
 
-        ax1.set_title("Domínio do Tempo", fontsize=14, fontweight='bold')
+        ax1.set_title("Domínio do Tempo (Série)", fontsize=14, fontweight='bold')
         ax1.set_xlabel("Tempo (ms)")
         ax1.set_ylabel("Amplitude Visual")
         ticks_ms = np.linspace(0, 2 * periodo_ms, 9)
@@ -509,28 +501,27 @@ def graficos_serie():
         ax1.legend(loc='upper right')
 
         ax2 = fig.add_subplot(122)
-        i_visual = 0.5 * v
 
         ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)', width=0.005)
 
         vr_x = amp_vr_visual * math.cos(-theta_rad)
         vr_y = amp_vr_visual * math.sin(-theta_rad)
-        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'VR ({amp_vr:.1f}V) ({-theta_deg:.1f}°)', width=0.005)
+        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'{label_vr} ({amp_vr:.1f}V) ({-theta_deg:.1f}°)', width=0.005)
 
         vl_x = amp_vl_visual * math.cos(-theta_rad + np.pi / 2)
         vl_y = amp_vl_visual * math.sin(-theta_rad + np.pi / 2)
-        ax2.quiver(0, 0, vl_x, vl_y, angles='xy', scale_units='xy', scale=1, color='purple', label=f'VL ({amp_vl:.1f}V) ({-theta_deg + 90:.1f}°)', width=0.005)
+        ax2.quiver(0, 0, vl_x, vl_y, angles='xy', scale_units='xy', scale=1, color='purple', label=f'{label_vl} ({amp_vl:.1f}V) ({-theta_deg + 90:.1f}°)', width=0.005)
 
-        i_x = i_visual * math.cos(-theta_rad)
-        i_y = i_visual * math.sin(-theta_rad)
-        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'I ({i_mag:.2f}A) ({-theta_deg:.1f}°)', width=0.008)
+        i_x = amp_i_visual * math.cos(-theta_rad)
+        i_y = amp_i_visual * math.sin(-theta_rad)
+        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'{label_i} ({i_mag:.2f}A) ({-theta_deg:.1f}°)', width=0.008)
 
         limite = max(v, amp_vr_visual, amp_vl_visual) * 1.2
         ax2.set_xlim(-limite, limite)
         ax2.set_ylim(-limite, limite)
         ax2.axhline(0, color='black', linewidth=1)
         ax2.axvline(0, color='black', linewidth=1)
-        ax2.set_title("Diagrama Fasorial", fontsize=14, fontweight='bold')
+        ax2.set_title("Diagrama Fasorial (Série)", fontsize=14, fontweight='bold')
         ax2.grid(True, linestyle='--', alpha=0.7)
         ax2.set_aspect('equal')
         ax2.legend(loc='upper right')
@@ -570,33 +561,27 @@ def graficos_paralelo():
         theta_rad = math.atan2(il_mag, ir_mag)
         theta_deg = math.degrees(theta_rad)
 
-        # 1. Definimos a escala base para que IT ocupe visualmente 50% de V
         amp_it_visual = 0.5 * v
-        escala_base = amp_it_visual / it_mag if it_mag > 0 else 1.0
+        fator_escala = amp_it_visual / it_mag if it_mag > 0 else 1.0
 
-        # 2. Aplicamos a escala base inicialmente nas correntes dos ramos
-        amp_ir_visual = ir_mag * escala_base
-        amp_il_visual = il_mag * escala_base
+        amp_ir_visual = ir_mag * fator_escala
+        amp_il_visual = il_mag * fator_escala
 
-        # 3. Salvaguarda visual: nenhuma corrente ativa pode ser menor que 15% de IT visual (0.15 * amp_it_visual)
         min_i_visual = 0.15 * amp_it_visual
 
         amp_ir_visual_final = max(amp_ir_visual, min_i_visual) if ir_mag > 0.01 else 0
         amp_il_visual_final = max(amp_il_visual, min_i_visual) if il_mag > 0.01 else 0
 
-        # 4. Calculamos os fatores de escala finais reais de cada uma para exibir na legenda
         escala_ir_final = amp_ir_visual_final / ir_mag if ir_mag > 0.01 else 1.0
         escala_il_final = amp_il_visual_final / il_mag if il_mag > 0.01 else 1.0
-        escala_it_final = escala_base  # IT segue estritamente a escala base
+        escala_it_final = fator_escala
 
-        # 5. Montamos as legendas dinâmicas informando a escala de cada uma
         label_it = f"IT (escala x{escala_it_final:.1f})"
         label_ir = "IR" if escala_ir_final <= 1.05 else f"IR (escala x{escala_ir_final:.1f})"
         label_il = "IL" if escala_il_final <= 1.05 else f"IL (escala x{escala_il_final:.1f})"
 
         fig = plt.figure(figsize=(12, 5))
 
-        # --- Domínio do Tempo ---
         ax1 = fig.add_subplot(121)
         periodo = 1 / f
         periodo_ms = periodo * 1000
@@ -622,21 +607,16 @@ def graficos_paralelo():
         ax1.grid(True, which='both', linestyle='--', alpha=0.7)
         ax1.legend(loc='upper right')
 
-        # --- Diagrama Fasorial ---
         ax2 = fig.add_subplot(122)
-        # Vetor de Tensão de Referência
         ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)',
                    width=0.005)
 
-        # Vetor IR
         ax2.quiver(0, 0, amp_ir_visual_final, 0, angles='xy', scale_units='xy', scale=1, color='green',
                    label=f'{label_ir} ({ir_mag:.2f}A) (0.0°)', width=0.005)
 
-        # Vetor IL (aponta para baixo, -90 graus)
         ax2.quiver(0, 0, 0, -amp_il_visual_final, angles='xy', scale_units='xy', scale=1, color='purple',
                    label=f'{label_il} ({il_mag:.2f}A) (-90.0°)', width=0.005)
 
-        # Vetor IT resultante
         it_x = amp_it_visual * math.cos(-theta_rad)
         it_y = amp_it_visual * math.sin(-theta_rad)
         ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red',
@@ -663,6 +643,7 @@ def graficos_paralelo():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
+
 # ==========================================
 # === GRÁFICOS: MÓDULO RC ==================
 # ==========================================
@@ -683,56 +664,85 @@ def graficos_rc_serie():
         xc = 1 / (w * c) if c != 0 else float('inf')
 
         z_mag = math.sqrt(r ** 2 + xc ** 2)
-        theta_rad = math.atan2(xc, r)
+        theta_rad = math.atan2(xc, r)  # Corrente adianta a tensão (ângulo positivo)
         theta_deg = math.degrees(theta_rad)
 
         i_mag = v / z_mag if z_mag != 0 else 0
-        fator_escala = round(z_mag, 1)
+
+        # Amplitudes de tensão reais
+        amp_vr = i_mag * r
+        amp_vc = i_mag * xc
+        min_v_visual = 0.15 * v
+
+        # Salvaguardas visuais de tensão
+        amp_vr_visual = max(amp_vr, min_v_visual) if amp_vr > 0.01 else 0
+        amp_vc_visual = max(amp_vc, min_v_visual) if amp_vc > 0.01 else 0
+
+        escala_vr = amp_vr_visual / amp_vr if amp_vr > 0.01 else 1.0
+        escala_vc = amp_vc_visual / amp_vc if amp_vc > 0.01 else 1.0
+
+        label_vr = "VR" if escala_vr <= 1.05 else f"VR (escala x{escala_vr:.1f})"
+        label_vc = "VC" if escala_vc <= 1.05 else f"VC (escala x{escala_vc:.1f})"
+
+        # Escala da Corrente para ocupar exatamente 50% de V
+        amp_i_visual = 0.5 * v
+        escala_i = amp_i_visual / i_mag if i_mag > 0 else 1.0
+        label_i = f"I (escala x{escala_i:.1f})"
 
         fig = plt.figure(figsize=(12, 5))
 
+        # --- Domínio do Tempo ---
         ax1 = fig.add_subplot(121)
         periodo = 1 / f
+        periodo_ms = periodo * 1000
         t = np.linspace(0, 2 * periodo, 200)
         t_ms = t * 1000
 
         v_t = v * np.sin(w * t)
-        i_t_escalada = (i_mag * fator_escala) * np.sin(w * t + theta_rad)
-        vr_t = (i_mag * r) * np.sin(w * t + theta_rad)
-        vc_t = (i_mag * xc) * np.sin(w * t + theta_rad - np.pi / 2)
+        # Nota: Como I adianta a tensão, seu ângulo é +theta_rad. VR acompanha I.
+        vr_t = amp_vr_visual * np.sin(w * t + theta_rad)
+        vc_t = amp_vc_visual * np.sin(w * t + theta_rad - np.pi / 2)
+        i_t_escalada = amp_i_visual * np.sin(w * t + theta_rad)
 
-        ax1.plot(t_ms, v_t, label='V (Fonte)', color='blue', linewidth=2)
-        ax1.plot(t_ms, i_t_escalada, label=f'I (escala x{fator_escala})', color='red', linestyle='--')
-        ax1.plot(t_ms, vr_t, label='VR', color='green')
-        ax1.plot(t_ms, vc_t, label='VC', color='orange')
+        ax1.plot(t_ms, v_t, label='V (Fonte)', color='blue', linewidth=2.5)
+        ax1.plot(t_ms, vr_t, label=label_vr, color='green', linewidth=1.5)
+        ax1.plot(t_ms, vc_t, label=label_vc, color='orange', linewidth=1.5)
+        ax1.plot(t_ms, i_t_escalada, label=label_i, color='red', linestyle='--', linewidth=2)
 
         ax1.set_title("Domínio do Tempo (RC Série)", fontsize=14, fontweight='bold')
         ax1.set_xlabel("Tempo (ms)")
-        ax1.set_ylabel("Amplitude")
+        ax1.set_ylabel("Amplitude Visual")
+        ticks_ms = np.linspace(0, 2 * periodo_ms, 9)
+        ax1.set_xticks(ticks_ms)
+        ax1.set_xticklabels([f"{tick:.3f}" for tick in ticks_ms])
         ax1.grid(True, which='both', linestyle='--', alpha=0.7)
         ax1.legend(loc='upper right')
 
+        # --- Diagrama Fasorial ---
         ax2 = fig.add_subplot(122)
-        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label='V (0.0°)')
+        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)', width=0.005)
 
-        vr_x = (i_mag * r) * math.cos(theta_rad)
-        vr_y = (i_mag * r) * math.sin(theta_rad)
-        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'VR ({theta_deg:.1f}°)')
+        # VR aponta no mesmo ângulo da corrente (+theta)
+        vr_x = amp_vr_visual * math.cos(theta_rad)
+        vr_y = amp_vr_visual * math.sin(theta_rad)
+        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'{label_vr} ({amp_vr:.1f}V) ({theta_deg:.1f}°)', width=0.005)
 
-        i_x = (i_mag * fator_escala) * math.cos(theta_rad)
-        i_y = (i_mag * fator_escala) * math.sin(theta_rad)
-        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'I (x{fator_escala}) ({theta_deg:.1f}°)', width=0.005)
+        # VC atrasado 90 graus em relação à corrente (aponta a +theta - 90)
+        vc_x = amp_vc_visual * math.cos(theta_rad - np.pi / 2)
+        vc_y = amp_vc_visual * math.sin(theta_rad - np.pi / 2)
+        ax2.quiver(0, 0, vc_x, vc_y, angles='xy', scale_units='xy', scale=1, color='orange', label=f'{label_vc} ({amp_vc:.1f}V) ({theta_deg - 90:.1f}°)', width=0.005)
 
-        vc_x = (i_mag * xc) * math.cos(theta_rad - np.pi / 2)
-        vc_y = (i_mag * xc) * math.sin(theta_rad - np.pi / 2)
-        ax2.quiver(0, 0, vc_x, vc_y, angles='xy', scale_units='xy', scale=1, color='orange', label=f'VC ({theta_deg - 90:.1f}°)')
+        # Vetor de Corrente
+        i_x = amp_i_visual * math.cos(theta_rad)
+        i_y = amp_i_visual * math.sin(theta_rad)
+        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'{label_i} ({i_mag:.2f}A) ({theta_deg:.1f}°)', width=0.008)
 
-        limite = max(v, i_mag * xc, i_mag * r) * 1.2
+        limite = max(v, amp_vr_visual, amp_vc_visual) * 1.2
         ax2.set_xlim(-limite, limite)
         ax2.set_ylim(-limite, limite)
         ax2.axhline(0, color='black', linewidth=1)
         ax2.axvline(0, color='black', linewidth=1)
-        ax2.set_title("Diagrama Fasorial", fontsize=14, fontweight='bold')
+        ax2.set_title("Diagrama Fasorial (RC Série)", fontsize=14, fontweight='bold')
         ax2.grid(True, linestyle='--', alpha=0.7)
         ax2.set_aspect('equal')
         ax2.legend(loc='upper right')
@@ -747,6 +757,7 @@ def graficos_rc_serie():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
+
 
 @app.route('/graficos_rc_paralelo', methods=['POST'])
 def graficos_rc_paralelo():
@@ -770,46 +781,74 @@ def graficos_rc_paralelo():
         theta_rad = math.atan2(ic_mag, ir_mag)
         theta_deg = math.degrees(theta_rad)
 
-        z_eq = v / it_mag if it_mag != 0 else 1
-        fator_escala = round(z_eq, 1)
+        # 1. Definimos a escala base para que IT ocupe visualmente 50% de V
+        amp_it_visual = 0.5 * v
+        fator_escala = amp_it_visual / it_mag if it_mag > 0 else 1.0
+
+        # 2. Aplicamos a escala base inicialmente nas correntes dos ramos
+        amp_ir_visual = ir_mag * fator_escala
+        amp_ic_visual = ic_mag * fator_escala
+
+        # 3. Salvaguarda visual mínima de 15% de IT_visual
+        min_i_visual = 0.15 * amp_it_visual
+
+        amp_ir_visual_final = max(amp_ir_visual, min_i_visual) if ir_mag > 0.01 else 0
+        amp_ic_visual_final = max(amp_ic_visual, min_i_visual) if ic_mag > 0.01 else 0
+
+        # 4. Fatores de escala finais reais de cada uma para exibir na legenda
+        escala_ir_final = amp_ir_visual_final / ir_mag if ir_mag > 0.01 else 1.0
+        escala_ic_final = amp_ic_visual_final / ic_mag if ic_mag > 0.01 else 1.0
+        escala_it_final = fator_escala
+
+        # 5. Legendas dinâmicas
+        label_it = f"IT (escala x{escala_it_final:.1f})"
+        label_ir = "IR" if escala_ir_final <= 1.05 else f"IR (escala x{escala_ir_final:.1f})"
+        label_ic = "IC" if escala_ic_final <= 1.05 else f"IC (escala x{escala_ic_final:.1f})"
 
         fig = plt.figure(figsize=(12, 5))
 
+        # --- Domínio do Tempo ---
         ax1 = fig.add_subplot(121)
         periodo = 1 / f
+        periodo_ms = periodo * 1000
         t = np.linspace(0, 2 * periodo, 200)
         t_ms = t * 1000
 
         v_t = v * np.sin(w * t)
-        ir_t = (ir_mag * fator_escala) * np.sin(w * t)
-        ic_t = (ic_mag * fator_escala) * np.sin(w * t + np.pi / 2)
-        it_t = (it_mag * fator_escala) * np.sin(w * t + theta_rad)
+        ir_t = amp_ir_visual_final * np.sin(w * t)
+        ic_t = amp_ic_visual_final * np.sin(w * t + np.pi / 2)
+        it_t = amp_it_visual * np.sin(w * t + theta_rad)
 
-        ax1.plot(t_ms, v_t, label='V (Referência)', color='blue', linewidth=2)
-        ax1.plot(t_ms, it_t, label=f'IT (escala x{fator_escala})', color='red', linestyle='--')
-        ax1.plot(t_ms, ir_t, label='IR', color='green')
-        ax1.plot(t_ms, ic_t, label='IC', color='orange')
+        ax1.plot(t_ms, v_t, label='V (Referência)', color='blue', linewidth=2.5)
+        ax1.plot(t_ms, it_t, label=label_it, color='red', linestyle='--', linewidth=2)
+        ax1.plot(t_ms, ir_t, label=label_ir, color='green', linewidth=1.5)
+        ax1.plot(t_ms, ic_t, label=label_ic, color='orange', linewidth=1.5)
+
         ax1.set_title("Domínio do Tempo (RC Paralelo)", fontsize=14, fontweight='bold')
         ax1.set_xlabel("Tempo (ms)")
-        ax1.set_ylabel("Amplitude")
+        ax1.set_ylabel("Amplitude Visual")
+        ticks_ms = np.linspace(0, 2 * periodo_ms, 9)
+        ax1.set_xticks(ticks_ms)
+        ax1.set_xticklabels([f"{tick:.3f}" for tick in ticks_ms])
         ax1.grid(True, which='both', linestyle='--', alpha=0.7)
         ax1.legend(loc='upper right')
 
+        # --- Diagrama Fasorial ---
         ax2 = fig.add_subplot(122)
-        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label='V (0.0°)')
-        ax2.quiver(0, 0, ir_mag * fator_escala, 0, angles='xy', scale_units='xy', scale=1, color='green', label='IR (0.0°)')
-        ax2.quiver(0, 0, 0, ic_mag * fator_escala, angles='xy', scale_units='xy', scale=1, color='orange', label='IC (90.0°)')
+        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)', width=0.005)
+        ax2.quiver(0, 0, amp_ir_visual_final, 0, angles='xy', scale_units='xy', scale=1, color='green', label=f'{label_ir} ({ir_mag:.2f}A) (0.0°)', width=0.005)
+        ax2.quiver(0, 0, 0, amp_ic_visual_final, angles='xy', scale_units='xy', scale=1, color='orange', label=f'{label_ic} ({ic_mag:.2f}A) (90.0°)', width=0.005)
 
-        it_x = (it_mag * fator_escala) * math.cos(theta_rad)
-        it_y = (it_mag * fator_escala) * math.sin(theta_rad)
-        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'IT (x{fator_escala}) ({theta_deg:.1f}°)', width=0.005)
+        it_x = amp_it_visual * math.cos(theta_rad)
+        it_y = amp_it_visual * math.sin(theta_rad)
+        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'{label_it} ({it_mag:.2f}A) ({theta_deg:.1f}°)', width=0.008)
 
-        limite = max(v, ir_mag * fator_escala, ic_mag * fator_escala) * 1.2
+        limite = max(v, amp_ir_visual_final, amp_ic_visual_final) * 1.2
         ax2.set_xlim(-limite, limite)
         ax2.set_ylim(-limite, limite)
         ax2.axhline(0, color='black', linewidth=1)
         ax2.axvline(0, color='black', linewidth=1)
-        ax2.set_title("Diagrama Fasorial", fontsize=14, fontweight='bold')
+        ax2.set_title("Diagrama Fasorial (RC Paralelo)", fontsize=14, fontweight='bold')
         ax2.grid(True, linestyle='--', alpha=0.7)
         ax2.set_aspect('equal')
         ax2.legend(loc='upper right')
@@ -825,6 +864,7 @@ def graficos_rc_paralelo():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
+
 # ==========================================
 # === GRÁFICOS: MÓDULO RLC =================
 # ==========================================
@@ -838,56 +878,104 @@ def graficos_rlc_serie():
         c_uF = float(dados['c'])
         f = float(dados['f'])
 
+        if f <= 0 or v == 0 or (r == 0 and l_mH == 0 and c_uF == 0):
+            return jsonify({'sucesso': False, 'erro': 'Valores inválidos para gráficos.'})
+
         l = l_mH * 1e-3
         c = c_uF * 1e-6
         w = 2 * np.pi * f
 
         xl = w * l
-        xc = 1 / (w * c)
+        xc = 1 / (w * c) if c != 0 else float('inf')
         x_total = xl - xc
         z = math.sqrt(r ** 2 + x_total ** 2)
 
-        i = v / z if z != 0 else 0
-        vr = i * r
-        vl = i * xl
-        vc = i * xc
+        i_mag = v / z if z != 0 else 0
+        theta_rad = math.atan2(x_total, r)
+        theta_deg = math.degrees(theta_rad)
 
-        theta = math.degrees(math.atan2(vl - vc, vr))
+        amp_vr = i_mag * r
+        amp_vl = i_mag * xl
+        amp_vc = i_mag * xc
+        min_v_visual = 0.15 * v
 
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        # Salvaguardas visuais das tensões individuais
+        amp_vr_visual = max(amp_vr, min_v_visual) if amp_vr > 0.01 else 0
+        amp_vl_visual = max(amp_vl, min_v_visual) if amp_vl > 0.01 else 0
+        amp_vc_visual = max(amp_vc, min_v_visual) if amp_vc > 0.01 else 0
 
-        # Triângulo de Impedância
-        ax1.quiver(0, 0, r, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'R = {r:.1f} Ω')
-        ax1.quiver(r, 0, 0, x_total, angles='xy', scale_units='xy', scale=1, color='red', label=f'X_L - X_C = {x_total:.1f} Ω')
-        ax1.quiver(0, 0, r, x_total, angles='xy', scale_units='xy', scale=1, color='green', label=f'Z = {z:.1f} Ω ∠ {theta:.1f}°')
+        escala_vr = amp_vr_visual / amp_vr if amp_vr > 0.01 else 1.0
+        escala_vl = amp_vl_visual / amp_vl if amp_vl > 0.01 else 1.0
+        escala_vc = amp_vc_visual / amp_vc if amp_vc > 0.01 else 1.0
 
-        lim_z = max(r, abs(x_total)) * 1.2
-        ax1.set_xlim(-0.1 * lim_z, lim_z)
-        ax1.set_ylim(-lim_z if x_total < 0 else -0.1 * lim_z, lim_z if x_total > 0 else 0.1 * lim_z)
-        ax1.grid(True, linestyle='--', alpha=0.6)
-        ax1.axhline(0, color='black', linewidth=1)
-        ax1.axvline(0, color='black', linewidth=1)
-        ax1.set_title('Triângulo de Impedância')
-        ax1.legend(loc='lower left')
+        label_vr = "VR" if escala_vr <= 1.05 else f"VR (escala x{escala_vr:.1f})"
+        label_vl = "VL" if escala_vl <= 1.05 else f"VL (escala x{escala_vl:.1f})"
+        label_vc = "VC" if escala_vc <= 1.05 else f"VC (escala x{escala_vc:.1f})"
 
-        # Diagrama Fasorial
-        max_v = max(v, vr, vl, vc)
-        fator_escala_i = (max_v * 0.7) / i if i > 0 else 1
+        # Escala de Corrente correspondente a 50% da tensão
+        amp_i_visual = 0.5 * v
+        escala_i = amp_i_visual / i_mag if i_mag > 0 else 1.0
+        label_i = f"I (escala x{escala_i:.1f})"
 
-        ax2.quiver(0, 0, i * fator_escala_i, 0, angles='xy', scale_units='xy', scale=1, color='purple', width=0.005, label=f'I = {i:.2f} A ∠ 0° (Ref, esc. x{fator_escala_i:.1f})')
-        ax2.quiver(0, 0, vr, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V_R = {vr:.1f} V ∠ 0°')
-        ax2.quiver(0, 0, 0, vl, angles='xy', scale_units='xy', scale=1, color='orange', label=f'V_L = {vl:.1f} V ∠ +90°')
-        ax2.quiver(0, 0, 0, -vc, angles='xy', scale_units='xy', scale=1, color='cyan', label=f'V_C = {vc:.1f} V ∠ -90°')
-        ax2.quiver(0, 0, vr, vl - vc, angles='xy', scale_units='xy', scale=1, color='green', label=f'V_T = {v:.1f} V ∠ {theta:.1f}°')
+        fig = plt.figure(figsize=(12, 5))
 
-        lim_v = max(max_v, i * fator_escala_i) * 1.2
-        ax2.set_xlim(-0.1 * lim_v, lim_v)
-        ax2.set_ylim(-lim_v, lim_v)
-        ax2.grid(True, linestyle='--', alpha=0.6)
+        # --- Domínio do Tempo ---
+        ax1 = fig.add_subplot(121)
+        periodo = 1 / f
+        periodo_ms = periodo * 1000
+        t = np.linspace(0, 2 * periodo, 200)
+        t_ms = t * 1000
+
+        v_t = v * np.sin(w * t)
+        vr_t = amp_vr_visual * np.sin(w * t - theta_rad)
+        vl_t = amp_vl_visual * np.sin(w * t - theta_rad + np.pi / 2)
+        vc_t = amp_vc_visual * np.sin(w * t - theta_rad - np.pi / 2)
+        i_t_escalada = amp_i_visual * np.sin(w * t - theta_rad)
+
+        ax1.plot(t_ms, v_t, label='V (Fonte)', color='blue', linewidth=2.5)
+        ax1.plot(t_ms, vr_t, label=label_vr, color='green', linewidth=1.5)
+        ax1.plot(t_ms, vl_t, label=label_vl, color='purple', linewidth=1.5)
+        ax1.plot(t_ms, vc_t, label=label_vc, color='orange', linewidth=1.5)
+        ax1.plot(t_ms, i_t_escalada, label=label_i, color='red', linestyle='--', linewidth=2)
+
+        ax1.set_title("Domínio do Tempo (RLC Série)", fontsize=14, fontweight='bold')
+        ax1.set_xlabel("Tempo (ms)")
+        ax1.set_ylabel("Amplitude Visual")
+        ticks_ms = np.linspace(0, 2 * periodo_ms, 9)
+        ax1.set_xticks(ticks_ms)
+        ax1.set_xticklabels([f"{tick:.3f}" for tick in ticks_ms])
+        ax1.grid(True, which='both', linestyle='--', alpha=0.7)
+        ax1.legend(loc='upper right')
+
+        # --- Diagrama Fasorial ---
+        ax2 = fig.add_subplot(122)
+        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)', width=0.005)
+
+        vr_x = amp_vr_visual * math.cos(-theta_rad)
+        vr_y = amp_vr_visual * math.sin(-theta_rad)
+        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'{label_vr} ({amp_vr:.1f}V) ({-theta_deg:.1f}°)', width=0.005)
+
+        vl_x = amp_vl_visual * math.cos(-theta_rad + np.pi / 2)
+        vl_y = amp_vl_visual * math.sin(-theta_rad + np.pi / 2)
+        ax2.quiver(0, 0, vl_x, vl_y, angles='xy', scale_units='xy', scale=1, color='purple', label=f'{label_vl} ({amp_vl:.1f}V) ({-theta_deg + 90:.1f}°)', width=0.005)
+
+        vc_x = amp_vc_visual * math.cos(-theta_rad - np.pi / 2)
+        vc_y = amp_vc_visual * math.sin(-theta_rad - np.pi / 2)
+        ax2.quiver(0, 0, vc_x, vc_y, angles='xy', scale_units='xy', scale=1, color='orange', label=f'{label_vc} ({amp_vc:.1f}V) ({-theta_deg - 90:.1f}°)', width=0.005)
+
+        i_x = amp_i_visual * math.cos(-theta_rad)
+        i_y = amp_i_visual * math.sin(-theta_rad)
+        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'{label_i} ({i_mag:.2f}A) ({-theta_deg:.1f}°)', width=0.008)
+
+        limite = max(v, amp_vr_visual, amp_vl_visual, amp_vc_visual) * 1.2
+        ax2.set_xlim(-limite, limite)
+        ax2.set_ylim(-limite, limite)
         ax2.axhline(0, color='black', linewidth=1)
         ax2.axvline(0, color='black', linewidth=1)
-        ax2.set_title('Diagrama Fasorial (Série)')
-        ax2.legend(loc='lower left')
+        ax2.set_title("Diagrama Fasorial (RLC Série)", fontsize=14, fontweight='bold')
+        ax2.grid(True, linestyle='--', alpha=0.7)
+        ax2.set_aspect('equal')
+        ax2.legend(loc='upper right')
 
         plt.tight_layout()
         buf = io.BytesIO()
@@ -899,6 +987,7 @@ def graficos_rlc_serie():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
+
 
 @app.route('/graficos_rlc_paralelo', methods=['POST'])
 def graficos_rlc_paralelo():
@@ -910,6 +999,9 @@ def graficos_rlc_paralelo():
         c_uF = float(dados['c'])
         f = float(dados['f'])
 
+        if f <= 0 or v == 0 or r == 0 or l_mH == 0 or c_uF == 0:
+            return jsonify({'sucesso': False, 'erro': 'Valores inválidos para gráficos.'})
+
         l = l_mH * 1e-3
         c = c_uF * 1e-6
         w = 2 * np.pi * f
@@ -917,48 +1009,93 @@ def graficos_rlc_paralelo():
         xl = w * l
         xc = 1 / (w * c)
 
-        ir = v / r
-        il = v / xl
-        ic = v / xc
-        i_reativa = ic - il
-        it = math.sqrt(ir ** 2 + i_reativa ** 2)
+        ir_mag = v / r
+        il_mag = v / xl
+        ic_mag = v / xc
+        i_reativa = ic_mag - il_mag
+        it_mag = math.sqrt(ir_mag ** 2 + i_reativa ** 2)
 
-        theta = math.degrees(math.atan2(ic - il, ir))
+        theta_rad = math.atan2(i_reativa, ir_mag)
+        theta_deg = math.degrees(theta_rad)
 
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        # 1. Escala base para IT ocupar 50% de V
+        amp_it_visual = 0.5 * v
+        fator_escala = amp_it_visual / it_mag if it_mag > 0 else 1.0
 
-        # Triângulo de Correntes
-        ax1.quiver(0, 0, ir, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'I_R = {ir:.2f} A')
-        ax1.quiver(ir, 0, 0, i_reativa, angles='xy', scale_units='xy', scale=1, color='red', label=f'I_C - I_L = {i_reativa:.2f} A')
-        ax1.quiver(0, 0, ir, i_reativa, angles='xy', scale_units='xy', scale=1, color='green', label=f'I_T = {it:.2f} A ∠ {theta:.1f}°')
+        # 2. Multiplicação inicial dos ramos
+        amp_ir_visual = ir_mag * fator_escala
+        amp_il_visual = il_mag * fator_escala
+        amp_ic_visual = ic_mag * fator_escala
 
-        lim_i = max(ir, abs(i_reativa)) * 1.2
-        ax1.set_xlim(-0.1 * lim_i, lim_i)
-        ax1.set_ylim(-lim_i if i_reativa < 0 else -0.1 * lim_i, lim_i if i_reativa > 0 else 0.1 * lim_i)
-        ax1.grid(True, linestyle='--', alpha=0.6)
-        ax1.axhline(0, color='black', linewidth=1)
-        ax1.axvline(0, color='black', linewidth=1)
-        ax1.set_title('Triângulo de Correntes')
-        ax1.legend(loc='lower left')
+        # 3. Salvaguarda de 15% de IT_visual
+        min_i_visual = 0.15 * amp_it_visual
 
-        # Diagrama Fasorial
-        max_i = max(it, ir, ic, il)
-        fator_escala_v = (max_i * 0.7) / v if v > 0 else 1
+        amp_ir_visual_final = max(amp_ir_visual, min_i_visual) if ir_mag > 0.01 else 0
+        amp_il_visual_final = max(amp_il_visual, min_i_visual) if il_mag > 0.01 else 0
+        amp_ic_visual_final = max(amp_ic_visual, min_i_visual) if ic_mag > 0.01 else 0
 
-        ax2.quiver(0, 0, v * fator_escala_v, 0, angles='xy', scale_units='xy', scale=1, color='purple', width=0.005, label=f'V = {v:.1f} V ∠ 0° (Ref, esc. x{fator_escala_v:.2f})')
-        ax2.quiver(0, 0, ir, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'I_R = {ir:.2f} A ∠ 0°')
-        ax2.quiver(0, 0, 0, ic, angles='xy', scale_units='xy', scale=1, color='orange', label=f'I_C = {ic:.2f} A ∠ +90°')
-        ax2.quiver(0, 0, 0, -il, angles='xy', scale_units='xy', scale=1, color='cyan', label=f'I_L = {il:.2f} A ∠ -90°')
-        ax2.quiver(0, 0, ir, i_reativa, angles='xy', scale_units='xy', scale=1, color='green', label=f'I_T = {it:.2f} A ∠ {theta:.1f}°')
+        # 4. Fatores reais calculados para as legendas
+        escala_ir_final = amp_ir_visual_final / ir_mag if ir_mag > 0.01 else 1.0
+        escala_il_final = amp_il_visual_final / il_mag if il_mag > 0.01 else 1.0
+        escala_ic_final = amp_ic_visual_final / ic_mag if ic_mag > 0.01 else 1.0
+        escala_it_final = fator_escala
 
-        lim_fasor = max(v * fator_escala_v, max_i) * 1.2
-        ax2.set_xlim(-0.1 * lim_fasor, lim_fasor)
-        ax2.set_ylim(-max(il, abs(i_reativa)) * 1.2, max(ic, abs(i_reativa)) * 1.2)
-        ax2.grid(True, linestyle='--', alpha=0.6)
+        # 5. Legendas dinâmicas
+        label_it = f"IT (escala x{escala_it_final:.1f})"
+        label_ir = "IR" if escala_ir_final <= 1.05 else f"IR (escala x{escala_ir_final:.1f})"
+        label_il = "IL" if escala_il_final <= 1.05 else f"IL (escala x{escala_il_final:.1f})"
+        label_ic = "IC" if escala_ic_final <= 1.05 else f"IC (escala x{escala_ic_final:.1f})"
+
+        fig = plt.figure(figsize=(12, 5))
+
+        # --- Domínio do Tempo ---
+        ax1 = fig.add_subplot(121)
+        periodo = 1 / f
+        periodo_ms = periodo * 1000
+        t = np.linspace(0, 2 * periodo, 200)
+        t_ms = t * 1000
+
+        v_t = v * np.sin(w * t)
+        ir_t = amp_ir_visual_final * np.sin(w * t)
+        ic_t = amp_ic_visual_final * np.sin(w * t + np.pi / 2)
+        il_t = amp_il_visual_final * np.sin(w * t - np.pi / 2)
+        it_t = amp_it_visual * np.sin(w * t + theta_rad)
+
+        ax1.plot(t_ms, v_t, label='V (Referência)', color='blue', linewidth=2.5)
+        ax1.plot(t_ms, it_t, label=label_it, color='red', linestyle='--', linewidth=2)
+        ax1.plot(t_ms, ir_t, label=label_ir, color='green', linewidth=1.5)
+        ax1.plot(t_ms, ic_t, label=label_ic, color='orange', linewidth=1.5)
+        ax1.plot(t_ms, il_t, label=label_il, color='purple', linewidth=1.5)
+
+        ax1.set_title("Domínio do Tempo (RLC Paralelo)", fontsize=14, fontweight='bold')
+        ax1.set_xlabel("Tempo (ms)")
+        ax1.set_ylabel("Amplitude Visual")
+        ticks_ms = np.linspace(0, 2 * periodo_ms, 9)
+        ax1.set_xticks(ticks_ms)
+        ax1.set_xticklabels([f"{tick:.3f}" for tick in ticks_ms])
+        ax1.grid(True, which='both', linestyle='--', alpha=0.7)
+        ax1.legend(loc='upper right')
+
+        # --- Diagrama Fasorial ---
+        ax2 = fig.add_subplot(122)
+        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)', width=0.005)
+        ax2.quiver(0, 0, amp_ir_visual_final, 0, angles='xy', scale_units='xy', scale=1, color='green', label=f'{label_ir} ({ir_mag:.2f}A) (0.0°)', width=0.005)
+        ax2.quiver(0, 0, 0, amp_ic_visual_final, angles='xy', scale_units='xy', scale=1, color='orange', label=f'{label_ic} ({ic_mag:.2f}A) (90.0°)', width=0.005)
+        ax2.quiver(0, 0, 0, -amp_il_visual_final, angles='xy', scale_units='xy', scale=1, color='purple', label=f'{label_il} ({il_mag:.2f}A) (-90.0°)', width=0.005)
+
+        it_x = amp_it_visual * math.cos(theta_rad)
+        it_y = amp_it_visual * math.sin(theta_rad)
+        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'{label_it} ({it_mag:.2f}A) ({theta_deg:.1f}°)', width=0.008)
+
+        limite = max(v, amp_ir_visual_final, amp_ic_visual_final, amp_il_visual_final) * 1.2
+        ax2.set_xlim(-limite, limite)
+        ax2.set_ylim(-limite, limite)
         ax2.axhline(0, color='black', linewidth=1)
         ax2.axvline(0, color='black', linewidth=1)
-        ax2.set_title('Diagrama Fasorial (Paralelo)')
-        ax2.legend(loc='lower left')
+        ax2.set_title("Diagrama Fasorial (RLC Paralelo)", fontsize=14, fontweight='bold')
+        ax2.grid(True, linestyle='--', alpha=0.7)
+        ax2.set_aspect('equal')
+        ax2.legend(loc='upper right')
 
         plt.tight_layout()
         buf = io.BytesIO()
@@ -970,6 +1107,7 @@ def graficos_rlc_paralelo():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
