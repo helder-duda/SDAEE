@@ -626,6 +626,15 @@ function abrirGraficosSerie() {
     exibirGraficoGenerico('/graficos_serie', { v: v, r: r, l: l, f: f });
 }
 
+function abrirGraficosParalelo() {
+    const v = document.getElementById('v-paralelo').value;
+    const r = document.getElementById('r-paralelo').value;
+    const l = document.getElementById('l-paralelo').value;
+    const f = document.getElementById('f-paralelo').value;
+    if (!v || !r || !l || !f) { alert("Calcule os parâmetros primeiro."); return; }
+    exibirGraficoGenerico('/graficos_paralelo', { v: v, r: r, l: l, f: f });
+}
+
 function abrirGraficosSerieRC() {
     const v = document.getElementById('v-rc-serie').value;
     const r = document.getElementById('r-rc-serie').value;

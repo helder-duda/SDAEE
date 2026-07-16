@@ -6,11 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC e Exercicios OK">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/exercicios.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/exercicios.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +122,23 @@
       <option name="project" value="LOCAL" />
       <updated>1783992237859</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC e Exercicios OK">
+      <option name="closed" value="true" />
+      <created>1784079182703</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1784079182703</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC e Exercicios OK">
+      <option name="closed" value="true" />
+      <created>1784083909501</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1784083909501</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
