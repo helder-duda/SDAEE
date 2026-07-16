@@ -125,7 +125,7 @@ def alterar_senha():
 def gerar_exercicios():
     # CAPTURA OS PARÂMETROS ENVIADOS PELO JAVASCRIPT
     # Se não forem informados, assume o padrão de 10 questões e tipo 'todos'
-    qtd = int(request.args.get('qtd', 10))
+    qtd = int(request.args.get('qtd', 20))
     tipo_selecionado = request.args.get('tipo', 'todos').upper()
 
     def sortear():
@@ -546,6 +546,7 @@ def graficos_serie():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
+
 @app.route('/graficos_paralelo', methods=['POST'])
 def graficos_paralelo():
     dados = request.get_json()
@@ -568,11 +569,34 @@ def graficos_paralelo():
 
         theta_rad = math.atan2(il_mag, ir_mag)
         theta_deg = math.degrees(theta_rad)
-        z_eq = v / it_mag if it_mag != 0 else 1
-        fator_escala = round(z_eq, 1)
+
+        # 1. Definimos a escala base para que IT ocupe visualmente 50% de V
+        amp_it_visual = 0.5 * v
+        escala_base = amp_it_visual / it_mag if it_mag > 0 else 1.0
+
+        # 2. Aplicamos a escala base inicialmente nas correntes dos ramos
+        amp_ir_visual = ir_mag * escala_base
+        amp_il_visual = il_mag * escala_base
+
+        # 3. Salvaguarda visual: nenhuma corrente ativa pode ser menor que 15% de IT visual (0.15 * amp_it_visual)
+        min_i_visual = 0.15 * amp_it_visual
+
+        amp_ir_visual_final = max(amp_ir_visual, min_i_visual) if ir_mag > 0.01 else 0
+        amp_il_visual_final = max(amp_il_visual, min_i_visual) if il_mag > 0.01 else 0
+
+        # 4. Calculamos os fatores de escala finais reais de cada uma para exibir na legenda
+        escala_ir_final = amp_ir_visual_final / ir_mag if ir_mag > 0.01 else 1.0
+        escala_il_final = amp_il_visual_final / il_mag if il_mag > 0.01 else 1.0
+        escala_it_final = escala_base  # IT segue estritamente a escala base
+
+        # 5. Montamos as legendas dinâmicas informando a escala de cada uma
+        label_it = f"IT (escala x{escala_it_final:.1f})"
+        label_ir = "IR" if escala_ir_final <= 1.05 else f"IR (escala x{escala_ir_final:.1f})"
+        label_il = "IL" if escala_il_final <= 1.05 else f"IL (escala x{escala_il_final:.1f})"
 
         fig = plt.figure(figsize=(12, 5))
 
+        # --- Domínio do Tempo ---
         ax1 = fig.add_subplot(121)
         periodo = 1 / f
         periodo_ms = periodo * 1000
@@ -580,38 +604,50 @@ def graficos_paralelo():
         t_ms = t * 1000
 
         v_t = v * np.sin(w * t)
-        ir_t = (ir_mag * fator_escala) * np.sin(w * t)
-        il_t = (il_mag * fator_escala) * np.sin(w * t - np.pi / 2)
-        it_t = (it_mag * fator_escala) * np.sin(w * t - theta_rad)
+        ir_t = amp_ir_visual_final * np.sin(w * t)
+        il_t = amp_il_visual_final * np.sin(w * t - np.pi / 2)
+        it_t = amp_it_visual * np.sin(w * t - theta_rad)
 
-        ax1.plot(t_ms, v_t, label='V (Referência)', color='blue', linewidth=2)
-        ax1.plot(t_ms, it_t, label=f'IT (escala x{fator_escala})', color='red', linestyle='--')
-        ax1.plot(t_ms, ir_t, label='IR', color='green')
-        ax1.plot(t_ms, il_t, label='IL', color='purple')
+        ax1.plot(t_ms, v_t, label='V (Referência)', color='blue', linewidth=2.5)
+        ax1.plot(t_ms, it_t, label=label_it, color='red', linestyle='--', linewidth=2)
+        ax1.plot(t_ms, ir_t, label=label_ir, color='green', linewidth=1.5)
+        ax1.plot(t_ms, il_t, label=label_il, color='purple', linewidth=1.5)
+
         ax1.set_title("Domínio do Tempo (Paralelo)", fontsize=14, fontweight='bold')
         ax1.set_xlabel("Tempo (ms)")
-        ax1.set_ylabel("Amplitude")
+        ax1.set_ylabel("Amplitude Visual")
         ticks_ms = np.linspace(0, 2 * periodo_ms, 9)
         ax1.set_xticks(ticks_ms)
         ax1.set_xticklabels([f"{tick:.3f}" for tick in ticks_ms])
         ax1.grid(True, which='both', linestyle='--', alpha=0.7)
         ax1.legend(loc='upper right')
 
+        # --- Diagrama Fasorial ---
         ax2 = fig.add_subplot(122)
-        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label='V (0.0°)')
-        ax2.quiver(0, 0, ir_mag * fator_escala, 0, angles='xy', scale_units='xy', scale=1, color='green', label='IR (0.0°)')
-        ax2.quiver(0, 0, 0, -il_mag * fator_escala, angles='xy', scale_units='xy', scale=1, color='purple', label='IL (-90.0°)')
+        # Vetor de Tensão de Referência
+        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)',
+                   width=0.005)
 
-        it_x = (it_mag * fator_escala) * math.cos(-theta_rad)
-        it_y = (it_mag * fator_escala) * math.sin(-theta_rad)
-        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'IT (x{fator_escala}) ({-theta_deg:.1f}°)', width=0.005)
+        # Vetor IR
+        ax2.quiver(0, 0, amp_ir_visual_final, 0, angles='xy', scale_units='xy', scale=1, color='green',
+                   label=f'{label_ir} ({ir_mag:.2f}A) (0.0°)', width=0.005)
 
-        limite = max(v, ir_mag * fator_escala, il_mag * fator_escala) * 1.2
+        # Vetor IL (aponta para baixo, -90 graus)
+        ax2.quiver(0, 0, 0, -amp_il_visual_final, angles='xy', scale_units='xy', scale=1, color='purple',
+                   label=f'{label_il} ({il_mag:.2f}A) (-90.0°)', width=0.005)
+
+        # Vetor IT resultante
+        it_x = amp_it_visual * math.cos(-theta_rad)
+        it_y = amp_it_visual * math.sin(-theta_rad)
+        ax2.quiver(0, 0, it_x, it_y, angles='xy', scale_units='xy', scale=1, color='red',
+                   label=f'{label_it} ({it_mag:.2f}A) ({-theta_deg:.1f}°)', width=0.008)
+
+        limite = max(v, amp_ir_visual_final, amp_il_visual_final) * 1.2
         ax2.set_xlim(-limite, limite)
         ax2.set_ylim(-limite, limite)
         ax2.axhline(0, color='black', linewidth=1)
         ax2.axvline(0, color='black', linewidth=1)
-        ax2.set_title("Diagrama Fasorial", fontsize=14, fontweight='bold')
+        ax2.set_title("Diagrama Fasorial (Paralelo)", fontsize=14, fontweight='bold')
         ax2.grid(True, linestyle='--', alpha=0.7)
         ax2.set_aspect('equal')
         ax2.legend(loc='upper right')

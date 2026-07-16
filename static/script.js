@@ -146,22 +146,24 @@ function carregarConteudo(modulo) {
             </div>
         `;
     }
+    // ... dentro de carregarConteudo(modulo) ...
     else if (modulo === 'exercicios') {
         painel.innerHTML = `
-            <div class="quadrante" style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: Arial, sans-serif;">Gerador de Exercícios Customizado</h3>
+            <div style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: block !important; height: auto !important;">
+                <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: Arial, sans-serif; display: block !important;">Gerador de Exercícios Customizado</h3>
 
-                <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; font-family: Arial, sans-serif;">
-                    <!-- Campo para digitar o número de questões (Máximo 20) -->
-                    <div class="input-item" style="display: flex; flex-direction: column; gap: 8px;">
-                        <label style="font-weight: bold; color: #34495e;">Número de Questões (1 a 20):</label>
-                        <input type="number" id="num-questoes" value="20" min="1" max="20" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; width: 100%; box-sizing: border-box;">
+                <div style="display: block !important; margin-bottom: 25px; font-family: Arial, sans-serif;">
+
+                    <!-- Ajustado sem a classe "input-item" para evitar conflitos do CSS -->
+                    <div style="display: block !important; margin-bottom: 20px; text-align: left;">
+                        <label style="display: block !important; font-weight: bold; color: #34495e; margin-bottom: 8px; text-align: left; font-size: 14px;">Número de Questões (1 a 20):</label>
+                        <input type="number" id="num-questoes" value="20" min="1" max="20" style="display: block !important; padding: 12px !important; border: 2px solid #bdc3c7 !important; border-radius: 4px !important; font-size: 16px !important; width: 100% !important; box-sizing: border-box !important; background-color: #ffffff !important; color: #2c3e50 !important; text-align: left !important; height: auto !important;">
                     </div>
 
-                    <!-- Campo para selecionar o tipo de circuito -->
-                    <div class="input-item" style="display: flex; flex-direction: column; gap: 8px;">
-                        <label style="font-weight: bold; color: #34495e;">Tipo de Circuito:</label>
-                        <select id="tipo-circuito" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; background-color: white; width: 100%; box-sizing: border-box;">
+                    <!-- Ajustado para o Tipo de Circuito -->
+                    <div style="display: block !important; margin-bottom: 20px; text-align: left;">
+                        <label style="display: block !important; font-weight: bold; color: #34495e; margin-bottom: 8px; text-align: left; font-size: 14px;">Tipo de Circuito:</label>
+                        <select id="tipo-circuito" style="display: block !important; padding: 12px !important; border: 2px solid #bdc3c7 !important; border-radius: 4px !important; font-size: 16px !important; background-color: #ffffff !important; color: #2c3e50 !important; width: 100% !important; box-sizing: border-box !important; height: auto !important;">
                             <option value="todos">Todos (Mesclado)</option>
                             <option value="reversa">Apenas Engenharia Reversa</option>
                             <option value="normal">Apenas Circuitos Clássicos</option>
@@ -169,8 +171,8 @@ function carregarConteudo(modulo) {
                     </div>
                 </div>
 
-                <div style="text-align: center;">
-                    <button class="btn-calc" onclick="enviarGerarExercicios()" style="background-color: #2980b9; color: white; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: background 0.2s;">
+                <div style="text-align: center; display: block !important;">
+                    <button onclick="enviarGerarExercicios()" style="background-color: #2980b9 !important; color: white !important; border: none !important; padding: 14px 30px !important; font-size: 16px !important; font-weight: bold !important; border-radius: 4px !important; cursor: pointer !important; width: 100% !important; display: block !important;">
                         Gerar Lista de Exercícios
                     </button>
                 </div>
@@ -368,7 +370,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("conteudo-exercicios");
     if (container) {
         const urlParams = new URLSearchParams(window.location.search);
-        const qtd = parseInt(urlParams.get('qtd')) || 5;
+        // Alterado de 5 para 20 para ser o padrão caso não seja especificado na URL
+        const qtd = parseInt(urlParams.get('qtd')) || 20;
 
         const tipo = urlParams.get('tipo') || 'todos';
 
@@ -445,13 +448,12 @@ function toggleResposta(botao) {
 // === AUXILIAR DE GERAÇÃO EXERCÍCIOS =======
 // ==========================================
 function enviarGerarExercicios() {
-    const qtd = document.getElementById('num-questoes').value;
-    const tipo = document.getElementById('tipo-circuito').value;
+    // Busca o campo, se não encontrar ou estiver invisível, assume o valor de 20 por padrão
+    const campoQtd = document.getElementById('num-questoes');
+    const qtd = (campoQtd && campoQtd.value) ? campoQtd.value : 20;
 
-    if (!qtd || qtd <= 0) {
-        alert("Por favor, digite uma quantidade de questões válida.");
-        return;
-    }
+    const campoTipo = document.getElementById('tipo-circuito');
+    const tipo = campoTipo ? campoTipo.value : 'todos';
 
     window.open(`/gerar_exercicios?qtd=${qtd}&tipo=${tipo}`, '_blank');
 }
