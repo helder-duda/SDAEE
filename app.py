@@ -501,10 +501,17 @@ def calcular_rlc_paralelo():
 def graficos_serie():
     dados = request.get_json()
     try:
+        # 1. Valores do circuito
         v = float(dados.get('v'))
         r = float(dados.get('r'))
         l_mh = float(dados.get('l'))
         f = float(dados.get('f'))
+
+        # 2. Novos parâmetros: Estado dos checkboxes de visibilidade (Padrão: True)
+        show_v = dados.get('show_v', True)
+        show_vr = dados.get('show_vr', True)
+        show_vl = dados.get('show_vl', True)
+        show_i = dados.get('show_i', True)
 
         if f <= 0 or v == 0 or (r == 0 and l_mh == 0):
             return jsonify({'sucesso': False, 'erro': 'Valores inválidos para gráficos.'})
@@ -537,6 +544,9 @@ def graficos_serie():
 
         fig = plt.figure(figsize=(12, 5))
 
+        # ===================================================
+        # GRÁFICO 1: Domínio do Tempo
+        # ===================================================
         ax1 = fig.add_subplot(121)
         periodo = 1 / f
         periodo_ms = periodo * 1000
@@ -548,10 +558,15 @@ def graficos_serie():
         vl_t = amp_vl_visual * np.sin(w * t - theta_rad + np.pi / 2)
         i_t_escalada = amp_i_visual * np.sin(w * t - theta_rad)
 
-        ax1.plot(t_ms, v_t, label='V (Fonte)', color='blue', linewidth=2.5)
-        ax1.plot(t_ms, vr_t, label=label_vr, color='green', linewidth=1.5)
-        ax1.plot(t_ms, vl_t, label=label_vl, color='purple', linewidth=1.5)
-        ax1.plot(t_ms, i_t_escalada, label=label_i, color='red', linestyle='--', linewidth=2)
+        # Só desenha a curva se o respectivo checkbox for True
+        if show_v:
+            ax1.plot(t_ms, v_t, label='V (Fonte)', color='blue', linewidth=2.5)
+        if show_vr:
+            ax1.plot(t_ms, vr_t, label=label_vr, color='green', linewidth=1.5)
+        if show_vl:
+            ax1.plot(t_ms, vl_t, label=label_vl, color='purple', linewidth=1.5)
+        if show_i:
+            ax1.plot(t_ms, i_t_escalada, label=label_i, color='red', linestyle='--', linewidth=2)
 
         ax1.set_title("Domínio do Tempo (Série)", fontsize=14, fontweight='bold')
         ax1.set_xlabel("Tempo (ms)")
@@ -560,23 +575,35 @@ def graficos_serie():
         ax1.set_xticks(ticks_ms)
         ax1.set_xticklabels([f"{tick:.3f}" for tick in ticks_ms])
         ax1.grid(True, which='both', linestyle='--', alpha=0.7)
-        ax1.legend(loc='upper right')
+        if show_v or show_vr or show_vl or show_i:
+            ax1.legend(loc='upper right')
 
+        # ===================================================
+        # GRÁFICO 2: Diagrama Fasorial
+        # ===================================================
         ax2 = fig.add_subplot(122)
 
-        ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)', width=0.005)
+        if show_v:
+            ax2.quiver(0, 0, v, 0, angles='xy', scale_units='xy', scale=1, color='blue', label=f'V ({v:.1f}V) (0.0°)',
+                       width=0.005)
 
-        vr_x = amp_vr_visual * math.cos(-theta_rad)
-        vr_y = amp_vr_visual * math.sin(-theta_rad)
-        ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green', label=f'{label_vr} ({amp_vr:.1f}V) ({-theta_deg:.1f}°)', width=0.005)
+        if show_vr:
+            vr_x = amp_vr_visual * math.cos(-theta_rad)
+            vr_y = amp_vr_visual * math.sin(-theta_rad)
+            ax2.quiver(0, 0, vr_x, vr_y, angles='xy', scale_units='xy', scale=1, color='green',
+                       label=f'{label_vr} ({amp_vr:.1f}V) ({-theta_deg:.1f}°)', width=0.005)
 
-        vl_x = amp_vl_visual * math.cos(-theta_rad + np.pi / 2)
-        vl_y = amp_vl_visual * math.sin(-theta_rad + np.pi / 2)
-        ax2.quiver(0, 0, vl_x, vl_y, angles='xy', scale_units='xy', scale=1, color='purple', label=f'{label_vl} ({amp_vl:.1f}V) ({-theta_deg + 90:.1f}°)', width=0.005)
+        if show_vl:
+            vl_x = amp_vl_visual * math.cos(-theta_rad + np.pi / 2)
+            vl_y = amp_vl_visual * math.sin(-theta_rad + np.pi / 2)
+            ax2.quiver(0, 0, vl_x, vl_y, angles='xy', scale_units='xy', scale=1, color='purple',
+                       label=f'{label_vl} ({amp_vl:.1f}V) ({-theta_deg + 90:.1f}°)', width=0.005)
 
-        i_x = amp_i_visual * math.cos(-theta_rad)
-        i_y = amp_i_visual * math.sin(-theta_rad)
-        ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red', label=f'{label_i} ({i_mag:.2f}A) ({-theta_deg:.1f}°)', width=0.008)
+        if show_i:
+            i_x = amp_i_visual * math.cos(-theta_rad)
+            i_y = amp_i_visual * math.sin(-theta_rad)
+            ax2.quiver(0, 0, i_x, i_y, angles='xy', scale_units='xy', scale=1, color='red',
+                       label=f'{label_i} ({i_mag:.2f}A) ({-theta_deg:.1f}°)', width=0.008)
 
         limite = max(v, amp_vr_visual, amp_vl_visual) * 1.2
         ax2.set_xlim(-limite, limite)
@@ -586,7 +613,9 @@ def graficos_serie():
         ax2.set_title("Diagrama Fasorial (Série)", fontsize=14, fontweight='bold')
         ax2.grid(True, linestyle='--', alpha=0.7)
         ax2.set_aspect('equal')
-        ax2.legend(loc='upper right')
+
+        if show_v or show_vr or show_vl or show_i:
+            ax2.legend(loc='upper right')
 
         plt.tight_layout()
         buf = io.BytesIO()
@@ -598,7 +627,6 @@ def graficos_serie():
         return jsonify({'sucesso': True, 'imagem': img_base64})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
-
 
 @app.route('/graficos_paralelo', methods=['POST'])
 def graficos_paralelo():

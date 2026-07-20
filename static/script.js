@@ -596,6 +596,45 @@ function exibirGraficoGenerico(rota_url, dados_json) {
     imgGrafico.style.display = "none";
     msgCarregando.style.display = "block";
 
+    // Cria ou recupera o container de checkboxes dentro do modal
+    let containerCheckboxes = document.getElementById('container-chk-graficos');
+    if (!containerCheckboxes) {
+        containerCheckboxes = document.createElement('div');
+        containerCheckboxes.id = 'container-chk-graficos';
+        containerCheckboxes.style = "text-align: center; margin-top: 15px; font-family: Arial, sans-serif; display: flex; justify-content: center; gap: 20px;";
+        // Injeta os elementos HTML dos checkboxes
+        containerCheckboxes.innerHTML = `
+            <label style="cursor:pointer; font-weight:bold; color:blue;"><input type="checkbox" id="chk_v" checked style="margin-right:5px;"> V (Fonte)</label>
+            <label style="cursor:pointer; font-weight:bold; color:green;"><input type="checkbox" id="chk_vr" checked style="margin-right:5px;"> VR</label>
+            <label style="cursor:pointer; font-weight:bold; color:purple;"><input type="checkbox" id="chk_vl" checked style="margin-right:5px;"> VL</label>
+            <label style="cursor:pointer; font-weight:bold; color:red;"><input type="checkbox" id="chk_i" checked style="margin-right:5px;"> I (Corrente)</label>
+        `;
+        // Adiciona embaixo da imagem no modal
+        imgGrafico.parentNode.insertBefore(containerCheckboxes, imgGrafico.nextSibling);
+
+        // Adiciona o evento para atualizar o gráfico automaticamente ao clicar em qualquer checkbox
+        ['chk_v', 'chk_vr', 'chk_vl', 'chk_i'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => {
+                // Dispara novamente a requisição atualizando o gráfico com os novos estados
+                if (window.ultimosDadosGrafico) {
+                    exibirGraficoGenerico(window.ultimaRotaGrafico, window.ultimosDadosGrafico);
+                }
+            });
+        });
+    }
+
+    // Se houver os checkboxes na tela, adiciona o estado booleano deles ao JSON que vai para o Python
+    if (document.getElementById('chk_v')) {
+        dados_json.show_v = document.getElementById('chk_v').checked;
+        dados_json.show_vr = document.getElementById('chk_vr').checked;
+        dados_json.show_vl = document.getElementById('chk_vl').checked;
+        dados_json.show_i = document.getElementById('chk_i').checked;
+    }
+
+    // Salva o estado atual na janela global para permitir a atualização no clique
+    window.ultimaRotaGrafico = rota_url;
+    window.ultimosDadosGrafico = dados_json;
+
     fetch(rota_url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -618,7 +657,6 @@ function exibirGraficoGenerico(rota_url, dados_json) {
         fecharModal();
     });
 }
-
 function abrirGraficosSerie() {
     const v = document.getElementById('v-serie').value;
     const r = document.getElementById('r-serie').value;
@@ -748,6 +786,11 @@ function abrirGraficosParaleloRLC() {
 // ==========================================
 function fecharModal() {
     document.getElementById('modal-graficos').style.display = "none";
+    // Remove os checkboxes ao fechar para que sejam recriados limpos no próximo gráfico
+    const containerCheckboxes = document.getElementById('container-chk-graficos');
+    if (containerCheckboxes) {
+        containerCheckboxes.remove();
+    }
 }
 
 function fecharJanela() {
