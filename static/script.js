@@ -146,21 +146,17 @@ function carregarConteudo(modulo) {
             </div>
         `;
     }
-    // ... dentro de carregarConteudo(modulo) ...
     else if (modulo === 'exercicios') {
         painel.innerHTML = `
             <div style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: block !important; height: auto !important;">
                 <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: Arial, sans-serif; display: block !important;">Gerador de Exercícios Customizado</h3>
 
                 <div style="display: block !important; margin-bottom: 25px; font-family: Arial, sans-serif;">
-
-                    <!-- Ajustado sem a classe "input-item" para evitar conflitos do CSS -->
                     <div style="display: block !important; margin-bottom: 20px; text-align: left;">
                         <label style="display: block !important; font-weight: bold; color: #34495e; margin-bottom: 8px; text-align: left; font-size: 14px;">Número de Questões (1 a 20):</label>
                         <input type="number" id="num-questoes" value="20" min="1" max="20" style="display: block !important; padding: 12px !important; border: 2px solid #bdc3c7 !important; border-radius: 4px !important; font-size: 16px !important; width: 100% !important; box-sizing: border-box !important; background-color: #ffffff !important; color: #2c3e50 !important; text-align: left !important; height: auto !important;">
                     </div>
 
-                    <!-- Ajustado para o Tipo de Circuito -->
                     <div style="display: block !important; margin-bottom: 20px; text-align: left;">
                         <label style="display: block !important; font-weight: bold; color: #34495e; margin-bottom: 8px; text-align: left; font-size: 14px;">Tipo de Circuito:</label>
                         <select id="tipo-circuito" style="display: block !important; padding: 12px !important; border: 2px solid #bdc3c7 !important; border-radius: 4px !important; font-size: 16px !important; background-color: #ffffff !important; color: #2c3e50 !important; width: 100% !important; box-sizing: border-box !important; height: auto !important;">
@@ -370,11 +366,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("conteudo-exercicios");
     if (container) {
         const urlParams = new URLSearchParams(window.location.search);
-        // Alterado de 5 para 20 para ser o padrão caso não seja especificado na URL
         const qtd = parseInt(urlParams.get('qtd')) || 20;
-
         const tipo = urlParams.get('tipo') || 'todos';
-
         gerarFolhaDeExercicios(container, qtd, tipo);
     }
 });
@@ -392,7 +385,6 @@ function gerarFolhaDeExercicios(container, quantidade, tipoFiltro) {
     }
 
     poolQuestoes.sort(() => Math.random() - 0.5);
-
     const selecionados = poolQuestoes.slice(0, Math.min(quantidade, poolQuestoes.length));
 
     selecionados.forEach((exercicio, index) => {
@@ -444,17 +436,11 @@ function toggleResposta(botao) {
     }
 }
 
-// ==========================================
-// === AUXILIAR DE GERAÇÃO EXERCÍCIOS =======
-// ==========================================
 function enviarGerarExercicios() {
-    // Busca o campo, se não encontrar ou estiver invisível, assume o valor de 20 por padrão
     const campoQtd = document.getElementById('num-questoes');
     const qtd = (campoQtd && campoQtd.value) ? campoQtd.value : 20;
-
     const campoTipo = document.getElementById('tipo-circuito');
     const tipo = campoTipo ? campoTipo.value : 'todos';
-
     window.open(`/gerar_exercicios?qtd=${qtd}&tipo=${tipo}`, '_blank');
 }
 
@@ -468,7 +454,7 @@ function calcularSerie() {
     const f = document.getElementById('f-serie').value;
 
     if (!v || !r || !l || !f) {
-        alert("Preencha todos os parâmetros (V, R, L e f) da Série.");
+        alert("Preencha todos os parameters (V, R, L e f) da Série.");
         return;
     }
 
@@ -596,26 +582,67 @@ function exibirGraficoGenerico(rota_url, dados_json) {
     imgGrafico.style.display = "none";
     msgCarregando.style.display = "block";
 
-    // Cria ou recupera o container de checkboxes dentro do modal
     let containerCheckboxes = document.getElementById('container-chk-graficos');
     if (!containerCheckboxes) {
         containerCheckboxes = document.createElement('div');
         containerCheckboxes.id = 'container-chk-graficos';
-        containerCheckboxes.style = "text-align: center; margin-top: 15px; font-family: Arial, sans-serif; display: flex; justify-content: center; gap: 20px;";
-        // Injeta os elementos HTML dos checkboxes
-        containerCheckboxes.innerHTML = `
-            <label style="cursor:pointer; font-weight:bold; color:blue;"><input type="checkbox" id="chk_v" checked style="margin-right:5px;"> V (Fonte)</label>
+        containerCheckboxes.style = "text-align: center; margin-top: 15px; font-family: Arial, sans-serif; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;";
+        imgGrafico.parentNode.insertBefore(containerCheckboxes, imgGrafico.nextSibling);
+    }
+
+    let chhtml = `<label style="cursor:pointer; font-weight:bold; color:blue;"><input type="checkbox" id="chk_v" checked style="margin-right:5px;"> V (Fonte)</label>`;
+    let checkIds = ['chk_v'];
+
+    if (rota_url.includes('rlc_serie')) {
+        chhtml += `
+            <label style="cursor:pointer; font-weight:bold; color:green;"><input type="checkbox" id="chk_vr" checked style="margin-right:5px;"> VR</label>
+            <label style="cursor:pointer; font-weight:bold; color:purple;"><input type="checkbox" id="chk_vl" checked style="margin-right:5px;"> VL</label>
+            <label style="cursor:pointer; font-weight:bold; color:orange;"><input type="checkbox" id="chk_vc" checked style="margin-right:5px;"> VC</label>
+            <label style="cursor:pointer; font-weight:bold; color:red;"><input type="checkbox" id="chk_i" checked style="margin-right:5px;"> I (Corrente)</label>
+        `;
+        checkIds.push('chk_vr', 'chk_vl', 'chk_vc', 'chk_i');
+    } else if (rota_url.includes('rlc_paralelo')) {
+        chhtml += `
+            <label style="cursor:pointer; font-weight:bold; color:green;"><input type="checkbox" id="chk_ir" checked style="margin-right:5px;"> IR</label>
+            <label style="cursor:pointer; font-weight:bold; color:purple;"><input type="checkbox" id="chk_il" checked style="margin-right:5px;"> IL</label>
+            <label style="cursor:pointer; font-weight:bold; color:orange;"><input type="checkbox" id="chk_ic" checked style="margin-right:5px;"> IC</label>
+            <label style="cursor:pointer; font-weight:bold; color:red;"><input type="checkbox" id="chk_i" checked style="margin-right:5px;"> IT (Total)</label>
+        `;
+        checkIds.push('chk_ir', 'chk_il', 'chk_ic', 'chk_i');
+    } else if (rota_url.includes('rc_serie')) {
+        chhtml += `
+            <label style="cursor:pointer; font-weight:bold; color:green;"><input type="checkbox" id="chk_vr" checked style="margin-right:5px;"> VR</label>
+            <label style="cursor:pointer; font-weight:bold; color:orange;"><input type="checkbox" id="chk_vc" checked style="margin-right:5px;"> VC</label>
+            <label style="cursor:pointer; font-weight:bold; color:red;"><input type="checkbox" id="chk_i" checked style="margin-right:5px;"> I (Corrente)</label>
+        `;
+        checkIds.push('chk_vr', 'chk_vc', 'chk_i');
+    } else if (rota_url.includes('rc_paralelo')) {
+        chhtml += `
+            <label style="cursor:pointer; font-weight:bold; color:green;"><input type="checkbox" id="chk_ir" checked style="margin-right:5px;"> IR</label>
+            <label style="cursor:pointer; font-weight:bold; color:orange;"><input type="checkbox" id="chk_ic" checked style="margin-right:5px;"> IC</label>
+            <label style="cursor:pointer; font-weight:bold; color:red;"><input type="checkbox" id="chk_i" checked style="margin-right:5px;"> IT (Total)</label>
+        `;
+        checkIds.push('chk_ir', 'chk_ic', 'chk_i');
+    } else if (rota_url.includes('paralelo')) {
+        chhtml += `
+            <label style="cursor:pointer; font-weight:bold; color:green;"><input type="checkbox" id="chk_ir" checked style="margin-right:5px;"> IR</label>
+            <label style="cursor:pointer; font-weight:bold; color:purple;"><input type="checkbox" id="chk_il" checked style="margin-right:5px;"> IL</label>
+            <label style="cursor:pointer; font-weight:bold; color:red;"><input type="checkbox" id="chk_i" checked style="margin-right:5px;"> IT (Total)</label>
+        `;
+        checkIds.push('chk_ir', 'chk_il', 'chk_i');
+    } else {
+        chhtml += `
             <label style="cursor:pointer; font-weight:bold; color:green;"><input type="checkbox" id="chk_vr" checked style="margin-right:5px;"> VR</label>
             <label style="cursor:pointer; font-weight:bold; color:purple;"><input type="checkbox" id="chk_vl" checked style="margin-right:5px;"> VL</label>
             <label style="cursor:pointer; font-weight:bold; color:red;"><input type="checkbox" id="chk_i" checked style="margin-right:5px;"> I (Corrente)</label>
         `;
-        // Adiciona embaixo da imagem no modal
-        imgGrafico.parentNode.insertBefore(containerCheckboxes, imgGrafico.nextSibling);
+        checkIds.push('chk_vr', 'chk_vl', 'chk_i');
+    }
 
-        // Adiciona o evento para atualizar o gráfico automaticamente ao clicar em qualquer checkbox
-        ['chk_v', 'chk_vr', 'chk_vl', 'chk_i'].forEach(id => {
+    if (!containerCheckboxes.innerHTML || window.ultimaRotaGrafico !== rota_url) {
+        containerCheckboxes.innerHTML = chhtml;
+        checkIds.forEach(id => {
             document.getElementById(id).addEventListener('change', () => {
-                // Dispara novamente a requisição atualizando o gráfico com os novos estados
                 if (window.ultimosDadosGrafico) {
                     exibirGraficoGenerico(window.ultimaRotaGrafico, window.ultimosDadosGrafico);
                 }
@@ -623,15 +650,10 @@ function exibirGraficoGenerico(rota_url, dados_json) {
         });
     }
 
-    // Se houver os checkboxes na tela, adiciona o estado booleano deles ao JSON que vai para o Python
-    if (document.getElementById('chk_v')) {
-        dados_json.show_v = document.getElementById('chk_v').checked;
-        dados_json.show_vr = document.getElementById('chk_vr').checked;
-        dados_json.show_vl = document.getElementById('chk_vl').checked;
-        dados_json.show_i = document.getElementById('chk_i').checked;
-    }
+    checkIds.forEach(id => {
+        dados_json[id.replace('chk_', 'show_')] = document.getElementById(id).checked;
+    });
 
-    // Salva o estado atual na janela global para permitir a atualização no clique
     window.ultimaRotaGrafico = rota_url;
     window.ultimosDadosGrafico = dados_json;
 
@@ -657,6 +679,7 @@ function exibirGraficoGenerico(rota_url, dados_json) {
         fecharModal();
     });
 }
+
 function abrirGraficosSerie() {
     const v = document.getElementById('v-serie').value;
     const r = document.getElementById('r-serie').value;
@@ -786,10 +809,9 @@ function abrirGraficosParaleloRLC() {
 // ==========================================
 function fecharModal() {
     document.getElementById('modal-graficos').style.display = "none";
-    // Remove os checkboxes ao fechar para que sejam recriados limpos no próximo gráfico
     const containerCheckboxes = document.getElementById('container-chk-graficos');
     if (containerCheckboxes) {
-        containerCheckboxes.remove();
+        containerCheckboxes.innerHTML = "";
     }
 }
 
@@ -809,4 +831,4 @@ window.onclick = function(event) {
     if (event.target == modal) {
         fecharModal();
     }
-}
+};
