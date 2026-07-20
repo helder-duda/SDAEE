@@ -9,13 +9,13 @@
 body {
     background-color: #f4f7f6;
     color: #333;
-    overflow: auto; /* Garante que haverá barras de rolagem no PC, trocando por hidden não permite*/
+    overflow: auto;
 }
 
 /* Estrutura principal */
 .container {
     display: flex;
-    height: 100vh; /* Trava a altura exata da tela no PC */
+    height: 100vh;
 }
 
 /* Menu Lateral (Sidebar) - REDUZIDO */
@@ -26,9 +26,9 @@ body {
     padding: 15px;
     display: flex;
     flex-direction: column;
-    height: 100vh;             /* Mantém a altura da tela no PC */
-    overflow-y: auto;          /* LIBERA A ROLAGEM VERTICAL SE PRECISAR */
-    -webkit-overflow-scrolling: touch; /* Deixa a rolagem suave no celular (iOS/Android) */
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .logo-title {
@@ -39,7 +39,6 @@ body {
     padding-bottom: 10px;
 }
 
-/* Removemos qualquer marcador (bolinha) das listas do menu */
 .menu, .menu-item {
     list-style-type: none;
     margin: 0;
@@ -52,12 +51,10 @@ body {
     color: #bdc3c7;
     cursor: pointer;
     user-select: none;
-    padding-left: 10px; /* Mantém o seu deslocamento para a direita */
-
-    /* Transformamos em Flexbox para separar o texto da setinha */
+    padding-left: 10px;
     display: flex;
-    justify-content: space-between; /* Joga o texto de um lado e a setinha pro outro */
-    align-items: center; /* Centraliza na vertical */
+    justify-content: space-between;
+    align-items: center;
 }
 
 .menu-title:hover {
@@ -69,13 +66,13 @@ body {
     list-style: none;
     margin-top: 5px;
     padding-left: 25px;
-    display: none; /* NOVA REGRA: Oculta o submenu por padrão */
+    display: none;
 }
 
-/* NOVA CLASSE: O JavaScript usará isso para mostrar o submenu */
 .submenu.ativo {
     display: block;
 }
+
 .submenu a {
     color: #ecf0f1;
     text-decoration: none;
@@ -93,7 +90,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: auto; /* permite que o conteúdo empurre a tela no PC, hidden evita */
+    overflow: auto;
 }
 
 .top-header {
@@ -125,7 +122,7 @@ body {
     min-height: min-content;
 }
 
-/* Grid de 4 Partes (Imagens e Controles) - MAIS COMPACTO */
+/* Grid de 4 Partes (Imagens e Controles) */
 .grid-4-partes {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -140,7 +137,7 @@ body {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Distribui os itens uniformemente */
+    justify-content: space-between;
 }
 
 .quadrante h3, .quadrante h4 {
@@ -151,31 +148,27 @@ body {
     font-size: 1rem;
 }
 
-/* Imagens do Circuito - REDIMENSIONAMENTO AUTOMÁTICO */
 .container-imagem {
-    flex: 1; /* Diz ao contêiner para absorver todo o espaço vertical livre */
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%; /* Ocupa toda a largura do quadrante */
-    min-height: 100px; /* Proteção: impede que a imagem fique espremida demais */
+    width: 100%;
+    min-height: 100px;
     margin-bottom: 10px;
-    overflow: hidden; /* Garante que a imagem não vaze do contêiner */
+    overflow: hidden;
 }
 
 .imagem-circuito {
-    width: 100%; /* Tenta ocupar toda a largura */
-    height: 100%; /* Tenta ocupar toda a altura */
-    max-height: 100%; /* Remove a trava antiga de 160px */
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
     border-radius: 4px;
     border: 1px solid #ddd;
-
-    /* A regra mais importante:
-       Redimensiona a imagem para caber na caixa sem cortar e sem achatar! */
     object-fit: contain;
 }
 
-/* Formulários e Inputs - CORREÇÃO DE LARGURA */
+/* Formulários e Inputs */
 .form-linha {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -183,7 +176,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* Nova classe para os 5 inputs do RLC na mesma linha */
 .form-linha-5 {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -194,7 +186,7 @@ body {
 .input-item {
     display: flex;
     flex-direction: column;
-    min-width: 0; /* CORREÇÃO CRUCIAL: Impede que o input ultrapasse a grade */
+    min-width: 0;
 }
 
 .input-item label {
@@ -238,7 +230,7 @@ button {
 .btn-graf { background-color: #2980b9; }
 .btn-graf:hover { background-color: #2471a3; }
 
-/* Resultados - CORREÇÃO DE QUEBRA DE LINHA */
+/* Resultados */
 .resultados-linha {
     display: flex;
     justify-content: space-between;
@@ -252,7 +244,7 @@ button {
 .resultados-linha p {
     margin: 0;
     font-size: 0.85rem;
-    white-space: nowrap; /* Impede que o texto pule para a linha de baixo */
+    white-space: nowrap;
 }
 
 .resultados-linha span {
@@ -260,7 +252,7 @@ button {
     font-weight: bold;
 }
 
-/* Janela Modal (Gráficos) */
+/* Janela Modal */
 .modal {
     display: none;
     position: fixed;
@@ -300,42 +292,34 @@ button {
 
 .fechar-modal:hover { color: #333; }
 
-/* ========================================== */
-/* === TELA INICIAL (CAPA) ================== */
-/* ========================================== */
+/* Capa Inicial */
 .container-inicio {
     flex: 1;
     display: flex;
-    justify-content: center; /* Centraliza a imagem na horizontal */
-    align-items: center; /* Centraliza a imagem na vertical */
+    justify-content: center;
+    align-items: center;
     width: 100%;
 }
 
 .imagem-inicio {
-    width: 90%; /* Ocupa 80% da largura disponível */
-    height: 90%; /* Ocupa 80% da altura disponível */
-    object-fit: contain; /* Garante que a imagem inteira apareça sem distorcer */
-    border-radius: 8px; /* Mantém as bordas arredondadas */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Sombra em volta da imagem para dar destaque */
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-
-/* ========================================== */
-/* === AJUSTES DE RESPONSIVIDADE (CELULAR) == */
-/* ========================================== */
+/* Responsividade (Celulares e Telas Pequenas) */
 @media (max-width: 768px) {
-    /* Libera a rolagem vertical na tela inteira do celular */
     body {
         overflow: auto !important;
     }
 
-    /* O container passa a empilhar os elementos verticalmente em vez de lado a lado */
     .container {
         flex-direction: column !important;
         height: auto !important;
     }
 
-    /* Ajusta o Menu Lateral para virar uma barra no topo da tela */
     .sidebar {
         width: 100% !important;
         height: auto !important;
@@ -344,7 +328,6 @@ button {
         position: relative !important;
     }
 
-    /* Permite que a área de conteúdo cresça verticalmente e role sem travas */
     .main-area {
         overflow: visible !important;
         height: auto !important;
@@ -355,28 +338,25 @@ button {
         height: auto !important;
     }
 
-    /* Transforma a grade de 2 colunas em 1 única coluna (os módulos ficam empilhados) */
     .grid-4-partes {
         grid-template-columns: 1fr !important;
         gap: 15px !important;
     }
 
     .quadrante {
-        height: auto !important; /* Permite que cada quadrante se estique se necessário */
+        height: auto !important;
     }
 
-    /* Reduz as colunas de entrada de dados para 2 colunas no celular para caber o texto */
     .form-linha {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 10px !important;
     }
 
     .form-linha-5 {
-        grid-template-columns: repeat(2, 1fr) !important; /* No celular, os 5 inputs viram 2 por linha + 1 abaixo */
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 10px !important;
     }
 
-    /* Melhora a exibição dos resultados para não cortar as fórmulas de cálculo */
     .resultados-linha {
         flex-direction: column !important;
         align-items: flex-start !important;
@@ -384,6 +364,54 @@ button {
     }
 
     .resultados-linha p {
-        white-space: normal !important; /* Agora o texto quebra de linha em vez de sumir da tela */
+        white-space: normal !important;
+    }
+}
+
+/* Customização para o Layout Trifásico em 4 Colunas */
+.grid-resultados-trifasico {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.col-resultado {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.col-resultado h4 {
+    font-size: 0.9rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.res-bloco {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #333;
+}
+
+.res-bloco p {
+    margin-bottom: 2px;
+}
+
+/* Ajuste Responsivo para o grid trifásico */
+@media (max-width: 900px) {
+    .grid-resultados-trifasico {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-resultados-trifasico {
+        grid-template-columns: 1fr !important;
     }
 }

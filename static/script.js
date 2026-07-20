@@ -133,7 +133,7 @@ const bancoDeExercicios = {
 // ==========================================
 function toggleMenu(idMenu) {
     const menu = document.getElementById(idMenu);
-    menu.classList.toggle('ativo');
+    if(menu) menu.classList.toggle('ativo');
 }
 
 function carregarConteudo(modulo) {
@@ -142,57 +142,48 @@ function carregarConteudo(modulo) {
     if (modulo === 'inicio') {
         painel.innerHTML = `
             <div class="container-inicio">
-                <img src="/static/imagens/capa.jpeg" alt="Página Inicial" class="imagem-inicio">
+                <img src="/static/imagens/capa.jpeg" alt="Página Inicial" class="imagem-inicio" style="max-width:100%; height:auto;">
             </div>
         `;
     }
     else if (modulo === 'exercicios') {
         painel.innerHTML = `
-            <div style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: block !important; height: auto !important;">
-                <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: Arial, sans-serif; display: block !important;">Gerador de Exercícios Customizado</h3>
-
-                <div style="display: block !important; margin-bottom: 25px; font-family: Arial, sans-serif;">
-                    <div style="display: block !important; margin-bottom: 20px; text-align: left;">
-                        <label style="display: block !important; font-weight: bold; color: #34495e; margin-bottom: 8px; text-align: left; font-size: 14px;">Número de Questões (1 a 20):</label>
-                        <input type="number" id="num-questoes" value="20" min="1" max="20" style="display: block !important; padding: 12px !important; border: 2px solid #bdc3c7 !important; border-radius: 4px !important; font-size: 16px !important; width: 100% !important; box-sizing: border-box !important; background-color: #ffffff !important; color: #2c3e50 !important; text-align: left !important; height: auto !important;">
+            <div style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h3 style="text-align: center; margin-bottom: 25px; color: #2c3e50; font-family: Arial, sans-serif;">Gerador de Exercícios Customizado</h3>
+                <div style="margin-bottom: 25px; font-family: Arial, sans-serif;">
+                    <div style="margin-bottom: 20px; text-align: left;">
+                        <label style="display: block; font-weight: bold; color: #34495e; margin-bottom: 8px; font-size: 14px;">Número de Questões (1 a 20):</label>
+                        <input type="number" id="num-questoes" value="20" min="1" max="20" style="padding: 12px; border: 2px solid #bdc3c7; border-radius: 4px; font-size: 16px; width: 100%; box-sizing: border-box;">
                     </div>
-
-                    <div style="display: block !important; margin-bottom: 20px; text-align: left;">
-                        <label style="display: block !important; font-weight: bold; color: #34495e; margin-bottom: 8px; text-align: left; font-size: 14px;">Tipo de Circuito:</label>
-                        <select id="tipo-circuito" style="display: block !important; padding: 12px !important; border: 2px solid #bdc3c7 !important; border-radius: 4px !important; font-size: 16px !important; background-color: #ffffff !important; color: #2c3e50 !important; width: 100% !important; box-sizing: border-box !important; height: auto !important;">
+                    <div style="margin-bottom: 20px; text-align: left;">
+                        <label style="display: block; font-weight: bold; color: #34495e; margin-bottom: 8px; font-size: 14px;">Tipo de Circuito:</label>
+                        <select id="tipo-circuito" style="padding: 12px; border: 2px solid #bdc3c7; border-radius: 4px; font-size: 16px; width: 100%; box-sizing: border-box;">
                             <option value="todos">Todos (Mesclado)</option>
                             <option value="reversa">Apenas Engenharia Reversa</option>
                             <option value="normal">Apenas Circuitos Clássicos</option>
                         </select>
                     </div>
                 </div>
-
-                <div style="text-align: center; display: block !important;">
-                    <button onclick="enviarGerarExercicios()" style="background-color: #2980b9 !important; color: white !important; border: none !important; padding: 14px 30px !important; font-size: 16px !important; font-weight: bold !important; border-radius: 4px !important; cursor: pointer !important; width: 100% !important; display: block !important;">
+                <div style="text-align: center;">
+                    <button onclick="enviarGerarExercicios()" style="background-color: #2980b9; color: white; border: none; padding: 14px 30px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%;">
                         Gerar Lista de Exercícios
                     </button>
                 </div>
             </div>
+            <div id="conteudo-exercicios" style="margin-top: 20px;"></div>
         `;
     } else if (modulo === 'circuito-rl') {
         painel.innerHTML = `
             <h2>Análise de Circuitos RL</h2>
-
             <div class="grid-4-partes">
                 <div class="quadrante">
                     <h3>RL - Série</h3>
-                    <div class="container-imagem">
-                        <img src="/static/imagens/rl_serie.jpg" alt="Esquema Circuito RL Série" class="imagem-circuito">
-                    </div>
+                    <div class="container-imagem"><img src="/static/imagens/rl_serie.jpg" alt="Esquema Circuito RL Série" class="imagem-circuito"></div>
                 </div>
-
                 <div class="quadrante">
                     <h3>RL - Paralelo</h3>
-                    <div class="container-imagem">
-                        <img src="/static/imagens/rl_paralelo.jpg" alt="Esquema Circuito RL Paralelo" class="imagem-circuito">
-                    </div>
+                    <div class="container-imagem"><img src="/static/imagens/rl_paralelo.jpg" alt="Esquema Circuito RL Paralelo" class="imagem-circuito"></div>
                 </div>
-
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -212,7 +203,6 @@ function carregarConteudo(modulo) {
                         <p><strong>V<sub>L</sub>:</strong> <span id="res-vl-serie">-</span> V</p>
                     </div>
                 </div>
-
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -237,22 +227,15 @@ function carregarConteudo(modulo) {
     } else if (modulo === 'circuito-rc') {
         painel.innerHTML = `
             <h2>Análise de Circuitos RC</h2>
-
             <div class="grid-4-partes">
                 <div class="quadrante">
                     <h3>RC - Série</h3>
-                    <div class="container-imagem">
-                        <img src="/static/imagens/rc_serie.jpg" alt="Esquema Circuito RC Série" class="imagem-circuito">
-                    </div>
+                    <div class="container-imagem"><img src="/static/imagens/rc_serie.jpg" alt="Esquema Circuito RC Série" class="imagem-circuito"></div>
                 </div>
-
                 <div class="quadrante">
                     <h3>RC - Paralelo</h3>
-                    <div class="container-imagem">
-                        <img src="/static/imagens/rc_paralelo.jpg" alt="Esquema Circuito RC Paralelo" class="imagem-circuito">
-                    </div>
+                    <div class="container-imagem"><img src="/static/imagens/rc_paralelo.jpg" alt="Esquema Circuito RC Paralelo" class="imagem-circuito"></div>
                 </div>
-
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -272,7 +255,6 @@ function carregarConteudo(modulo) {
                         <p><strong>V<sub>C</sub>:</strong> <span id="res-vc-serie">-</span> V</p>
                     </div>
                 </div>
-
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha">
@@ -297,22 +279,15 @@ function carregarConteudo(modulo) {
     } else if (modulo === 'circuito-rlc') {
         painel.innerHTML = `
             <h2>Análise de Circuitos RLC</h2>
-
             <div class="grid-4-partes">
                 <div class="quadrante">
                     <h3>RLC - Série</h3>
-                    <div class="container-imagem">
-                        <img src="/static/imagens/rlc_serie.jpg" alt="Esquema Circuito RLC Série" class="imagem-circuito">
-                    </div>
+                    <div class="container-imagem"><img src="/static/imagens/rlc_serie.jpg" alt="Esquema Circuito RLC Série" class="imagem-circuito"></div>
                 </div>
-
                 <div class="quadrante">
                     <h3>RLC - Paralelo</h3>
-                    <div class="container-imagem">
-                        <img src="/static/imagens/rlc_paralelo.jpg" alt="Esquema Circuito RLC Paralelo" class="imagem-circuito">
-                    </div>
+                    <div class="container-imagem"><img src="/static/imagens/rlc_paralelo.jpg" alt="Esquema Circuito RLC Paralelo" class="imagem-circuito"></div>
                 </div>
-
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha-5">
@@ -333,7 +308,6 @@ function carregarConteudo(modulo) {
                         <p><strong>X<sub>C</sub>:</strong> <span id="res-xc-rlc-serie">-</span> Ω</p>
                     </div>
                 </div>
-
                 <div class="quadrante">
                     <h4>Parâmetros da Fonte e Componentes</h4>
                     <div class="form-linha-5">
@@ -357,10 +331,199 @@ function carregarConteudo(modulo) {
             </div>
         `;
     }
+    else if (modulo === 'trifasico-yy') {
+        painel.innerHTML = `
+            <h2>Circuitos Trifásicos - Y-Y Aterrado</h2>
+            <div class="imagens-container" style="display: flex; gap: 20px; margin-bottom: 20px; justify-content: space-between;">
+                <div style="width: 49%; border: 1px solid #ccc; text-align: center; padding: 5px; background:#fff;">
+                    <img src="/static/imagens/circuito_yy.png" alt="Esquema do Circuito Y-Y" style="max-width: 100%; height: auto;">
+                </div>
+                <div style="width: 49%; border: 1px solid #ccc; text-align: center; padding: 5px; background:#fff;">
+                    <img src="/static/imagens/formulas_yy.png" alt="Fórmulas do Sistema" style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+
+            <fieldset style="margin-bottom: 15px; padding: 15px; border: 1px solid #ccc; background:#fff;">
+                <legend><strong>Parâmetros de Entrada (Use 'i' para complexos em impedâncias)</strong></legend>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <!-- Tensões de Fase em Forma Polar -->
+                    <div>
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Tensões de Fase (Módulo / Ângulo°)</h4>
+                            <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label>Van: </label><input type="number" id="in-van-mod" value="127" placeholder="Módulo" style="width:50%;">
+                            <input type="number" id="in-van-ang" value="0" placeholder="Ângulo°" style="width:50%;">
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label>Vbn: </label><input type="number" id="in-vbn-mod" value="127" placeholder="Módulo" style="width:50%;">
+                            <input type="number" id="in-vbn-ang" value="-120" placeholder="Ângulo°" style="width:50%;">
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label>Vcn: </label><input type="number" id="in-vcn-mod" value="127" placeholder="Módulo" style="width:50%;">
+                            <input type="number" id="in-vcn-ang" value="120" placeholder="Ângulo°" style="width:50%;">
+                        </div>
+                    </div>
+                    <!-- Impedâncias de Linha e Fonte -->
+                    <div>
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias (Fonte e Linha)</h4>
+                        <label>Zfa: </label><input type="text" id="in-zfa" value="0" style="width:90%; margin-bottom:5px;">
+                        <label>Zfb: </label><input type="text" id="in-zfb" value="0" style="width:90%; margin-bottom:5px;">
+                        <label>Zfc: </label><input type="text" id="in-zfc" value="0" style="width:90%; margin-bottom:5px;">
+                        <div style="margin-top:5px;">
+                            <label>ZLa: </label><input type="text" id="in-zla" value="0" style="width:90%; margin-bottom:5px;">
+                            <label>ZLb: </label><input type="text" id="in-zlb" value="0" style="width:90%; margin-bottom:5px;">
+                            <label>ZLc: </label><input type="text" id="in-zlc" value="0" style="width:90%; margin-bottom:5px;">
+                        </div>
+                    </div>
+                    <!-- Impedâncias de Carga e Neutro -->
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias de Carga e Neutro</h4>
+                        <label>ZA: </label><input type="text" id="in-za" value="10+3i" style="width:90%; margin-bottom:5px;">
+                        <label>ZB: </label><input type="text" id="in-zb" value="10+3i" style="width:90%; margin-bottom:5px;">
+                        <label>ZC: </label><input type="text" id="in-zc" value="10+3i" style="width:90%; margin-bottom:5px;">
+                        <label>Zo: </label><input type="text" id="in-zo" value="0+0i" style="width:90%; margin-bottom:5px;">
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- PAINEL DE RESULTADOS EM QUATRO COLUNAS -->
+            <fieldset style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc;">
+                <legend><strong>Painel de Resultados Otimizado</strong></legend>
+                <div class="grid-resultados-trifasico">
+
+                    <!-- Coluna 1: Correntes -->
+                    <div class="col-resultado">
+                        <h4>Correntes de Fase/Linha</h4>
+                        <div id="out-correntes" class="res-bloco">Aguardando cálculo...</div>
+                    </div>
+
+                    <!-- Coluna 2: Tensões de Fase -->
+                    <div class="col-resultado">
+                        <h4>Tensões de Fase na Carga</h4>
+                        <div id="out-tensoes-fase" class="res-bloco">Aguardando cálculo...</div>
+                    </div>
+
+                    <!-- Coluna 3: Tensões de Linha -->
+                    <div class="col-resultado">
+                        <h4>Tensões de Linha na Carga</h4>
+                        <div id="out-tensoes-linha" class="res-bloco">Aguardando cálculo...</div>
+                    </div>
+
+                    <!-- Coluna 4: Potências -->
+                    <div class="col-resultado">
+                        <h4>Potências Modais (Carga)</h4>
+                        <div id="out-potencias" class="res-bloco">Aguardando cálculo...</div>
+                    </div>
+
+                </div>
+            </fieldset>
+
+            <div style="margin-top: 20px; display: flex; gap: 20px;">
+                <button class="btn-calc" onclick="calcularTrifasicoYY()" style="padding: 10px 20px;">Calcular</button>
+                <button class="btn-graf" onclick="alert('Funcionalidade de gráficos temporais trifásicos em desenvolvimento.')" style="padding: 10px 20px;">Exibir Gráficos</button>
+            </div>
+        `;
+    }
+}
+// ==========================================
+// === FUNÇÃO DE CÁLCULO TRIFÁSICO YY =======
+// ==========================================
+function calcularTrifasicoYY() {
+    // Coleta as entradas, remove espaços em branco e garante o tipo correto
+    const obterTexto = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : "0";
+    };
+
+    const obterNumero = (id) => {
+        const el = document.getElementById(id);
+        return el ? Number(el.value) : 0;
+    };
+
+    const payload = {
+        van_mod: obterNumero("in-van-mod"),
+        van_ang: obterNumero("in-van-ang"),
+        vbn_mod: obterNumero("in-vbn-mod"),
+        vbn_ang: obterNumero("in-vbn-ang"),
+        vcn_mod: obterNumero("in-vcn-mod"),
+        vcn_ang: obterNumero("in-vcn-ang"),
+        zfa: obterTexto("in-zfa"),
+        zfb: obterTexto("in-zfb"),
+        zfc: obterTexto("in-zfc"),
+        zla: obterTexto("in-zla"),
+        zlb: obterTexto("in-zlb"),
+        zlc: obterTexto("in-zlc"),
+        za: obterTexto("in-za"),
+        zb: obterTexto("in-zb"),
+        zc: obterTexto("in-zc"),
+        zo: obterTexto("in-zo")
+    };
+
+    // Log para você inspecionar no F12 o que está saindo do navegador
+    console.log("Payload enviado ao servidor:", payload);
+
+    fetch('/calcular_trifasico_yy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.erro); });
+        }
+        return response.json();
+    })
+    .then(res => {
+        console.log("Resposta recebida do servidor:", res);
+
+        // Função interna auxiliar para tratar strings e evitar [object Object]
+        const v = (val) => {
+            if (val === undefined || val === null) return '-';
+            if (typeof val === 'object') {
+                return val.polar || val.retangular || '-';
+            }
+            return val;
+        };
+
+        const getPolar = (obj) => (obj && typeof obj === 'object') ? obj.polar : null;
+        const getRet = (obj) => (obj && typeof obj === 'object') ? obj.retangular : null;
+
+        // RENDERIZANDO COLUNA 1: CORRENTES
+        document.getElementById("out-correntes").innerHTML = `
+            <p><b>I<sub>AN</sub>:</b><br> P: ${v(getPolar(res.ian) || res.ian_pol || res.ian)}<br> R: ${v(getRet(res.ian) || res.ian_ret)}</p><br>
+            <p><b>I<sub>BN</sub>:</b><br> P: ${v(getPolar(res.ibn) || res.ibn_pol || res.ibn)}<br> R: ${v(getRet(res.ibn) || res.ibn_ret)}</p><br>
+            <p><b>I<sub>CN</sub>:</b><br> P: ${v(getPolar(res.icn) || res.icn_pol || res.icn)}<br> R: ${v(getRet(res.icn) || res.icn_ret)}</p><br>
+            <p><b>I<sub>N</sub>:</b><br> P: ${v(getPolar(res.in_n) || getPolar(res.in) || res.in_pol || res.in)}<br> R: ${v(getRet(res.in_n) || getRet(res.in) || res.in_ret)}</p>
+        `;
+
+        // RENDERIZANDO COLUNA 2: TENSÕES DE FASE
+        document.getElementById("out-tensoes-fase").innerHTML = `
+            <p><b>V<sub>AN</sub>:</b><br> P: ${v(getPolar(res.van_c) || res.van_c_pol || res.van)}<br> R: ${v(getRet(res.van_c) || res.van_c_ret)}</p><br>
+            <p><b>V<sub>BN</sub>:</b><br> P: ${v(getPolar(res.vbn_c) || res.vbn_c_pol || res.vbn)}<br> R: ${v(getRet(res.vbn_c) || res.vbn_c_ret)}</p><br>
+            <p><b>V<sub>CN</sub>:</b><br> P: ${v(getPolar(res.vcn_c) || res.vcn_c_pol || res.vcn)}<br> R: ${v(getRet(res.vcn_c) || res.vcn_c_ret)}</p>
+        `;
+
+        // RENDERIZANDO COLUNA 3: TENSÕES DE LINHA
+        document.getElementById("out-tensoes-linha").innerHTML = `
+            <p><b>V<sub>AB</sub>:</b><br> P: ${v(getPolar(res.vab) || res.vab_pol || res.vab)}<br> R: ${v(getRet(res.vab) || res.vab_ret)}</p><br>
+            <p><b>V<sub>BC</sub>:</b><br> P: ${v(getPolar(res.vbc) || res.vbc_pol || res.vbc)}<br> R: ${v(getRet(res.vbc) || res.vbc_ret)}</p><br>
+            <p><b>V<sub>CA</sub>:</b><br> P: ${v(getPolar(res.vca) || res.vca_pol || res.vca)}<br> R: ${v(getRet(res.vca) || res.vca_ret)}</p>
+        `;
+
+        // RENDERIZANDO COLUNA 4: POTÊNCIAS (S, P, Q)
+        document.getElementById("out-potencias").innerHTML = `
+            <p><b>Fase A:</b><br> S: ${v(res.sa)} VA<br> P: ${v(res.pa)} W<br> Q: ${v(res.qa)} VAr</p><br>
+            <p><b>Fase B:</b><br> S: ${v(res.sb)} VA<br> P: ${v(res.pb)} W<br> Q: ${v(res.qb)} VAr</p><br>
+            <p><b>Fase C:</b><br> S: ${v(res.sc)} VA<br> P: ${v(res.pc)} W<br> Q: ${v(res.qc)} VAr</p><br>
+            <p style="border-top: 1px solid #ccc; padding-top: 5px; margin-top: 5px;"><b>Total Trifásico:</b><br> S: ${v(res.stotal)} VA<br> P: ${v(res.ptotal)} W<br> Q: ${v(res.qtotal)} VAr</p>
+        `;
+    })
+    .catch(error => {
+        alert("Erro ao calcular circuito trifásico: " + error.message);
+    });
 }
 
 // ==========================================
-// === GERADOR E RENDERIZADOR DE EXERCÍCIOS =
+// === RENDERIZADOR INTERNO DE EXERCÍCIOS ====
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("conteudo-exercicios");
@@ -371,6 +534,18 @@ document.addEventListener("DOMContentLoaded", () => {
         gerarFolhaDeExercicios(container, qtd, tipo);
     }
 });
+
+function enviarGerarExercicios() {
+    const campoQtd = document.getElementById('num-questoes');
+    const qtd = (campoQtd && campoQtd.value) ? campoQtd.value : 20;
+    const campoTipo = document.getElementById('tipo-circuito');
+    const tipo = campoTipo ? campoTipo.value : 'todos';
+
+    const container = document.getElementById("conteudo-exercicios");
+    if (container) {
+        gerarFolhaDeExercicios(container, parseInt(qtd), tipo);
+    }
+}
 
 function gerarFolhaDeExercicios(container, quantidade, tipoFiltro) {
     container.innerHTML = "";
@@ -389,27 +564,19 @@ function gerarFolhaDeExercicios(container, quantidade, tipoFiltro) {
 
     selecionados.forEach((exercicio, index) => {
         const card = document.createElement("div");
-        card.className = "card mb-4 shadow-sm border-left-primary";
-        card.style.borderLeft = "5px solid #2980b9";
+        card.style = "border: 1px solid #ddd; border-left: 5px solid #2980b9; padding: 15px; margin-bottom: 15px; background: #fff; border-radius: 4px; font-family: Arial, sans-serif;";
 
         card.innerHTML = `
-            <div class="card-header d-flex justify-content-between align-items-center bg-light">
-                <span class="badge badge-info text-uppercase font-weight-bold" style="padding: 6px 12px; background-color: #34495e; color: white;">${exercicio.tipo}</span>
-                <span class="text-muted small" style="font-weight: bold;">Questão ${index + 1}</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-size:0.9rem; color:#555;">
+                <span style="padding: 3px 8px; background: #34495e; color: white; border-radius:3px; font-weight:bold; text-transform:uppercase;">${exercicio.tipo}</span>
+                <strong>Questão ${index + 1}</strong>
             </div>
-            <div class="card-body" style="padding: 20px; font-family: Arial, sans-serif;">
-                <p class="card-text text-dark" style="font-size: 1.1rem; line-height: 1.6;">
-                    ${exercicio.enunciado}
-                </p>
-                <hr style="border-top: 1px dashed #ddd;">
-                <div class="resposta-container mt-3">
-                    <button class="btn btn-sm btn-outline-secondary btn-ver-resposta" onclick="toggleResposta(this)" style="padding: 6px 12px; cursor: pointer; border: 1px solid #7f8c8d; border-radius: 4px; background: transparent; transition: all 0.2s;">
-                        <i class="fas fa-eye mr-1"></i> Mostrar Gabarito
-                    </button>
-                    <div class="resposta-conteudo d-none mt-2 p-3 bg-success-light text-success border border-success rounded" style="display: none; margin-top: 10px; padding: 15px; background-color: #e8f8f5; color: #27ae60; border-radius: 4px; border: 1px solid #2ecc71; font-weight: normal; line-height: 1.8;">
-                        <span style="font-size: 1.1rem; display: block; margin-bottom: 5px;"><strong>Gabarito Oficial:</strong></span>
-                        ${exercicio.resposta}
-                    </div>
+            <p style="font-size: 1.05rem; line-height: 1.5; color:#2c3e50;">${exercicio.enunciado}</p>
+            <hr style="border: 0; border-top: 1px dashed #eee; margin: 10px 0;">
+            <div>
+                <button onclick="toggleResposta(this)" style="padding: 5px 10px; cursor: pointer; border: 1px solid #7f8c8d; background: transparent; border-radius: 4px;">Mostrar Gabarito</button>
+                <div style="display: none; margin-top: 10px; padding: 10px; background-color: #e8f8f5; color: #27ae60; border: 1px solid #2ecc71; border-radius: 4px; line-height: 1.6;">
+                    <strong>Gabarito Oficial:</strong><br>${exercicio.resposta}
                 </div>
             </div>
         `;
@@ -425,23 +592,15 @@ function toggleResposta(botao) {
     const containerResposta = botao.nextElementSibling;
     if (containerResposta.style.display === "none" || containerResposta.style.display === "") {
         containerResposta.style.display = "block";
-        botao.innerHTML = `<i class="fas fa-eye-slash mr-1"></i> Ocultar Gabarito`;
+        botao.innerText = "Ocultar Gabarito";
         botao.style.backgroundColor = "#7f8c8d";
         botao.style.color = "white";
     } else {
         containerResposta.style.display = "none";
-        botao.innerHTML = `<i class="fas fa-eye mr-1"></i> Mostrar Gabarito`;
+        botao.innerText = "Mostrar Gabarito";
         botao.style.backgroundColor = "transparent";
         botao.style.color = "inherit";
     }
-}
-
-function enviarGerarExercicios() {
-    const campoQtd = document.getElementById('num-questoes');
-    const qtd = (campoQtd && campoQtd.value) ? campoQtd.value : 20;
-    const campoTipo = document.getElementById('tipo-circuito');
-    const tipo = campoTipo ? campoTipo.value : 'todos';
-    window.open(`/gerar_exercicios?qtd=${qtd}&tipo=${tipo}`, '_blank');
 }
 
 // ==========================================
@@ -453,10 +612,7 @@ function calcularSerie() {
     const l = document.getElementById('l-serie').value;
     const f = document.getElementById('f-serie').value;
 
-    if (!v || !r || !l || !f) {
-        alert("Preencha todos os parameters (V, R, L e f) da Série.");
-        return;
-    }
+    if (!v || !r || !l || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_serie', {
         method: 'POST',
@@ -470,11 +626,8 @@ function calcularSerie() {
             document.getElementById('res-i-serie').innerText = data.i;
             document.getElementById('res-vr-serie').innerText = data.vr;
             document.getElementById('res-vl-serie').innerText = data.vl;
-        } else {
-            alert("Erro: " + data.erro);
-        }
-    })
-    .catch(error => console.error('Erro:', error));
+        } else { alert("Erro: " + data.erro); }
+    });
 }
 
 function calcularParalelo() {
@@ -483,10 +636,7 @@ function calcularParalelo() {
     const l = document.getElementById('l-paralelo').value;
     const f = document.getElementById('f-paralelo').value;
 
-    if (!v || !r || !l || !f) {
-        alert("Preencha todos os parâmetros (V, R, L e f) do Paralelo.");
-        return;
-    }
+    if (!v || !r || !l || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_paralelo', {
         method: 'POST',
@@ -500,11 +650,8 @@ function calcularParalelo() {
             document.getElementById('res-it-paralelo').innerText = data.it;
             document.getElementById('res-ir-paralelo').innerText = data.ir;
             document.getElementById('res-il-paralelo').innerText = data.il;
-        } else {
-            alert("Erro: " + data.erro);
-        }
-    })
-    .catch(error => console.error('Erro:', error));
+        } else { alert("Erro: " + data.erro); }
+    });
 }
 
 // ==========================================
@@ -516,10 +663,7 @@ function calcularSerieRC() {
     const c = document.getElementById('c-rc-serie').value;
     const f = document.getElementById('f-rc-serie').value;
 
-    if (!v || !r || !c || !f) {
-        alert("Preencha todos os parâmetros (V, R, C e f) da Série RC.");
-        return;
-    }
+    if (!v || !r || !c || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_rc_serie', {
         method: 'POST',
@@ -533,11 +677,8 @@ function calcularSerieRC() {
             document.getElementById('res-i-rc-serie').innerText = data.i;
             document.getElementById('res-vr-rc-serie').innerText = data.vr;
             document.getElementById('res-vc-serie').innerText = data.vc;
-        } else {
-            alert("Erro: " + data.erro);
-        }
-    })
-    .catch(error => console.error('Erro:', error));
+        } else { alert("Erro: " + data.erro); }
+    });
 }
 
 function calcularParaleloRC() {
@@ -546,10 +687,7 @@ function calcularParaleloRC() {
     const c = document.getElementById('c-rc-paralelo').value;
     const f = document.getElementById('f-rc-paralelo').value;
 
-    if (!v || !r || !c || !f) {
-        alert("Preencha todos os parâmetros (V, R, C e f) do Paralelo RC.");
-        return;
-    }
+    if (!v || !r || !c || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_rc_paralelo', {
         method: 'POST',
@@ -563,15 +701,65 @@ function calcularParaleloRC() {
             document.getElementById('res-it-rc-paralelo').innerText = data.it;
             document.getElementById('res-ir-rc-paralelo').innerText = data.ir;
             document.getElementById('res-ic-paralelo').innerText = data.ic;
-        } else {
-            alert("Erro: " + data.erro);
-        }
-    })
-    .catch(error => console.error('Erro:', error));
+        } else { alert("Erro: " + data.erro); }
+    });
 }
 
 // ==========================================
-// === GRÁFICOS (GERAL E JANELAS MODAIS) ====
+// === CÁLCULOS DO CIRCUITO RLC =============
+// ==========================================
+function calcularSerieRLC() {
+    const v = document.getElementById('v-rlc-serie').value;
+    const r = document.getElementById('r-rlc-serie').value;
+    const l = document.getElementById('l-rlc-serie').value;
+    const c = document.getElementById('c-rlc-serie').value;
+    const f = document.getElementById('f-rlc-serie').value;
+
+    if (!v || !r || !l || !c || !f) { alert("Preencha todos os parâmetros."); return; }
+
+    fetch('/calcular_rlc_serie', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ v: v, r: r, l: l, c: c, f: f })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.sucesso) {
+            document.getElementById('res-z-serie').innerText = data.z;
+            document.getElementById('res-i-rlc-serie').innerText = data.i;
+            document.getElementById('res-xl-rlc-serie').innerText = data.xl;
+            document.getElementById('res-xc-rlc-serie').innerText = data.xc;
+        } else { alert("Erro: " + data.erro); }
+    });
+}
+
+function calcularParaleloRLC() {
+    const v = document.getElementById('v-rlc-paralelo').value;
+    const r = document.getElementById('r-rlc-paralelo').value;
+    const l = document.getElementById('l-rlc-paralelo').value;
+    const c = document.getElementById('c-rlc-paralelo').value;
+    const f = document.getElementById('f-rlc-paralelo').value;
+
+    if (!v || !r || !l || !c || !f) { alert("Preencha todos os parâmetros."); return; }
+
+    fetch('/calcular_rlc_paralelo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ v: v, r: r, l: l, c: c, f: f })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.sucesso) {
+            document.getElementById('res-z-paralelo').innerText = data.z;
+            document.getElementById('res-it-rlc-paralelo').innerText = data.it;
+            document.getElementById('res-il-rlc-paralelo').innerText = data.il;
+            document.getElementById('res-ic-rlc-paralelo').innerText = data.ic;
+        } else { alert("Erro: " + data.erro); }
+    });
+}
+
+// ==========================================
+// === CONTROLE DE MÓDULOS DE GRÁFICOS ======
 // ==========================================
 function exibirGraficoGenerico(rota_url, dados_json) {
     const modal = document.getElementById('modal-graficos');
@@ -673,7 +861,7 @@ function exibirGraficoGenerico(rota_url, dados_json) {
             fecharModal();
         }
     })
-    .catch(error => {
+    .catch(() => {
         msgCarregando.style.display = "none";
         alert("Erro de comunicação com o servidor.");
         fecharModal();
@@ -716,74 +904,6 @@ function abrirGraficosParaleloRC() {
     exibirGraficoGenerico('/graficos_rc_paralelo', { v: v, r: r, c: c, f: f });
 }
 
-// ==========================================
-// === CÁLCULOS DO CIRCUITO RLC =============
-// ==========================================
-function calcularSerieRLC() {
-    const v = document.getElementById('v-rlc-serie').value;
-    const r = document.getElementById('r-rlc-serie').value;
-    const l = document.getElementById('l-rlc-serie').value;
-    const c = document.getElementById('c-rlc-serie').value;
-    const f = document.getElementById('f-rlc-serie').value;
-
-    if (!v || !r || !l || !c || !f) {
-        alert("Preencha todos os 5 parâmetros da Série RLC.");
-        return;
-    }
-
-    fetch('/calcular_rlc_serie', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, l: l, c: c, f: f })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.sucesso) {
-            document.getElementById('res-z-serie').innerText = data.z;
-            document.getElementById('res-i-rlc-serie').innerText = data.i;
-            document.getElementById('res-xl-rlc-serie').innerText = data.xl;
-            document.getElementById('res-xc-rlc-serie').innerText = data.xc;
-        } else {
-            alert("Erro: " + data.erro);
-        }
-    })
-    .catch(error => console.error('Erro:', error));
-}
-
-function calcularParaleloRLC() {
-    const v = document.getElementById('v-rlc-paralelo').value;
-    const r = document.getElementById('r-rlc-paralelo').value;
-    const l = document.getElementById('l-rlc-paralelo').value;
-    const c = document.getElementById('c-rlc-paralelo').value;
-    const f = document.getElementById('f-rlc-paralelo').value;
-
-    if (!v || !r || !l || !c || !f) {
-        alert("Preencha todos os 5 parâmetros do Paralelo RLC.");
-        return;
-    }
-
-    fetch('/calcular_rlc_paralelo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, l: l, c: c, f: f })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.sucesso) {
-            document.getElementById('res-z-paralelo').innerText = data.z;
-            document.getElementById('res-it-rlc-paralelo').innerText = data.it;
-            document.getElementById('res-il-rlc-paralelo').innerText = data.il;
-            document.getElementById('res-ic-rlc-paralelo').innerText = data.ic;
-        } else {
-            alert("Erro: " + data.erro);
-        }
-    })
-    .catch(error => console.error('Erro:', error));
-}
-
-// ==========================================
-// === GRÁFICOS RLC =========================
-// ==========================================
 function abrirGraficosSerieRLC() {
     const v = document.getElementById('v-rlc-serie').value;
     const r = document.getElementById('r-rlc-serie').value;
@@ -805,30 +925,19 @@ function abrirGraficosParaleloRLC() {
 }
 
 // ==========================================
-// === CONTROLES DA JANELA MODAL E FECHAMENTO
+// === JANELA MODAL E INICIALIZAÇÃO =========
 // ==========================================
 function fecharModal() {
     document.getElementById('modal-graficos').style.display = "none";
     const containerCheckboxes = document.getElementById('container-chk-graficos');
-    if (containerCheckboxes) {
-        containerCheckboxes.innerHTML = "";
-    }
+    if (containerCheckboxes) containerCheckboxes.innerHTML = "";
 }
 
-function fecharJanela() {
-    window.close();
-}
-
-// ==========================================
-// === INICIALIZAÇÃO DA PÁGINA ==============
-// ==========================================
 window.onload = function() {
     carregarConteudo('inicio');
 };
 
 window.onclick = function(event) {
     const modal = document.getElementById('modal-graficos');
-    if (event.target == modal) {
-        fecharModal();
-    }
+    if (event.target == modal) fecharModal();
 };

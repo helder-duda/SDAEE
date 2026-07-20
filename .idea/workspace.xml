@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC e Exercicios OK">
+    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos) e Exercicios com 20 Questoes OK">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1784521276012</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos) e Exercicios com 20 Questoes OK">
+      <option name="closed" value="true" />
+      <created>1784524390465</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1784524390467</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -190,6 +200,7 @@
     <MESSAGE value="Ponto Perfeito - Menu Análise CA - Circuito RL OK" />
     <MESSAGE value="Ponto Perfeito - Menus início, Análise CA - Circuito RL, RC e RLC OK" />
     <MESSAGE value="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC e Exercicios OK" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC e Exercicios OK" />
+    <MESSAGE value="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos) e Exercicios com 20 Questoes OK" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos) e Exercicios com 20 Questoes OK" />
   </component>
 </project>

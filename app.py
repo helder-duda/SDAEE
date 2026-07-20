@@ -2,13 +2,17 @@ import base64
 import io
 import math
 import random
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+import cmath
+import os
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from PIL import Image, ImageTk
+
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from models import db, User  # Importa o banco do seu arquivo models.py
 
@@ -28,7 +32,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 with app.app_context():
     db.create_all()
@@ -117,7 +121,7 @@ def alterar_senha():
     return render_template('alterar_senha.html')
 
 # ==========================================
-# === ROTA DE GERAÇÃO DE EXERCÍCIOS ATUALIZADA ===
+# === ROTA DE GERAÇÃO DE EXERCÍCIOS =======
 # ==========================================
 @app.route('/gerar_exercicios')
 @login_required
@@ -287,6 +291,7 @@ def gerar_exercicios():
 # === CÁLCULOS: MÓDULO RL ==================
 # ==========================================
 @app.route('/calcular_serie', methods=['POST'])
+@login_required
 def calcular_serie():
     dados = request.get_json()
     try:
@@ -317,6 +322,7 @@ def calcular_serie():
         return jsonify({'sucesso': False, 'erro': 'Valores inválidos.'})
 
 @app.route('/calcular_paralelo', methods=['POST'])
+@login_required
 def calcular_paralelo():
     dados = request.get_json()
     try:
@@ -349,6 +355,7 @@ def calcular_paralelo():
 # === CÁLCULOS: MÓDULO RC ==================
 # ==========================================
 @app.route('/calcular_rc_serie', methods=['POST'])
+@login_required
 def calcular_rc_serie():
     dados = request.get_json()
     try:
@@ -380,6 +387,7 @@ def calcular_rc_serie():
         return jsonify({'sucesso': False, 'erro': 'Valores inválidos.'})
 
 @app.route('/calcular_rc_paralelo', methods=['POST'])
+@login_required
 def calcular_rc_paralelo():
     dados = request.get_json()
     try:
@@ -413,6 +421,7 @@ def calcular_rc_paralelo():
 # === CÁLCULOS: MÓDULO RLC =================
 # ==========================================
 @app.route('/calcular_rlc_serie', methods=['POST'])
+@login_required
 def calcular_rlc_serie():
     try:
         dados = request.json
@@ -445,6 +454,7 @@ def calcular_rlc_serie():
         return jsonify({'sucesso': False, 'erro': str(e)})
 
 @app.route('/calcular_rlc_paralelo', methods=['POST'])
+@login_required
 def calcular_rlc_paralelo():
     try:
         dados = request.json
@@ -483,6 +493,7 @@ def calcular_rlc_paralelo():
 # === GRÁFICOS: MÓDULO RL ==================
 # ==========================================
 @app.route('/graficos_serie', methods=['POST'])
+@login_required
 def graficos_serie():
     dados = request.get_json()
     try:
@@ -596,6 +607,7 @@ def graficos_serie():
         return jsonify({'sucesso': False, 'erro': str(e)})
 
 @app.route('/graficos_paralelo', methods=['POST'])
+@login_required
 def graficos_paralelo():
     dados = request.get_json()
     try:
@@ -706,11 +718,11 @@ def graficos_paralelo():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
-
 # ==========================================
 # === GRÁFICOS: MÓDULO RC ==================
 # ==========================================
 @app.route('/graficos_rc_serie', methods=['POST'])
+@login_required
 def graficos_rc_serie():
     dados = request.get_json()
     try:
@@ -823,8 +835,8 @@ def graficos_rc_serie():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
-
 @app.route('/graficos_rc_paralelo', methods=['POST'])
+@login_required
 def graficos_rc_paralelo():
     dados = request.get_json()
     try:
@@ -934,11 +946,11 @@ def graficos_rc_paralelo():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
-
 # ==========================================
 # === GRÁFICOS: MÓDULO RLC =================
 # ==========================================
 @app.route('/graficos_rlc_serie', methods=['POST'])
+@login_required
 def graficos_rlc_serie():
     try:
         dados = request.json
@@ -1068,8 +1080,8 @@ def graficos_rlc_serie():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
-
 @app.route('/graficos_rlc_paralelo', methods=['POST'])
+@login_required
 def graficos_rlc_paralelo():
     try:
         dados = request.json
@@ -1197,5 +1209,163 @@ def graficos_rlc_paralelo():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
+# ==========================================
+# === CÁLCULO E ROTA: MÓDULO TRIFÁSICO Y-Y =
+# ==========================================
+import cmath
+import math
+from flask import jsonify, request
+
+def calcular_triphasico_yy(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZA, ZB, ZC, Zo):
+    # Impedâncias equivalentes por fase (Fonte + Linha + Carga)
+    ZeqA = Zfa + ZLa + ZA
+    ZeqB = Zfb + ZLb + ZB
+    ZeqC = Zfc + ZLc + ZC
+
+    # Proteção contra divisão por zero nas fases
+    if ZeqA == 0: ZeqA = 1e-6 + 0j
+    if ZeqB == 0: ZeqB = 1e-6 + 0j
+    if ZeqC == 0: ZeqC = 1e-6 + 0j
+
+    # Tensão de deslocamento de neutro (V_Nn) via Millman
+    if abs(Zo) < 1e-6:
+        V_Nn = 0j
+    else:
+        numerador = (Van / ZeqA) + (Vbn / ZeqB) + (Vcn / ZeqC)
+        denominador = (1 / ZeqA) + (1 / ZeqB) + (1 / ZeqC) + (1 / Zo)
+        V_Nn = numerador / denominador
+
+    # Correntes de Linha/Fase
+    IAN = (Van - V_Nn) / ZeqA
+    IBN = (Vbn - V_Nn) / ZeqB
+    ICN = (Vcn - V_Nn) / ZeqC
+    IN = IAN + IBN + ICN
+
+    # Tensões de Fase na Carga
+    VAN = IAN * ZA
+    VBN = IBN * ZB
+    VCN = ICN * ZC
+
+    # Tensões de Linha na Carga
+    VAB = VAN - VBN
+    VBC = VBN - VCN
+    VCA = VCN - VAN
+
+    # === CÁLCULO DAS POTÊNCIAS NA CARGA ===
+    # S = V * conj(I)
+    Sa = VAN * IAN.conjugate()
+    Sb = VBN * IBN.conjugate()
+    Sc = VCN * ICN.conjugate()
+    Stotal = Sa + Sb + Sc
+
+    return {
+        "IAN": IAN, "IBN": IBN, "ICN": ICN, "IN": IN,
+        "VAN": VAN, "VBN": VBN, "VCN": VCN,
+        "VAB": VAB, "VBC": VBC, "VCA": VCA,
+        # Adicionados ao retorno da função matemática
+        "Sa": Sa, "Sb": Sb, "Sc": Sc, "Stotal": Stotal
+    }
+
+
+@app.route('/calcular_trifasico_yy', methods=['POST'])
+@login_required
+def rota_calcular_trifasico_yy():
+    dados = request.get_json() or {}
+
+    # Conversor robusto
+    def converter(valor):
+        if valor is None:
+            return 0j
+        texto = str(valor).strip().lower().replace(" ", "").replace("i", "j")
+        if not texto:
+            return 0j
+        try:
+            return complex(texto)
+        except ValueError:
+            return 0j
+
+    def formatar_complexo(c):
+        real = round(c.real, 2)
+        imag = round(c.imag, 2)
+
+        if imag == 0:
+            retangular = f"{real}"
+        elif real == 0:
+            retangular = f"{imag}i"
+        else:
+            retangular = f"{real} + {imag}i" if imag > 0 else f"{real} - {abs(imag)}i"
+
+        magnitude = round(abs(c), 2)
+        angulo = round(math.degrees(cmath.phase(c)), 1)
+        polar = f"{magnitude} ∠ {angulo}°"
+
+        return {"polar": polar, "retangular": retangular}
+
+    # Captura e tratamento seguro de nulos/vazios
+    try:
+        van_mod = float(dados.get('van_mod', 0) or 0)
+        van_ang = float(dados.get('van_ang', 0) or 0)
+        Van = cmath.rect(van_mod, math.radians(van_ang))
+
+        vbn_mod = float(dados.get('vbn_mod', 0) or 0)
+        vbn_ang = float(dados.get('vbn_ang', 0) or 0)
+        Vbn = cmath.rect(vbn_mod, math.radians(vbn_ang))
+
+        vcn_mod = float(dados.get('vcn_mod', 0) or 0)
+        vcn_ang = float(dados.get('vcn_ang', 0) or 0)
+        Vcn = cmath.rect(vcn_mod, math.radians(vcn_ang))
+    except (ValueError, TypeError):
+        Van, Vbn, Vcn = 0j, 0j, 0j
+
+    Zfa = converter(dados.get('zfa'))
+    Zfb = converter(dados.get('zfb'))
+    Zfc = converter(dados.get('zfc'))
+    ZLa = converter(dados.get('zla'))
+    ZLb = converter(dados.get('zlb'))
+    ZLc = converter(dados.get('zlc'))
+    ZA = converter(dados.get('za'))
+    ZB = converter(dados.get('zb'))
+    ZC = converter(dados.get('zc'))
+    Zo = converter(dados.get('zo'))
+
+    try:
+        res = calcular_triphasico_yy(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZA, ZB, ZC, Zo)
+
+        # Extração das potências para facilitar o envio estruturado
+        Sa, Sb, Sc, St = res["Sa"], res["Sb"], res["Sc"], res["Stotal"]
+
+        return jsonify({
+            "ian": formatar_complexo(res["IAN"]),
+            "ibn": formatar_complexo(res["IBN"]),
+            "icn": formatar_complexo(res["ICN"]),
+            "in_n": formatar_complexo(res["IN"]),
+            "van_c": formatar_complexo(res["VAN"]),
+            "vbn_c": formatar_complexo(res["VBN"]),
+            "vcn_c": formatar_complexo(res["VCN"]),
+            "vab": formatar_complexo(res["VAB"]),
+            "vbc": formatar_complexo(res["VBC"]),
+            "vca": formatar_complexo(res["VCA"]),
+
+            # === NOVOS CAMPOS ENVIADOS PARA O FRONTEND ===
+            # Potências Ativas (W)
+            "pa": round(Sa.real, 2),
+            "pb": round(Sb.real, 2),
+            "pc": round(Sc.real, 2),
+            "ptotal": round(St.real, 2),
+
+            # Potências Reativas (VAr)
+            "qa": round(Sa.imag, 2),
+            "qb": round(Sb.imag, 2),
+            "qc": round(Sc.imag, 2),
+            "qtotal": round(St.imag, 2),
+
+            # Potências Aparentes (VA)
+            "sa": round(abs(Sa), 2),
+            "sb": round(abs(Sb), 2),
+            "sc": round(abs(Sc), 2),
+            "stotal": round(abs(St), 2)
+        })
+    except Exception as e:
+        return jsonify({"erro": f"Erro no cálculo: {str(e)}"}), 400
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
