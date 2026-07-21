@@ -138,6 +138,7 @@ function toggleMenu(idMenu) {
 
 function carregarConteudo(modulo) {
     const painel = document.getElementById('painel-dinamico');
+    if (!painel) return;
 
     if (modulo === 'inicio') {
         painel.innerHTML = `
@@ -346,23 +347,21 @@ function carregarConteudo(modulo) {
             <fieldset style="margin-bottom: 15px; padding: 15px; border: 1px solid #ccc; background:#fff;">
                 <legend><strong>Parâmetros de Entrada (Use 'i' para complexos em impedâncias)</strong></legend>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-                    <!-- Tensões de Fase em Forma Polar -->
                     <div>
                         <h4 style="margin-bottom:8px; color:#2980b9;">Tensões de Fase (Módulo / Ângulo°)</h4>
-                            <div style="display:flex; gap:5px; margin-bottom:5px;">
-                            <label>Van: </label><input type="number" id="in-van-mod" value="127" placeholder="Módulo" style="width:50%;">
-                            <input type="number" id="in-van-ang" value="0" placeholder="Ângulo°" style="width:50%;">
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label>Van: </label><input type="number" id="in-van-mod" value="127" style="width:50%;">
+                            <input type="number" id="in-van-ang" value="0" style="width:50%;">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
-                            <label>Vbn: </label><input type="number" id="in-vbn-mod" value="127" placeholder="Módulo" style="width:50%;">
-                            <input type="number" id="in-vbn-ang" value="-120" placeholder="Ângulo°" style="width:50%;">
+                            <label>Vbn: </label><input type="number" id="in-vbn-mod" value="127" style="width:50%;">
+                            <input type="number" id="in-vbn-ang" value="-120" style="width:50%;">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
-                            <label>Vcn: </label><input type="number" id="in-vcn-mod" value="127" placeholder="Módulo" style="width:50%;">
-                            <input type="number" id="in-vcn-ang" value="120" placeholder="Ângulo°" style="width:50%;">
+                            <label>Vcn: </label><input type="number" id="in-vcn-mod" value="127" style="width:50%;">
+                            <input type="number" id="in-vcn-ang" value="120" style="width:50%;">
                         </div>
                     </div>
-                    <!-- Impedâncias de Linha e Fonte -->
                     <div>
                         <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias (Fonte e Linha)</h4>
                         <label>Zfa: </label><input type="text" id="in-zfa" value="0" style="width:90%; margin-bottom:5px;">
@@ -374,7 +373,6 @@ function carregarConteudo(modulo) {
                             <label>ZLc: </label><input type="text" id="in-zlc" value="0" style="width:90%; margin-bottom:5px;">
                         </div>
                     </div>
-                    <!-- Impedâncias de Carga e Neutro -->
                     <div style="margin-bottom: 15px;">
                         <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias de Carga e Neutro</h4>
                         <label>ZA: </label><input type="text" id="in-za" value="10+3i" style="width:90%; margin-bottom:5px;">
@@ -385,50 +383,40 @@ function carregarConteudo(modulo) {
                 </div>
             </fieldset>
 
-            <!-- PAINEL DE RESULTADOS EM QUATRO COLUNAS -->
             <fieldset style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc;">
                 <legend><strong>Painel de Resultados Otimizado</strong></legend>
                 <div class="grid-resultados-trifasico">
-
-                    <!-- Coluna 1: Correntes -->
                     <div class="col-resultado">
                         <h4>Correntes de Fase/Linha</h4>
                         <div id="out-correntes" class="res-bloco">Aguardando cálculo...</div>
                     </div>
-
-                    <!-- Coluna 2: Tensões de Fase -->
                     <div class="col-resultado">
                         <h4>Tensões de Fase na Carga</h4>
                         <div id="out-tensoes-fase" class="res-bloco">Aguardando cálculo...</div>
                     </div>
-
-                    <!-- Coluna 3: Tensões de Linha -->
                     <div class="col-resultado">
                         <h4>Tensões de Linha na Carga</h4>
                         <div id="out-tensoes-linha" class="res-bloco">Aguardando cálculo...</div>
                     </div>
-
-                    <!-- Coluna 4: Potências -->
                     <div class="col-resultado">
                         <h4>Potências Modais (Carga)</h4>
                         <div id="out-potencias" class="res-bloco">Aguardando cálculo...</div>
                     </div>
-
                 </div>
             </fieldset>
 
             <div style="margin-top: 20px; display: flex; gap: 20px;">
                 <button class="btn-calc" onclick="calcularTrifasicoYY()" style="padding: 10px 20px;">Calcular</button>
-                <button class="btn-graf" onclick="alert('Funcionalidade de gráficos temporais trifásicos em desenvolvimento.')" style="padding: 10px 20px;">Exibir Gráficos</button>
+                <button class="btn-graf" onclick="abrirGraficosTrifasico()" style="padding: 10px 20px;">Exibir Gráficos</button>
             </div>
         `;
     }
 }
+
 // ==========================================
 // === FUNÇÃO DE CÁLCULO TRIFÁSICO YY =======
 // ==========================================
 function calcularTrifasicoYY() {
-    // Coleta as entradas, remove espaços em branco e garante o tipo correto
     const obterTexto = (id) => {
         const el = document.getElementById(id);
         return el ? el.value.trim() : "0";
@@ -440,26 +428,13 @@ function calcularTrifasicoYY() {
     };
 
     const payload = {
-        van_mod: obterNumero("in-van-mod"),
-        van_ang: obterNumero("in-van-ang"),
-        vbn_mod: obterNumero("in-vbn-mod"),
-        vbn_ang: obterNumero("in-vbn-ang"),
-        vcn_mod: obterNumero("in-vcn-mod"),
-        vcn_ang: obterNumero("in-vcn-ang"),
-        zfa: obterTexto("in-zfa"),
-        zfb: obterTexto("in-zfb"),
-        zfc: obterTexto("in-zfc"),
-        zla: obterTexto("in-zla"),
-        zlb: obterTexto("in-zlb"),
-        zlc: obterTexto("in-zlc"),
-        za: obterTexto("in-za"),
-        zb: obterTexto("in-zb"),
-        zc: obterTexto("in-zc"),
-        zo: obterTexto("in-zo")
+        van_mod: obterNumero("in-van-mod"), van_ang: obterNumero("in-van-ang"),
+        vbn_mod: obterNumero("in-vbn-mod"), vbn_ang: obterNumero("in-vbn-ang"),
+        vcn_mod: obterNumero("in-vcn-mod"), vcn_ang: obterNumero("in-vcn-ang"),
+        zfa: obterTexto("in-zfa"), zfb: obterTexto("in-zfb"), zfc: obterTexto("in-zfc"),
+        zla: obterTexto("in-zla"), zlb: obterTexto("in-zlb"), zlc: obterTexto("in-zlc"),
+        za: obterTexto("in-za"), zb: obterTexto("in-zb"), zc: obterTexto("in-zc"), zo: obterTexto("in-zo")
     };
-
-    // Log para você inspecionar no F12 o que está saindo do navegador
-    console.log("Payload enviado ao servidor:", payload);
 
     fetch('/calcular_trifasico_yy', {
         method: 'POST',
@@ -473,21 +448,15 @@ function calcularTrifasicoYY() {
         return response.json();
     })
     .then(res => {
-        console.log("Resposta recebida do servidor:", res);
-
-        // Função interna auxiliar para tratar strings e evitar [object Object]
         const v = (val) => {
             if (val === undefined || val === null) return '-';
-            if (typeof val === 'object') {
-                return val.polar || val.retangular || '-';
-            }
+            if (typeof val === 'object') return val.polar || val.retangular || '-';
             return val;
         };
 
         const getPolar = (obj) => (obj && typeof obj === 'object') ? obj.polar : null;
         const getRet = (obj) => (obj && typeof obj === 'object') ? obj.retangular : null;
 
-        // RENDERIZANDO COLUNA 1: CORRENTES
         document.getElementById("out-correntes").innerHTML = `
             <p><b>I<sub>AN</sub>:</b><br> P: ${v(getPolar(res.ian) || res.ian_pol || res.ian)}<br> R: ${v(getRet(res.ian) || res.ian_ret)}</p><br>
             <p><b>I<sub>BN</sub>:</b><br> P: ${v(getPolar(res.ibn) || res.ibn_pol || res.ibn)}<br> R: ${v(getRet(res.ibn) || res.ibn_ret)}</p><br>
@@ -495,21 +464,18 @@ function calcularTrifasicoYY() {
             <p><b>I<sub>N</sub>:</b><br> P: ${v(getPolar(res.in_n) || getPolar(res.in) || res.in_pol || res.in)}<br> R: ${v(getRet(res.in_n) || getRet(res.in) || res.in_ret)}</p>
         `;
 
-        // RENDERIZANDO COLUNA 2: TENSÕES DE FASE
         document.getElementById("out-tensoes-fase").innerHTML = `
             <p><b>V<sub>AN</sub>:</b><br> P: ${v(getPolar(res.van_c) || res.van_c_pol || res.van)}<br> R: ${v(getRet(res.van_c) || res.van_c_ret)}</p><br>
             <p><b>V<sub>BN</sub>:</b><br> P: ${v(getPolar(res.vbn_c) || res.vbn_c_pol || res.vbn)}<br> R: ${v(getRet(res.vbn_c) || res.vbn_c_ret)}</p><br>
             <p><b>V<sub>CN</sub>:</b><br> P: ${v(getPolar(res.vcn_c) || res.vcn_c_pol || res.vcn)}<br> R: ${v(getRet(res.vcn_c) || res.vcn_c_ret)}</p>
         `;
 
-        // RENDERIZANDO COLUNA 3: TENSÕES DE LINHA
         document.getElementById("out-tensoes-linha").innerHTML = `
             <p><b>V<sub>AB</sub>:</b><br> P: ${v(getPolar(res.vab) || res.vab_pol || res.vab)}<br> R: ${v(getRet(res.vab) || res.vab_ret)}</p><br>
             <p><b>V<sub>BC</sub>:</b><br> P: ${v(getPolar(res.vbc) || res.vbc_pol || res.vbc)}<br> R: ${v(getRet(res.vbc) || res.vbc_ret)}</p><br>
             <p><b>V<sub>CA</sub>:</b><br> P: ${v(getPolar(res.vca) || res.vca_pol || res.vca)}<br> R: ${v(getRet(res.vca) || res.vca_ret)}</p>
         `;
 
-        // RENDERIZANDO COLUNA 4: POTÊNCIAS (S, P, Q)
         document.getElementById("out-potencias").innerHTML = `
             <p><b>Fase A:</b><br> S: ${v(res.sa)} VA<br> P: ${v(res.pa)} W<br> Q: ${v(res.qa)} VAr</p><br>
             <p><b>Fase B:</b><br> S: ${v(res.sb)} VA<br> P: ${v(res.pb)} W<br> Q: ${v(res.qb)} VAr</p><br>
@@ -517,9 +483,7 @@ function calcularTrifasicoYY() {
             <p style="border-top: 1px solid #ccc; padding-top: 5px; margin-top: 5px;"><b>Total Trifásico:</b><br> S: ${v(res.stotal)} VA<br> P: ${v(res.ptotal)} W<br> Q: ${v(res.qtotal)} VAr</p>
         `;
     })
-    .catch(error => {
-        alert("Erro ao calcular circuito trifásico: " + error.message);
-    });
+    .catch(error => alert("Erro ao calcular circuito trifásico: " + error.message));
 }
 
 // ==========================================
@@ -542,22 +506,16 @@ function enviarGerarExercicios() {
     const tipo = campoTipo ? campoTipo.value : 'todos';
 
     const container = document.getElementById("conteudo-exercicios");
-    if (container) {
-        gerarFolhaDeExercicios(container, parseInt(qtd), tipo);
-    }
+    if (container) gerarFolhaDeExercicios(container, parseInt(qtd), tipo);
 }
 
 function gerarFolhaDeExercicios(container, quantidade, tipoFiltro) {
     container.innerHTML = "";
     let poolQuestoes = [];
 
-    if (tipoFiltro === "normal") {
-        poolQuestoes = [...bancoDeExercicios.normal];
-    } else if (tipoFiltro === "reversa") {
-        poolQuestoes = [...bancoDeExercicios.engenharia_reversa];
-    } else {
-        poolQuestoes = [...bancoDeExercicios.normal, ...bancoDeExercicios.engenharia_reversa];
-    }
+    if (tipoFiltro === "normal") poolQuestoes = [...bancoDeExercicios.normal];
+    else if (tipoFiltro === "reversa") poolQuestoes = [...bancoDeExercicios.engenharia_reversa];
+    else poolQuestoes = [...bancoDeExercicios.normal, ...bancoDeExercicios.engenharia_reversa];
 
     poolQuestoes.sort(() => Math.random() - 0.5);
     const selecionados = poolQuestoes.slice(0, Math.min(quantidade, poolQuestoes.length));
@@ -565,7 +523,6 @@ function gerarFolhaDeExercicios(container, quantidade, tipoFiltro) {
     selecionados.forEach((exercicio, index) => {
         const card = document.createElement("div");
         card.style = "border: 1px solid #ddd; border-left: 5px solid #2980b9; padding: 15px; margin-bottom: 15px; background: #fff; border-radius: 4px; font-family: Arial, sans-serif;";
-
         card.innerHTML = `
             <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-size:0.9rem; color:#555;">
                 <span style="padding: 3px 8px; background: #34495e; color: white; border-radius:3px; font-weight:bold; text-transform:uppercase;">${exercicio.tipo}</span>
@@ -583,9 +540,7 @@ function gerarFolhaDeExercicios(container, quantidade, tipoFiltro) {
         container.appendChild(card);
     });
 
-    if (typeof MathJax !== "undefined") {
-        MathJax.typesetPromise();
-    }
+    if (typeof MathJax !== "undefined") MathJax.typesetPromise();
 }
 
 function toggleResposta(botao) {
@@ -604,20 +559,19 @@ function toggleResposta(botao) {
 }
 
 // ==========================================
-// === CÁLCULOS DO CIRCUITO RL =============
+// === CÁLCULOS DOS CIRCUITOS MONOFÁSICOS ===
 // ==========================================
 function calcularSerie() {
     const v = document.getElementById('v-serie').value;
     const r = document.getElementById('r-serie').value;
     const l = document.getElementById('l-serie').value;
     const f = document.getElementById('f-serie').value;
-
     if (!v || !r || !l || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_serie', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, l: l, f: f })
+        body: JSON.stringify({ v, r, l, f })
     })
     .then(response => response.json())
     .then(data => {
@@ -626,7 +580,7 @@ function calcularSerie() {
             document.getElementById('res-i-serie').innerText = data.i;
             document.getElementById('res-vr-serie').innerText = data.vr;
             document.getElementById('res-vl-serie').innerText = data.vl;
-        } else { alert("Erro: " + data.erro); }
+        } else alert("Erro: " + data.erro);
     });
 }
 
@@ -635,13 +589,12 @@ function calcularParalelo() {
     const r = document.getElementById('r-paralelo').value;
     const l = document.getElementById('l-paralelo').value;
     const f = document.getElementById('f-paralelo').value;
-
     if (!v || !r || !l || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_paralelo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, l: l, f: f })
+        body: JSON.stringify({ v, r, l, f })
     })
     .then(response => response.json())
     .then(data => {
@@ -650,25 +603,21 @@ function calcularParalelo() {
             document.getElementById('res-it-paralelo').innerText = data.it;
             document.getElementById('res-ir-paralelo').innerText = data.ir;
             document.getElementById('res-il-paralelo').innerText = data.il;
-        } else { alert("Erro: " + data.erro); }
+        } else alert("Erro: " + data.erro);
     });
 }
 
-// ==========================================
-// === CÁLCULOS DO CIRCUITO RC =============
-// ==========================================
 function calcularSerieRC() {
     const v = document.getElementById('v-rc-serie').value;
     const r = document.getElementById('r-rc-serie').value;
     const c = document.getElementById('c-rc-serie').value;
     const f = document.getElementById('f-rc-serie').value;
-
     if (!v || !r || !c || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_rc_serie', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, c: c, f: f })
+        body: JSON.stringify({ v, r, c, f })
     })
     .then(response => response.json())
     .then(data => {
@@ -677,7 +626,7 @@ function calcularSerieRC() {
             document.getElementById('res-i-rc-serie').innerText = data.i;
             document.getElementById('res-vr-rc-serie').innerText = data.vr;
             document.getElementById('res-vc-serie').innerText = data.vc;
-        } else { alert("Erro: " + data.erro); }
+        } else alert("Erro: " + data.erro);
     });
 }
 
@@ -686,13 +635,12 @@ function calcularParaleloRC() {
     const r = document.getElementById('r-rc-paralelo').value;
     const c = document.getElementById('c-rc-paralelo').value;
     const f = document.getElementById('f-rc-paralelo').value;
-
     if (!v || !r || !c || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_rc_paralelo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, c: c, f: f })
+        body: JSON.stringify({ v, r, c, f })
     })
     .then(response => response.json())
     .then(data => {
@@ -701,26 +649,22 @@ function calcularParaleloRC() {
             document.getElementById('res-it-rc-paralelo').innerText = data.it;
             document.getElementById('res-ir-rc-paralelo').innerText = data.ir;
             document.getElementById('res-ic-paralelo').innerText = data.ic;
-        } else { alert("Erro: " + data.erro); }
+        } else alert("Erro: " + data.erro);
     });
 }
 
-// ==========================================
-// === CÁLCULOS DO CIRCUITO RLC =============
-// ==========================================
 function calcularSerieRLC() {
     const v = document.getElementById('v-rlc-serie').value;
     const r = document.getElementById('r-rlc-serie').value;
     const l = document.getElementById('l-rlc-serie').value;
     const c = document.getElementById('c-rlc-serie').value;
     const f = document.getElementById('f-rlc-serie').value;
-
     if (!v || !r || !l || !c || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_rlc_serie', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, l: l, c: c, f: f })
+        body: JSON.stringify({ v, r, l, c, f })
     })
     .then(response => response.json())
     .then(data => {
@@ -729,7 +673,7 @@ function calcularSerieRLC() {
             document.getElementById('res-i-rlc-serie').innerText = data.i;
             document.getElementById('res-xl-rlc-serie').innerText = data.xl;
             document.getElementById('res-xc-rlc-serie').innerText = data.xc;
-        } else { alert("Erro: " + data.erro); }
+        } else alert("Erro: " + data.erro);
     });
 }
 
@@ -739,13 +683,12 @@ function calcularParaleloRLC() {
     const l = document.getElementById('l-rlc-paralelo').value;
     const c = document.getElementById('c-rlc-paralelo').value;
     const f = document.getElementById('f-rlc-paralelo').value;
-
     if (!v || !r || !l || !c || !f) { alert("Preencha todos os parâmetros."); return; }
 
     fetch('/calcular_rlc_paralelo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v: v, r: r, l: l, c: c, f: f })
+        body: JSON.stringify({ v, r, l, c, f })
     })
     .then(response => response.json())
     .then(data => {
@@ -754,7 +697,7 @@ function calcularParaleloRLC() {
             document.getElementById('res-it-rlc-paralelo').innerText = data.it;
             document.getElementById('res-il-rlc-paralelo').innerText = data.il;
             document.getElementById('res-ic-rlc-paralelo').innerText = data.ic;
-        } else { alert("Erro: " + data.erro); }
+        } else alert("Erro: " + data.erro);
     });
 }
 
@@ -765,6 +708,7 @@ function exibirGraficoGenerico(rota_url, dados_json) {
     const modal = document.getElementById('modal-graficos');
     const imgGrafico = document.getElementById('img-grafico');
     const msgCarregando = document.getElementById('msg-carregando');
+    if (!modal || !imgGrafico || !msgCarregando) return;
 
     modal.style.display = "block";
     imgGrafico.style.display = "none";
@@ -830,16 +774,18 @@ function exibirGraficoGenerico(rota_url, dados_json) {
     if (!containerCheckboxes.innerHTML || window.ultimaRotaGrafico !== rota_url) {
         containerCheckboxes.innerHTML = chhtml;
         checkIds.forEach(id => {
-            document.getElementById(id).addEventListener('change', () => {
-                if (window.ultimosDadosGrafico) {
-                    exibirGraficoGenerico(window.ultimaRotaGrafico, window.ultimosDadosGrafico);
-                }
-            });
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', () => {
+                    if (window.ultimosDadosGrafico) exibirGraficoGenerico(window.ultimaRotaGrafico, window.ultimosDadosGrafico);
+                });
+            }
         });
     }
 
     checkIds.forEach(id => {
-        dados_json[id.replace('chk_', 'show_')] = document.getElementById(id).checked;
+        const el = document.getElementById(id);
+        dados_json[id.replace('chk_', 'show_')] = el ? el.checked : true;
     });
 
     window.ultimaRotaGrafico = rota_url;
@@ -874,7 +820,7 @@ function abrirGraficosSerie() {
     const l = document.getElementById('l-serie').value;
     const f = document.getElementById('f-serie').value;
     if (!v || !r || !l || !f) { alert("Calcule os parâmetros primeiro."); return; }
-    exibirGraficoGenerico('/graficos_serie', { v: v, r: r, l: l, f: f });
+    exibirGraficoGenerico('/graficos_serie', { v, r, l, f });
 }
 
 function abrirGraficosParalelo() {
@@ -883,7 +829,7 @@ function abrirGraficosParalelo() {
     const l = document.getElementById('l-paralelo').value;
     const f = document.getElementById('f-paralelo').value;
     if (!v || !r || !l || !f) { alert("Calcule os parâmetros primeiro."); return; }
-    exibirGraficoGenerico('/graficos_paralelo', { v: v, r: r, l: l, f: f });
+    exibirGraficoGenerico('/graficos_paralelo', { v, r, l, f });
 }
 
 function abrirGraficosSerieRC() {
@@ -892,7 +838,7 @@ function abrirGraficosSerieRC() {
     const c = document.getElementById('c-rc-serie').value;
     const f = document.getElementById('f-rc-serie').value;
     if (!v || !r || !c || !f) { alert("Calcule os parâmetros primeiro."); return; }
-    exibirGraficoGenerico('/graficos_rc_serie', { v: v, r: r, c: c, f: f });
+    exibirGraficoGenerico('/graficos_rc_serie', { v, r, c, f });
 }
 
 function abrirGraficosParaleloRC() {
@@ -901,7 +847,7 @@ function abrirGraficosParaleloRC() {
     const c = document.getElementById('c-rc-paralelo').value;
     const f = document.getElementById('f-rc-paralelo').value;
     if (!v || !r || !c || !f) { alert("Calcule os parâmetros primeiro."); return; }
-    exibirGraficoGenerico('/graficos_rc_paralelo', { v: v, r: r, c: c, f: f });
+    exibirGraficoGenerico('/graficos_rc_paralelo', { v, r, c, f });
 }
 
 function abrirGraficosSerieRLC() {
@@ -911,7 +857,7 @@ function abrirGraficosSerieRLC() {
     const c = document.getElementById('c-rlc-serie').value;
     const f = document.getElementById('f-rlc-serie').value;
     if (!v || !r || !l || !c || !f) { alert("Calcule os parâmetros primeiro."); return; }
-    exibirGraficoGenerico('/graficos_rlc_serie', { v: v, r: r, l: l, c: c, f: f });
+    exibirGraficoGenerico('/graficos_rlc_serie', { v, r, l, c, f });
 }
 
 function abrirGraficosParaleloRLC() {
@@ -921,14 +867,214 @@ function abrirGraficosParaleloRLC() {
     const c = document.getElementById('c-rlc-paralelo').value;
     const f = document.getElementById('f-rlc-paralelo').value;
     if (!v || !r || !l || !c || !f) { alert("Calcule os parâmetros primeiro."); return; }
-    exibirGraficoGenerico('/graficos_rlc_paralelo', { v: v, r: r, l: l, c: c, f: f });
+    exibirGraficoGenerico('/graficos_rlc_paralelo', { v, r, l, c, f });
+}
+
+// ==========================================
+// === GRÁFICOS TRIFÁSICOS (PLOTLY.JS) ======
+// ==========================================
+function abrirGraficosTrifasico() {
+    const obterTexto = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : "0"; };
+    const obterNumero = (id) => { const el = document.getElementById(id); return el ? Number(el.value) : 0; };
+
+    const payload = {
+        van_mod: obterNumero("in-van-mod"), van_ang: obterNumero("in-van-ang"),
+        vbn_mod: obterNumero("in-vbn-mod"), vbn_ang: obterNumero("in-vbn-ang"),
+        vcn_mod: obterNumero("in-vcn-mod"), vcn_ang: obterNumero("in-vcn-ang"),
+        zfa: obterTexto("in-zfa"), zfb: obterTexto("in-zfb"), zfc: obterTexto("in-zfc"),
+        zla: obterTexto("in-zla"), zlb: obterTexto("in-zlb"), zlc: obterTexto("in-zlc"),
+        za: obterTexto("in-za"), zb: obterTexto("in-zb"), zc: obterTexto("in-zc"), zo: obterTexto("in-zo")
+    };
+
+    fetch('/graficos_trifasico_yy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(dados => {
+        if (!dados.sucesso) {
+            alert("Erro ao calcular gráficos: " + dados.erro);
+            return;
+        }
+
+        let container = document.getElementById("container-graficos-trifasico");
+        if (!container) {
+            container = document.createElement("div");
+            container.id = "container-graficos-trifasico";
+            container.style = "display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px;";
+            document.getElementById('painel-dinamico').appendChild(container);
+        }
+
+        container.innerHTML = `
+            <!-- Painel Inteligente de Seleção de Visibilidade -->
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #ddd; font-family: Arial, sans-serif; font-size: 0.9rem; width: 100%; max-width: 1120px; box-sizing: border-box;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <strong style="color:#2c3e50;">Fases:</strong>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-van" checked> V<sub>AN</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vbn" checked> V<sub>BN</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vcn" checked> V<sub>CN</sub></label>
+                </div>
+                <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <strong style="color:#2c3e50;">Linhas:</strong>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vab"> V<sub>AB</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vbc"> V<sub>BC</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vca"> V<sub>CA</sub></label>
+                </div>
+                <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <strong style="color:#2c3e50;">Correntes:</strong>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-ia" checked> I<sub>A</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-ib" checked> I<sub>B</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-ic" checked> I<sub>C</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-in"> I<sub>N</sub></label>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%;">
+                <div id="grafico-fasores" style="width: 550px; height: 500px; background:#fff; border:1px solid #ddd; border-radius: 4px;"></div>
+                <div id="grafico-potencia" style="width: 550px; height: 500px; background:#fff; border:1px solid #ddd; border-radius: 4px;"></div>
+            </div>
+        `;
+
+        // Garantia de fallback caso dados.fasores não exista ou as chaves sejam minúsculas
+        const f = dados.fasores || {};
+
+        const van = f.VAN || f.van || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vbn = f.VBN || f.vbn || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vcn = f.VCN || f.vcn || { mod: 0, ang: 0, real: 0, imag: 0 };
+
+        const vab = f.VAB || f.vab || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vbc = f.VBC || f.vbc || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vca = f.VCA || f.vca || { mod: 0, ang: 0, real: 0, imag: 0 };
+
+        const ia  = f.Ia  || f.ia  || f.ian || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const ib  = f.Ib  || f.ib  || f.ibn || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const ic  = f.Ic  || f.ic  || f.icn || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const in_ = f.In  || f.in  || f.in_n|| { mod: 0, ang: 0, real: 0, imag: 0 };
+
+        // Reescalonamento Visual Automático das Correntes para exibição
+        const maxV = Math.max(van.mod, vbn.mod, vcn.mod, vab.mod, vbc.mod, vca.mod, 1.0);
+        const maxI = Math.max(ia.mod, ib.mod, ic.mod, in_.mod, 0.001);
+        const fatorEscalaI = (0.5 * maxV) / maxI;
+        const labelSufixoI = Math.abs(fatorEscalaI - 1.0) > 0.05 ? ` (x${fatorEscalaI.toFixed(1)})` : '';
+
+        function renderizarTracos() {
+            const vis = {
+                van: document.getElementById('chk-van')?.checked ?? true,
+                vbn: document.getElementById('chk-vbn')?.checked ?? true,
+                vcn: document.getElementById('chk-vcn')?.checked ?? true,
+                vab: document.getElementById('chk-vab')?.checked ?? false,
+                vbc: document.getElementById('chk-vbc')?.checked ?? false,
+                vca: document.getElementById('chk-vca')?.checked ?? false,
+                ia:  document.getElementById('chk-ia')?.checked ?? true,
+                ib:  document.getElementById('chk-ib')?.checked ?? true,
+                ic:  document.getElementById('chk-ic')?.checked ?? true,
+                in:  document.getElementById('chk-in')?.checked ?? false
+            };
+
+            function criarTracoVetor(fasor, nome, cor, sufixoUnidade, visivel, scale = 1.0, rotuloExtra = '') {
+                if (!fasor || !visivel) return null;
+                const rx = fasor.real * scale;
+                const ry = fasor.imag * scale;
+                return {
+                    x: [0, rx],
+                    y: [0, ry],
+                    mode: 'lines+markers',
+                    name: `${nome}: ${fasor.mod.toFixed(1)}${sufixoUnidade}${rotuloExtra} ∠${fasor.ang.toFixed(1)}°`,
+                    line: { color: cor, width: 3 },
+                    marker: { size: [0, 8], symbol: "arrow-bar-up", angleref: "previous" }
+                };
+            }
+
+            const listaFasores = [
+                criarTracoVetor(van, 'VAN', '#ff4d4d', 'V', vis.van),
+                criarTracoVetor(vbn, 'VBN', '#2ecc71', 'V', vis.vbn),
+                criarTracoVetor(vcn, 'VCN', '#3498db', 'V', vis.vcn),
+                criarTracoVetor(vab, 'VAB', '#9b59b6', 'V', vis.vab),
+                criarTracoVetor(vbc, 'VBC', '#f1c40f', 'V', vis.vbc),
+                criarTracoVetor(vca, 'VCA', '#e67e22', 'V', vis.vca),
+                criarTracoVetor(ia,  'Ia',  '#c0392b', 'A', vis.ia,  fatorEscalaI, labelSufixoI),
+                criarTracoVetor(ib,  'Ib',  '#27ae60', 'A', vis.ib,  fatorEscalaI, labelSufixoI),
+                criarTracoVetor(ic,  'Ic',  '#2980b9', 'A', vis.ic,  fatorEscalaI, labelSufixoI),
+                criarTracoVetor(in_, 'In',  '#7f8c8d', 'A', vis.in,  fatorEscalaI, labelSufixoI)
+            ].filter(t => t !== null);
+
+            const maxVal = maxV * 1.25;
+
+            const layoutFasores = {
+                title: { text: '<b>Diagrama Fasorial de Tensões e Correntes</b>', font: { size: 16 } },
+                xaxis: { range: [-maxVal, maxVal], title: 'Real (Re)', gridcolor: '#eee' },
+                yaxis: { range: [-maxVal, maxVal], title: 'Imaginário (Im)', gridcolor: '#eee', scaleanchor: "x", scaleratio: 1 },
+                showlegend: true,
+                legend: { orientation: "h", y: -0.2 },
+                margin: { l: 50, r: 50, t: 50, b: 100 }
+            };
+
+            Plotly.react('grafico-fasores', listaFasores, layoutFasores);
+        }
+        renderizarTracos();
+
+        // Adiciona ouvintes de evento às checkboxes para redesenhar dinamicamente
+        const idsCheckboxes = ['chk-van', 'chk-vbn', 'chk-vcn', 'chk-vab', 'chk-vbc', 'chk-vca', 'chk-ia', 'chk-ib', 'chk-ic', 'chk-in'];
+        idsCheckboxes.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', renderizarTracos);
+        });
+
+        // Plota o Triângulo de Potências
+        // Tratamento defensivo para evitar crash se dados.potencia vier undefined
+        const pot = dados.potencia || dados.potencias || {};
+
+        const p_ativa    = pot.P !== undefined ? pot.P : (pot.p !== undefined ? pot.p : (pot.ptotal || 0));
+        const q_reativa  = pot.Q !== undefined ? pot.Q : (pot.q !== undefined ? pot.q : (pot.qtotal || 0));
+        const s_aparente = pot.S_mod !== undefined ? pot.S_mod : (pot.s_mod !== undefined ? pot.s_mod : (pot.stotal || 0));
+
+        // Plota o Triângulo de Potências
+        const dadosPotencia = [
+            {
+                x: [0, p_ativa], y: [0, 0],
+                mode: 'lines+markers',
+                name: `Ativa (P): ${Number(p_ativa).toFixed(1)} W`,
+                line: { color: '#27ae60', width: 4 }
+            },
+            {
+                x: [p_ativa, p_ativa], y: [0, q_reativa],
+                mode: 'lines+markers',
+                name: `Reativa (Q): ${Number(q_reativa).toFixed(1)} var`,
+                line: { color: '#e74c3c', width: 4 }
+            },
+            {
+                x: [0, p_ativa], y: [0, q_reativa],
+                mode: 'lines+markers',
+                name: `Aparente (S): ${Number(s_aparente).toFixed(1)} VA`,
+                line: { color: '#f1c40f', width: 4, dash: 'dash' }
+            }
+        ];
+
+        const maxPot = Math.max(Math.abs(p_ativa), Math.abs(q_reativa), Math.abs(s_aparente), 1.0) * 1.2;
+
+        const layoutPotencia = {
+            title: { text: '<b>Triângulo de Potências Trifásico Total</b>', font: { size: 16 } },
+            xaxis: { range: [p_ativa >= 0 ? -maxPot*0.1 : -maxPot, p_ativa >= 0 ? maxPot : maxPot*0.1], title: 'Potência Ativa (W)', gridcolor: '#eee' },
+            yaxis: { range: [q_reativa >= 0 ? -maxPot*0.1 : -maxPot, q_reativa >= 0 ? maxPot : maxPot*0.1], title: 'Potência Reativa (var)', gridcolor: '#eee', scaleanchor: "x", scaleratio: 1 },
+            showlegend: true,
+            legend: { orientation: "h", y: -0.2 },
+            margin: { l: 50, r: 50, t: 50, b: 100 }
+        };
+
+        Plotly.newPlot('grafico-potencia', dadosPotencia, layoutPotencia);
+    })
+    .catch(err => alert("Erro na requisição dos gráficos: " + err));
 }
 
 // ==========================================
 // === JANELA MODAL E INICIALIZAÇÃO =========
 // ==========================================
 function fecharModal() {
-    document.getElementById('modal-graficos').style.display = "none";
+    const modal = document.getElementById('modal-graficos');
+    if (modal) modal.style.display = "none";
     const containerCheckboxes = document.getElementById('container-chk-graficos');
     if (containerCheckboxes) containerCheckboxes.innerHTML = "";
 }

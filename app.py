@@ -1212,17 +1212,12 @@ def graficos_rlc_paralelo():
 # ==========================================
 # === CÁLCULO E ROTA: MÓDULO TRIFÁSICO Y-Y =
 # ==========================================
-import cmath
-import math
-from flask import jsonify, request
-
 def calcular_triphasico_yy(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZA, ZB, ZC, Zo):
-    # Impedâncias equivalentes por fase (Fonte + Linha + Carga)
+    # Impedâncias equivalentes por fase
     ZeqA = Zfa + ZLa + ZA
     ZeqB = Zfb + ZLb + ZB
     ZeqC = Zfc + ZLc + ZC
 
-    # Proteção contra divisão por zero nas fases
     if ZeqA == 0: ZeqA = 1e-6 + 0j
     if ZeqB == 0: ZeqB = 1e-6 + 0j
     if ZeqC == 0: ZeqC = 1e-6 + 0j
@@ -1251,8 +1246,7 @@ def calcular_triphasico_yy(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZA, ZB, 
     VBC = VBN - VCN
     VCA = VCN - VAN
 
-    # === CÁLCULO DAS POTÊNCIAS NA CARGA ===
-    # S = V * conj(I)
+    # Potências na Carga
     Sa = VAN * IAN.conjugate()
     Sb = VBN * IBN.conjugate()
     Sc = VCN * ICN.conjugate()
@@ -1262,38 +1256,28 @@ def calcular_triphasico_yy(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZA, ZB, 
         "IAN": IAN, "IBN": IBN, "ICN": ICN, "IN": IN,
         "VAN": VAN, "VBN": VBN, "VCN": VCN,
         "VAB": VAB, "VBC": VBC, "VCA": VCA,
-        # Adicionados ao retorno da função matemática
         "Sa": Sa, "Sb": Sb, "Sc": Sc, "Stotal": Stotal
     }
-
 
 @app.route('/calcular_trifasico_yy', methods=['POST'])
 @login_required
 def rota_calcular_trifasico_yy():
     dados = request.get_json() or {}
 
-    # Conversor robusto
     def converter(valor):
-        if valor is None:
-            return 0j
+        if valor is None: return 0j
         texto = str(valor).strip().lower().replace(" ", "").replace("i", "j")
-        if not texto:
-            return 0j
-        try:
-            return complex(texto)
-        except ValueError:
-            return 0j
+        if not texto: return 0j
+        try: return complex(texto)
+        except ValueError: return 0j
 
     def formatar_complexo(c):
         real = round(c.real, 2)
         imag = round(c.imag, 2)
 
-        if imag == 0:
-            retangular = f"{real}"
-        elif real == 0:
-            retangular = f"{imag}i"
-        else:
-            retangular = f"{real} + {imag}i" if imag > 0 else f"{real} - {abs(imag)}i"
+        if imag == 0: retangular = f"{real}"
+        elif real == 0: retangular = f"{imag}i"
+        else: retangular = f"{real} + {imag}i" if imag > 0 else f"{real} - {abs(imag)}i"
 
         magnitude = round(abs(c), 2)
         angulo = round(math.degrees(cmath.phase(c)), 1)
@@ -1301,7 +1285,6 @@ def rota_calcular_trifasico_yy():
 
         return {"polar": polar, "retangular": retangular}
 
-    # Captura e tratamento seguro de nulos/vazios
     try:
         van_mod = float(dados.get('van_mod', 0) or 0)
         van_ang = float(dados.get('van_ang', 0) or 0)
@@ -1317,21 +1300,13 @@ def rota_calcular_trifasico_yy():
     except (ValueError, TypeError):
         Van, Vbn, Vcn = 0j, 0j, 0j
 
-    Zfa = converter(dados.get('zfa'))
-    Zfb = converter(dados.get('zfb'))
-    Zfc = converter(dados.get('zfc'))
-    ZLa = converter(dados.get('zla'))
-    ZLb = converter(dados.get('zlb'))
-    ZLc = converter(dados.get('zlc'))
-    ZA = converter(dados.get('za'))
-    ZB = converter(dados.get('zb'))
-    ZC = converter(dados.get('zc'))
+    Zfa, Zfb, Zfc = converter(dados.get('zfa')), converter(dados.get('zfb')), converter(dados.get('zfc'))
+    ZLa, ZLb, ZLc = converter(dados.get('zla')), converter(dados.get('zlb')), converter(dados.get('zlc'))
+    ZA, ZB, ZC = converter(dados.get('za')), converter(dados.get('zb')), converter(dados.get('zc'))
     Zo = converter(dados.get('zo'))
 
     try:
         res = calcular_triphasico_yy(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZA, ZB, ZC, Zo)
-
-        # Extração das potências para facilitar o envio estruturado
         Sa, Sb, Sc, St = res["Sa"], res["Sb"], res["Sc"], res["Stotal"]
 
         return jsonify({
@@ -1346,26 +1321,114 @@ def rota_calcular_trifasico_yy():
             "vbc": formatar_complexo(res["VBC"]),
             "vca": formatar_complexo(res["VCA"]),
 
-            # === NOVOS CAMPOS ENVIADOS PARA O FRONTEND ===
-            # Potências Ativas (W)
-            "pa": round(Sa.real, 2),
-            "pb": round(Sb.real, 2),
-            "pc": round(Sc.real, 2),
-            "ptotal": round(St.real, 2),
-
-            # Potências Reativas (VAr)
-            "qa": round(Sa.imag, 2),
-            "qb": round(Sb.imag, 2),
-            "qc": round(Sc.imag, 2),
-            "qtotal": round(St.imag, 2),
-
-            # Potências Aparentes (VA)
-            "sa": round(abs(Sa), 2),
-            "sb": round(abs(Sb), 2),
-            "sc": round(abs(Sc), 2),
-            "stotal": round(abs(St), 2)
+            "pa": round(Sa.real, 2), "pb": round(Sb.real, 2), "pc": round(Sc.real, 2), "ptotal": round(St.real, 2),
+            "qa": round(Sa.imag, 2), "qb": round(Sb.imag, 2), "qc": round(Sc.imag, 2), "qtotal": round(St.imag, 2),
+            "sa": round(abs(Sa), 2), "sb": round(abs(Sb), 2), "sc": round(abs(Sc), 2), "stotal": round(abs(St), 2)
         })
     except Exception as e:
         return jsonify({"erro": f"Erro no cálculo: {str(e)}"}), 400
+
+# ==========================================
+# === GRÁFICOS TRIFÁSICOS YY (PLOTLY) ======
+# ==========================================
+@app.route('/graficos_trifasico_yy', methods=['POST'])
+@login_required
+def graficos_trifasico_yy():
+    try:
+        dados = request.get_json()
+
+        def parse_complex(val):
+            if not val: return 0j
+            try:
+                # Substitui i por j para conversão do Python
+                s = str(val).replace('i', 'j').replace(' ', '')
+                return complex(s)
+            except:
+                return 0j
+
+        # Tensão da fonte
+        van_m, van_a = float(dados.get('van_mod', 0)), float(dados.get('van_ang', 0))
+        vbn_m, vbn_a = float(dados.get('vbn_mod', 0)), float(dados.get('vbn_ang', 0))
+        vcn_m, vcn_a = float(dados.get('vcn_mod', 0)), float(dados.get('vcn_ang', 0))
+
+        VAN = cmath.rect(van_m, math.radians(van_a))
+        VBN = cmath.rect(vbn_m, math.radians(vbn_a))
+        VCN = cmath.rect(vcn_m, math.radians(vcn_a))
+
+        # Impedâncias
+        zfa = parse_complex(dados.get('zfa'))
+        zfb = parse_complex(dados.get('zfb'))
+        zfc = parse_complex(dados.get('zfc'))
+
+        zla = parse_complex(dados.get('zla'))
+        zlb = parse_complex(dados.get('zlb'))
+        zlc = parse_complex(dados.get('zlc'))
+
+        za = parse_complex(dados.get('za'))
+        zb = parse_complex(dados.get('zb'))
+        zc = parse_complex(dados.get('zc'))
+        zo = parse_complex(dados.get('zo'))
+
+        # Impedâncias Totais por Fase
+        Za_tot = zfa + zla + za
+        Zb_tot = zfb + zlb + zb
+        Zc_tot = zfc + zlc + zc
+
+        # Correntes de Linha/Fase
+        Ia = VAN / Za_tot if Za_tot != 0 else 0j
+        Ib = VBN / Zb_tot if Zb_tot != 0 else 0j
+        Ic = VCN / Zc_tot if Zc_tot != 0 else 0j
+        In = Ia + Ib + Ic
+
+        # Tensões na Carga
+        Van_c = Ia * za
+        Vbn_c = Ib * zb
+        Vcn_c = Ic * zc
+
+        # Tensões de Linha na Carga
+        Vab = Van_c - Vbn_c
+        Vbc = Vbn_c - Vcn_c
+        Vca = Vcn_c - Van_c
+
+        # Potências Totais (Complexas)
+        Sa = Van_c * Ia.conjugate()
+        Sb = Vbn_c * Ib.conjugate()
+        Sc = Vcn_c * Ic.conjugate()
+        Stotal = Sa + Sb + Sc
+
+        def formatar_fasor(comp):
+            mod = abs(comp)
+            ang = math.degrees(cmath.phase(comp))
+            return {
+                'mod': round(mod, 2),
+                'ang': round(ang, 2),
+                'real': round(comp.real, 2),
+                'imag': round(comp.imag, 2)
+            }
+
+        fasores = {
+            'VAN': formatar_fasor(Van_c),
+            'VBN': formatar_fasor(Vbn_c),
+            'VCN': formatar_fasor(Vcn_c),
+            'VAB': formatar_fasor(Vab),
+            'VBC': formatar_fasor(Vbc),
+            'VCA': formatar_fasor(Vca),
+            'Ia':  formatar_fasor(Ia),
+            'Ib':  formatar_fasor(Ib),
+            'Ic':  formatar_fasor(Ic),
+            'In':  formatar_fasor(In)
+        }
+
+        potencia = {
+            'P': round(Stotal.real, 2),
+            'Q': round(Stotal.imag, 2),
+            'S_mod': round(abs(Stotal), 2)
+        }
+
+        return jsonify({'sucesso': True, 'fasores': fasores, 'potencia': potencia})
+
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)})
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
