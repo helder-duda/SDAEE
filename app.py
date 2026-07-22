@@ -120,6 +120,34 @@ def alterar_senha():
 
     return render_template('alterar_senha.html')
 
+import cmath
+import math
+def formatar_complexo(val):
+    """
+    Converte um número complexo em um dicionário com representação
+    polar e retangular formatadas para exibição no frontend.
+    """
+    if val is None:
+        return {"polar": "0 ∠ 0°", "retangular": "0 + 0j"}
+
+    mod = abs(val)
+    # Converte o ângulo de radianos para graus
+    ang = math.degrees(cmath.phase(val))
+
+    # Formatação do sinal do imaginário
+    sinal = "+" if val.imag >= 0 else "-"
+    real_str = f"{val.real:.2f}"
+    imag_str = f"{abs(val.imag):.2f}"
+
+    return {
+        "polar": f"{mod:.2f} ∠ {ang:.2f}°",
+        "retangular": f"{real_str} {sinal} {imag_str}j",
+        "mod": round(mod, 2),
+        "ang": round(ang, 2),
+        "real": round(val.real, 2),
+        "imag": round(val.imag, 2)
+    }
+
 # ==========================================
 # === ROTA DE GERAÇÃO DE EXERCÍCIOS =======
 # ==========================================
@@ -1427,6 +1455,202 @@ def graficos_trifasico_yy():
 
         return jsonify({'sucesso': True, 'fasores': fasores, 'potencia': potencia})
 
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)})
+
+# ==========================================
+# === CÁLCULO E ROTA: MÓDULO TRIFÁSICO Y-DELTA
+# ==========================================
+def calcular_triphasico_ydelta(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZAB, ZBC, ZCA):
+    # Impedâncias de linha + fonte por fase
+    Za_linha = Zfa + ZLa
+    Zb_linha = Zfb + ZLb
+    Zc_linha = Zfc + ZLc
+
+    # Conversão da carga Delta (ZAB, ZBC, ZCA) para Y equivalente (ZA_eq, ZB_eq, ZC_eq)
+    Z_delta_sum = ZAB + ZBC + ZCA
+    if abs(Z_delta_sum) < 1e-6:
+        Z_delta_sum = 1e-6 + 0j
+
+    ZA_eq = (ZAB * ZCA) / Z_delta_sum
+    ZB_eq = (ZAB * ZBC) / Z_delta_sum
+    ZC_eq = (ZBC * ZCA) / Z_delta_sum
+
+    # Impedâncias equivalentes totais por fase (Linha + Y equivalente da Carga)
+    ZeqA = Za_linha + ZA_eq
+    ZeqB = Zb_linha + ZB_eq
+    ZeqC = Zc_linha + ZC_eq
+
+    if ZeqA == 0: ZeqA = 1e-6 + 0j
+    if ZeqB == 0: ZeqB = 1e-6 + 0j
+    if ZeqC == 0: ZeqC = 1e-6 + 0j
+
+    # Millman para neutro fictício n' do Y equivalente
+    numerador = (Van / ZeqA) + (Vbn / ZeqB) + (Vcn / ZeqC)
+    denominador = (1 / ZeqA) + (1 / ZeqB) + (1 / ZeqC)
+    V_Nn = numerador / denominador if denominador != 0 else 0j
+
+    # Correntes de Linha (Ia, Ib, Ic)
+    Ia = (Van - V_Nn) / ZeqA
+    Ib = (Vbn - V_Nn) / ZeqB
+    Ic = (Vcn - V_Nn) / ZeqC
+
+    # Tensões de Nó nos terminais A, B, C da carga Delta em relação ao neutro n
+    VA = Van - Ia * Za_linha
+    VB = Vbn - Ib * Zb_linha
+    VC = Vcn - Ic * Zc_linha
+
+    # Tensões de Linha aplicadas à Carga Delta
+    VAB = VA - VB
+    VBC = VB - VC
+    VCA = VC - VA
+
+    # Correntes de Fase na Carga Delta (IAB, IBC, ICA)
+    IAB = VAB / ZAB if abs(ZAB) > 1e-6 else 0j
+    IBC = VBC / ZBC if abs(ZBC) > 1e-6 else 0j
+    ICA = VCA / ZCA if abs(ZCA) > 1e-6 else 0j
+
+    # Potências na Carga Delta por Fase
+    SAB = VAB * IAB.conjugate()
+    SBC = VBC * IBC.conjugate()
+    SCA = VCA * ICA.conjugate()
+    Stotal = SAB + SBC + SCA
+
+    return {
+        "Ia": Ia, "Ib": Ib, "Ic": Ic,
+        "VAB": VAB, "VBC": VBC, "VCA": VCA,
+        "IAB": IAB, "IBC": IBC, "ICA": ICA,
+        "SAB": SAB, "SBC": SBC, "SCA": SCA, "Stotal": Stotal
+    }
+
+import cmath
+import math
+
+@app.route('/calcular_trifasico_ydelta', methods=['POST'])
+@login_required
+def rota_calcular_trifasico_ydelta():
+    try:
+        dados = request.get_json() or {}
+
+        def parse_complex(val):
+            if not val:
+                return 0j
+            try:
+                return complex(str(val).replace('i', 'j').replace(' ', ''))
+            except:
+                return 0j
+
+        van_m, van_a = float(dados.get('van_mod', 0)), float(dados.get('van_ang', 0))
+        vbn_m, vbn_a = float(dados.get('vbn_mod', 0)), float(dados.get('vbn_ang', 0))
+        vcn_m, vcn_a = float(dados.get('vcn_mod', 0)), float(dados.get('vcn_ang', 0))
+
+        Van = cmath.rect(van_m, math.radians(van_a))
+        Vbn = cmath.rect(vbn_m, math.radians(vbn_a))
+        Vcn = cmath.rect(vcn_m, math.radians(vcn_a))
+
+        Zfa = parse_complex(dados.get('zfa'))
+        Zfb = parse_complex(dados.get('zfb'))
+        Zfc = parse_complex(dados.get('zfc'))
+
+        ZLa = parse_complex(dados.get('zla'))
+        ZLb = parse_complex(dados.get('zlb'))
+        ZLc = parse_complex(dados.get('zlc'))
+
+        ZAB = parse_complex(dados.get('zab'))
+        ZBC = parse_complex(dados.get('zbc'))
+        ZCA = parse_complex(dados.get('zca'))
+
+        res = calcular_triphasico_ydelta(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZAB, ZBC, ZCA)
+
+        SAB, SBC, SCA = res["SAB"], res["SBC"], res["SCA"]
+        St = res["Stotal"]
+
+        return jsonify({
+            # Correntes (chamando formatar_complexo)
+            "ia": formatar_complexo(res["Ia"]),
+            "ib": formatar_complexo(res["Ib"]),
+            "ic": formatar_complexo(res["Ic"]),
+            "iab": formatar_complexo(res["IAB"]),
+            "ibc": formatar_complexo(res["IBC"]),
+            "ica": formatar_complexo(res["ICA"]),
+
+            # Tensões (Fase e Linha)
+            "van": formatar_complexo(Van),
+            "vbn": formatar_complexo(Vbn),
+            "vcn": formatar_complexo(Vcn),
+            "vab": formatar_complexo(res["VAB"]),
+            "vbc": formatar_complexo(res["VBC"]),
+            "vca": formatar_complexo(res["VCA"]),
+
+            # Potências
+            "pa": round(SAB.real, 2), "qa": round(SAB.imag, 2), "sa": round(abs(SAB), 2),
+            "pb": round(SBC.real, 2), "qb": round(SBC.imag, 2), "sb": round(abs(SBC), 2),
+            "pc": round(SCA.real, 2), "qc": round(SCA.imag, 2), "sc": round(abs(SCA), 2),
+
+            "ptotal": round(St.real, 2),
+            "qtotal": round(St.imag, 2),
+            "stotal": round(abs(St), 2)
+        })
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro no cálculo: {str(e)}"}), 400
+
+@app.route('/graficos_trifasico_ydelta', methods=['POST'])
+@login_required
+def graficos_trifasico_ydelta():
+    try:
+        dados = request.get_json() or {}
+
+        def parse_complex(val):
+            if not val: return 0j
+            try: return complex(str(val).replace('i', 'j').replace(' ', ''))
+            except: return 0j
+
+        van_m, van_a = float(dados.get('van_mod', 0)), float(dados.get('van_ang', 0))
+        vbn_m, vbn_a = float(dados.get('vbn_mod', 0)), float(dados.get('vbn_ang', 0))
+        vcn_m, vcn_a = float(dados.get('vcn_mod', 0)), float(dados.get('vcn_ang', 0))
+
+        Van = cmath.rect(van_m, math.radians(van_a))
+        Vbn = cmath.rect(vbn_m, math.radians(vbn_a))
+        Vcn = cmath.rect(vcn_m, math.radians(vcn_a))
+
+        Zfa, Zfb, Zfc = parse_complex(dados.get('zfa')), parse_complex(dados.get('zfb')), parse_complex(dados.get('zfc'))
+        ZLa, ZLb, ZLc = parse_complex(dados.get('zla')), parse_complex(dados.get('zlb')), parse_complex(dados.get('zlc'))
+        ZAB, ZBC, ZCA = parse_complex(dados.get('zab')), parse_complex(dados.get('zbc')), parse_complex(dados.get('zca'))
+
+        res = calcular_triphasico_ydelta(Van, Vbn, Vcn, Zfa, Zfb, Zfc, ZLa, ZLb, ZLc, ZAB, ZBC, ZCA)
+
+        def dict_fasor(comp):
+            return {
+                'mod': round(abs(comp), 2),
+                'ang': round(math.degrees(cmath.phase(comp)), 2),
+                'real': round(comp.real, 2),
+                'imag': round(comp.imag, 2)
+            }
+
+        fasores = {
+            'VAN': dict_fasor(Van),
+            'VBN': dict_fasor(Vbn),
+            'VCN': dict_fasor(Vcn),
+            'VAB': dict_fasor(res["VAB"]),
+            'VBC': dict_fasor(res["VBC"]),
+            'VCA': dict_fasor(res["VCA"]),
+            'Ia':  dict_fasor(res["Ia"]),
+            'Ib':  dict_fasor(res["Ib"]),
+            'Ic':  dict_fasor(res["Ic"]),
+            'IAB': dict_fasor(res["IAB"]),
+            'IBC': dict_fasor(res["IBC"]),
+            'ICA': dict_fasor(res["ICA"])
+        }
+
+        Stotal = res["Stotal"]
+        potencia = {
+            'P': round(Stotal.real, 2),
+            'Q': round(Stotal.imag, 2),
+            'S_mod': round(abs(Stotal), 2)
+        }
+
+        return jsonify({'sucesso': True, 'fasores': fasores, 'potencia': potencia})
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
