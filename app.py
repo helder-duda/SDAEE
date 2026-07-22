@@ -1654,5 +1654,208 @@ def graficos_trifasico_ydelta():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)})
 
+@app.route('/calcular_trifasico_deltadelta', methods=['POST'])
+def calcular_trifasico_deltadelta():
+    try:
+        data = request.get_json()
+
+        # Tensões da Fonte (Delta: Vlinha = Vfase)
+        vab_f_mod = float(data.get('vab_mod', 0))
+        vab_f_ang = math.radians(float(data.get('vab_ang', 0)))
+        vbc_f_mod = float(data.get('vbc_mod', 0))
+        vbc_f_ang = math.radians(float(data.get('vbc_ang', 0)))
+        vca_f_mod = float(data.get('vca_mod', 0))
+        vca_f_ang = math.radians(float(data.get('vca_ang', 0)))
+
+        Vab_fonte = cmath.rect(vab_f_mod, vab_f_ang)
+        Vbc_fonte = cmath.rect(vbc_f_mod, vbc_f_ang)
+        Vca_fonte = cmath.rect(vca_f_mod, vca_f_ang)
+
+        # Impedâncias de Linha e Fonte
+        Zfa = complex(str(data.get('zfa', '0')).replace('i', 'j'))
+        Zfb = complex(str(data.get('zfb', '0')).replace('i', 'j'))
+        Zfc = complex(str(data.get('zfc', '0')).replace('i', 'j'))
+
+        Zla = complex(str(data.get('zla', '0')).replace('i', 'j'))
+        Zlb = complex(str(data.get('zlb', '0')).replace('i', 'j'))
+        Zlc = complex(str(data.get('zlc', '0')).replace('i', 'j'))
+
+        Za = Zfa + Zla
+        Zb = Zfb + Zlb
+        Zc = Zfc + Zlc
+
+        # Impedâncias da Carga (Delta)
+        ZAB = complex(str(data.get('zab', '1')).replace('i', 'j'))
+        ZBC = complex(str(data.get('zbc', '1')).replace('i', 'j'))
+        ZCA = complex(str(data.get('zca', '1')).replace('i', 'j'))
+
+        # Resolução por transformação Delta -> Y apenas para achar as Correntes de Linha exatas
+        Zsum = ZAB + ZBC + ZCA
+        Za_eq = (ZAB * ZCA) / Zsum
+        Zb_eq = (ZAB * ZBC) / Zsum
+        Zc_eq = (ZBC * ZCA) / Zsum
+
+        # Tensões equivalente de fase para cálculo das correntes de linha
+        Van_fonte = (Vab_fonte - Vca_fonte) / 3.0
+        Vbn_fonte = (Vbc_fonte - Vab_fonte) / 3.0
+        Vcn_fonte = (Vca_fonte - Vbc_fonte) / 3.0
+
+        # Correntes de Linha
+        Ia = Van_fonte / (Za + Za_eq)
+        Ib = Vbn_fonte / (Zb + Zb_eq)
+        Ic = Vcn_fonte / (Zc + Zc_eq)
+
+        # Tensões nos terminais da Carga (Vlinha = Vfase na Carga Delta)
+        # V_carga = V_fonte - Queda_de_tensao_na_linha
+        VAB_carga = Vab_fonte - (Ia * Za - Ib * Zb)
+        VBC_carga = Vbc_fonte - (Ib * Zb - Ic * Zc)
+        VCA_carga = Vca_fonte - (Ic * Zc - Ia * Za)
+
+        # Correntes de Fase na Carga (I_fase = V_carga / Z_carga)
+        IAB = VAB_carga / ZAB
+        IBC = VBC_carga / ZBC
+        ICA = VCA_carga / ZCA
+
+        # Potências por Fase na Carga
+        S_ab = VAB_carga * IAB.conjugate()
+        S_bc = VBC_carga * IBC.conjugate()
+        S_ca = VCA_carga * ICA.conjugate()
+        S_total = S_ab + S_bc + S_ca
+
+        return jsonify({
+            'ia': formatar_complexo(Ia),
+            'ib': formatar_complexo(Ib),
+            'ic': formatar_complexo(Ic),
+
+            'iab': formatar_complexo(IAB),
+            'ibc': formatar_complexo(IBC),
+            'ica': formatar_complexo(ICA),
+
+            'vab_carga': formatar_complexo(VAB_carga),
+            'vbc_carga': formatar_complexo(VBC_carga),
+            'vca_carga': formatar_complexo(VCA_carga),
+
+            'vab_fonte': formatar_complexo(Vab_fonte),
+            'vbc_fonte': formatar_complexo(Vbc_fonte),
+            'vca_fonte': formatar_complexo(Vca_fonte),
+
+            'sab': round(abs(S_ab), 2),
+            'pab': round(S_ab.real, 2),
+            'qab': round(S_ab.imag, 2),
+
+            'sbc': round(abs(S_bc), 2),
+            'pbc': round(S_bc.real, 2),
+            'qbc': round(S_bc.imag, 2),
+
+            'sca': round(abs(S_ca), 2),
+            'pca': round(S_ca.real, 2),
+            'qca': round(S_ca.imag, 2),
+
+            'stotal': round(abs(S_total), 2),
+            'ptotal': round(S_total.real, 2),
+            'qtotal': round(S_total.imag, 2)
+        })
+
+    except Exception as e:
+        return jsonify({'erro': f'Erro no cálculo Delta-Delta: {str(e)}'}), 400
+
+@app.route('/graficos_trifasico_deltadelta', methods=['POST'])
+def graficos_trifasico_deltadelta():
+    try:
+        data = request.get_json()
+
+        # Tensões da Fonte (Delta)
+        vab_f_mod = float(data.get('vab_mod', 0))
+        vab_f_ang = float(data.get('vab_ang', 0))
+        vbc_f_mod = float(data.get('vbc_mod', 0))
+        vbc_f_ang = float(data.get('vbc_ang', 0))
+        vca_f_mod = float(data.get('vca_mod', 0))
+        vca_f_ang = float(data.get('vca_ang', 0))
+
+        Vab_fonte = cmath.rect(vab_f_mod, math.radians(vab_f_ang))
+        Vbc_fonte = cmath.rect(vbc_f_mod, math.radians(vbc_f_ang))
+        Vca_fonte = cmath.rect(vca_f_mod, math.radians(vca_f_ang))
+
+        # Impedâncias
+        Zfa = complex(str(data.get('zfa', '0')).replace('i', 'j'))
+        Zfb = complex(str(data.get('zfb', '0')).replace('i', 'j'))
+        Zfc = complex(str(data.get('zfc', '0')).replace('i', 'j'))
+
+        Zla = complex(str(data.get('zla', '0')).replace('i', 'j'))
+        Zlb = complex(str(data.get('zlb', '0')).replace('i', 'j'))
+        Zlc = complex(str(data.get('zlc', '0')).replace('i', 'j'))
+
+        Za = Zfa + Zla
+        Zb = Zfb + Zlb
+        Zc = Zfc + Zlc
+
+        ZAB = complex(str(data.get('zab', '1')).replace('i', 'j'))
+        ZBC = complex(str(data.get('zbc', '1')).replace('i', 'j'))
+        ZCA = complex(str(data.get('zca', '1')).replace('i', 'j'))
+
+        # Equivalente Delta-Y
+        Zsum = ZAB + ZBC + ZCA
+        Za_eq = (ZAB * ZCA) / Zsum
+        Zb_eq = (ZAB * ZBC) / Zsum
+        Zc_eq = (ZBC * ZCA) / Zsum
+
+        Van_fonte = (Vab_fonte - Vca_fonte) / 3.0
+        Vbn_fonte = (Vbc_fonte - Vab_fonte) / 3.0
+        Vcn_fonte = (Vca_fonte - Vbc_fonte) / 3.0
+
+        Ia = Van_fonte / (Za + Za_eq)
+        Ib = Vbn_fonte / (Zb + Zb_eq)
+        Ic = Vcn_fonte / (Zc + Zc_eq)
+
+        VAB_carga = Vab_fonte - (Ia * Za - Ib * Zb)
+        VBC_carga = Vbc_fonte - (Ib * Zb - Ic * Zc)
+        VCA_carga = Vca_fonte - (Ic * Zc - Ia * Za)
+
+        IAB = VAB_carga / ZAB
+        IBC = VBC_carga / ZBC
+        ICA = VCA_carga / ZCA
+
+        # Potências
+        S_ab = VAB_carga * IAB.conjugate()
+        S_bc = VBC_carga * IBC.conjugate()
+        S_ca = VCA_carga * ICA.conjugate()
+        S_total = S_ab + S_bc + S_ca
+
+        def fasor_dict(c):
+            mod, ang_rad = cmath.polar(c)
+            return {
+                'mod': float(mod),
+                'ang': float(math.degrees(ang_rad)),
+                'real': float(c.real),
+                'imag': float(c.imag)
+            }
+
+        return jsonify({
+            'sucesso': True,
+            'fasores': {
+                'VAB_fonte': fasor_dict(Vab_fonte),
+                'VBC_fonte': fasor_dict(Vbc_fonte),
+                'VCA_fonte': fasor_dict(Vca_fonte),
+                'VAB_carga': fasor_dict(VAB_carga),
+                'VBC_carga': fasor_dict(VBC_carga),
+                'VCA_carga': fasor_dict(VCA_carga),
+                'Ia': fasor_dict(Ia),
+                'Ib': fasor_dict(Ib),
+                'Ic': fasor_dict(Ic),
+                'IAB': fasor_dict(IAB),
+                'IBC': fasor_dict(IBC),
+                'ICA': fasor_dict(ICA)
+            },
+            'potencia': {
+                'P': float(S_total.real),
+                'Q': float(S_total.imag),
+                'S_mod': float(abs(S_total))
+            }
+        })
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)}), 400
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
