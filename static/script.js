@@ -482,21 +482,29 @@ function carregarConteudo(modulo) {
                 </div>
             </fieldset>
 
-            <!-- Painel de Resultados Padronizado no Estilo Y-Y -->
+            <!-- Painel de Resultados Padronizado (5 Colunas) -->
             <fieldset style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc;">
                 <legend><strong>Painel de Resultados Otimizado</strong></legend>
-                <div class="grid-resultados-trifasico">
+                <div class="grid-resultados-trifasico-5col">
                     <div class="col-resultado">
-                        <h4>Correntes (Linha e Carga)</h4>
-                        <div id="out-correntes-yd" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Correntes de Linha</h4>
+                        <div id="out-i-linha-yd" class="res-bloco">Aguardando...</div>
                     </div>
                     <div class="col-resultado">
-                        <h4>Tensões na Carga</h4>
-                        <div id="out-tensoes-yd" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Correntes de Fase</h4>
+                        <div id="out-i-fase-yd" class="res-bloco">Aguardando...</div>
                     </div>
                     <div class="col-resultado">
-                        <h4>Potências por Fase</h4>
-                        <div id="out-potencias-yd" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Tensões de Linha</h4>
+                        <div id="out-v-linha-yd" class="res-bloco">Aguardando...</div>
+                    </div>
+                    <div class="col-resultado">
+                        <h4>Tensões de Fase</h4>
+                        <div id="out-v-fase-yd" class="res-bloco">Aguardando...</div>
+                    </div>
+                    <div class="col-resultado">
+                        <h4>Potências</h4>
+                        <div id="out-potencias-yd" class="res-bloco">Aguardando...</div>
                     </div>
                 </div>
             </fieldset>
@@ -1202,34 +1210,40 @@ function calcularTrifasicoYDelta() {
         const pol = (obj) => (obj && typeof obj === 'object') ? obj.polar : (obj || '-');
         const ret = (obj) => (obj && typeof obj === 'object') ? obj.retangular : '-';
 
-        // 1. Correntes
-        document.getElementById('out-correntes-yd').innerHTML = `
-            <p><b>I<sub>a</sub>:</b><br> P: ${pol(data.ia)}<br> R: ${ret(data.ia)}</p><br>
-            <p><b>I<sub>b</sub>:</b><br> P: ${pol(data.ib)}<br> R: ${ret(data.ib)}</p><br>
-            <p><b>I<sub>c</sub>:</b><br> P: ${pol(data.ic)}<br> R: ${ret(data.ic)}</p><br>
-            <hr style="margin:8px 0; border:0; border-top:1px dashed #ccc;">
-            <p><b>I<sub>AB</sub>:</b><br> P: ${pol(data.iab)}<br> R: ${ret(data.iab)}</p><br>
-            <p><b>I<sub>BC</sub>:</b><br> P: ${pol(data.ibc)}<br> R: ${ret(data.ibc)}</p><br>
-            <p><b>I<sub>CA</sub>:</b><br> P: ${pol(data.ica)}<br> R: ${ret(data.ica)}</p>
+        // 1. Correntes de Linha
+        document.getElementById('out-i-linha-yd').innerHTML = `
+            <p><b>I<sub>a</sub>:</b><br>P: ${pol(data.ia)}<br>R: ${ret(data.ia)}</p><br>
+            <p><b>I<sub>b</sub>:</b><br>P: ${pol(data.ib)}<br>R: ${ret(data.ib)}</p><br>
+            <p><b>I<sub>c</sub>:</b><br>P: ${pol(data.ic)}<br>R: ${ret(data.ic)}</p>
         `;
 
-        // 2. Tensões
-        document.getElementById('out-tensoes-yd').innerHTML = `
-            <p><b>V<sub>AN</sub>:</b><br> P: ${pol(data.van)}<br> R: ${ret(data.van)}</p><br>
-            <p><b>V<sub>BN</sub>:</b><br> P: ${pol(data.vbn)}<br> R: ${ret(data.vbn)}</p><br>
-            <p><b>V<sub>CN</sub>:</b><br> P: ${pol(data.vcn)}<br> R: ${ret(data.vcn)}</p><br>
-            <hr style="margin:8px 0; border:0; border-top:1px dashed #ccc;">
-            <p><b>V<sub>AB</sub>:</b><br> P: ${pol(data.vab)}<br> R: ${ret(data.vab)}</p><br>
-            <p><b>V<sub>BC</sub>:</b><br> P: ${pol(data.vbc)}<br> R: ${ret(data.vbc)}</p><br>
-            <p><b>V<sub>CA</sub>:</b><br> P: ${pol(data.vca)}<br> R: ${ret(data.vca)}</p>
+        // 2. Correntes de Fase (Carga Δ)
+        document.getElementById('out-i-fase-yd').innerHTML = `
+            <p><b>I<sub>AB</sub>:</b><br>P: ${pol(data.iab)}<br>R: ${ret(data.iab)}</p><br>
+            <p><b>I<sub>BC</sub>:</b><br>P: ${pol(data.ibc)}<br>R: ${ret(data.ibc)}</p><br>
+            <p><b>I<sub>CA</sub>:</b><br>P: ${pol(data.ica)}<br>R: ${ret(data.ica)}</p>
         `;
 
-        // 3. Potências
+        // 3. Tensões de Linha (Carga Δ)
+        document.getElementById('out-v-linha-yd').innerHTML = `
+            <p><b>V<sub>AB</sub>:</b><br>P: ${pol(data.vab)}<br>R: ${ret(data.vab)}</p><br>
+            <p><b>V<sub>BC</sub>:</b><br>P: ${pol(data.vbc)}<br>R: ${ret(data.vbc)}</p><br>
+            <p><b>V<sub>CA</sub>:</b><br>P: ${pol(data.vca)}<br>R: ${ret(data.vca)}</p>
+        `;
+
+        // 4. Tensões de Fase (Fonte Y)
+        document.getElementById('out-v-fase-yd').innerHTML = `
+            <p><b>V<sub>AN</sub>:</b><br>P: ${pol(data.van)}<br>R: ${ret(data.van)}</p><br>
+            <p><b>V<sub>BN</sub>:</b><br>P: ${pol(data.vbn)}<br>R: ${ret(data.vbn)}</p><br>
+            <p><b>V<sub>CN</sub>:</b><br>P: ${pol(data.vcn)}<br>R: ${ret(data.vcn)}</p>
+        `;
+
+        // 5. Potências
         document.getElementById('out-potencias-yd').innerHTML = `
-            <p><b>Fase AB:</b><br> S: ${data.sa} VA<br> P: ${data.pa} W<br> Q: ${data.qa} VAr</p><br>
-            <p><b>Fase BC:</b><br> S: ${data.sb} VA<br> P: ${data.pb} W<br> Q: ${data.qb} VAr</p><br>
-            <p><b>Fase CA:</b><br> S: ${data.sc} VA<br> P: ${data.pc} W<br> Q: ${data.qc} VAr</p><br>
-            <p style="border-top: 1px solid #ccc; padding-top: 5px; margin-top: 5px;"><b>Total Trifásico:</b><br> S: ${data.stotal} VA<br> P: ${data.ptotal} W<br> Q: ${data.qtotal} VAr</p>
+            <p><b>Fase AB:</b><br>S: ${data.sa} VA<br>P: ${data.pa} W<br>Q: ${data.qa} VAr</p><br>
+            <p><b>Fase BC:</b><br>S: ${data.sb} VA<br>P: ${data.pb} W<br>Q: ${data.qb} VAr</p><br>
+            <p><b>Fase CA:</b><br>S: ${data.sc} VA<br>P: ${data.pc} W<br>Q: ${data.qc} VAr</p><br>
+            <p style="border-top: 1px solid #ccc; padding-top: 4px; margin-top: 4px;"><b>Total:</b><br>S: ${data.stotal} VA<br>P: ${data.ptotal} W<br>Q: ${data.qtotal} VAr</p>
         `;
     })
     .catch(err => alert("Erro ao processar cálculo do Y-Delta: " + err));
