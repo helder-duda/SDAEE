@@ -1855,6 +1855,176 @@ def graficos_trifasico_deltadelta():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)}), 400
 
+# ==========================================
+# MÓDULO DELTA-Y (Δ-Y)
+# ==========================================
+
+def resolver_circuito_dy(data):
+    # Tensões da Fonte (Delta)
+    vab_f_mod = float(data.get('vab_mod', 0))
+    vab_f_ang = float(data.get('vab_ang', 0))
+    vbc_f_mod = float(data.get('vbc_mod', 0))
+    vbc_f_ang = float(data.get('vbc_ang', 0))
+    vca_f_mod = float(data.get('vca_mod', 0))
+    vca_f_ang = float(data.get('vca_ang', 0))
+
+    Vab_fonte = cmath.rect(vab_f_mod, math.radians(vab_f_ang))
+    Vbc_fonte = cmath.rect(vbc_f_mod, math.radians(vbc_f_ang))
+    Vca_fonte = cmath.rect(vca_f_mod, math.radians(vca_f_ang))
+
+    # Conversão da Fonte Delta -> Equivalente Estrela (Y) para simplificar a análise
+    Van_fonte = (Vab_fonte - Vca_fonte) / 3.0
+    Vbn_fonte = (Vbc_fonte - Vab_fonte) / 3.0
+    Vcn_fonte = (Vca_fonte - Vbc_fonte) / 3.0
+
+    # Impedâncias
+    Zfa = complex(str(data.get('zfa', '0')).replace('i', 'j'))
+    Zfb = complex(str(data.get('zfb', '0')).replace('i', 'j'))
+    Zfc = complex(str(data.get('zfc', '0')).replace('i', 'j'))
+
+    Zla = complex(str(data.get('zla', '0')).replace('i', 'j'))
+    Zlb = complex(str(data.get('zlb', '0')).replace('i', 'j'))
+    Zlc = complex(str(data.get('zlc', '0')).replace('i', 'j'))
+
+    # Impedâncias da Carga (Estrela - Y)
+    Za_carga = complex(str(data.get('za', '1')).replace('i', 'j'))
+    Zb_carga = complex(str(data.get('zb', '1')).replace('i', 'j'))
+    Zc_carga = complex(str(data.get('zc', '1')).replace('i', 'j'))
+
+    # Impedância de Neutro (se houver)
+    Zn = complex(str(data.get('zn', '0')).replace('i', 'j'))
+
+    # Impedâncias Totais por Fase
+    Za_total = Zfa + Zla + Za_carga
+    Zb_total = Zfb + Zlb + Zb_carga
+    Zc_total = Zfc + Zlc + Zc_carga
+
+    # Tensão de Deslocamento de Neutro (Vn'n) se Zn existir ou sistema for desequilibrado
+    Y_a = 1.0 / Za_total if Za_total != 0 else 0
+    Y_b = 1.0 / Zb_total if Zb_total != 0 else 0
+    Y_c = 1.0 / Zc_total if Zc_total != 0 else 0
+    Y_n = 1.0 / Zn if Zn != 0 else 0
+
+    Vnn = (Van_fonte * Y_a + Vbn_fonte * Y_b + Vcn_fonte * Y_c) / (Y_a + Y_b + Y_c + Y_n)
+
+    # Correntes de Linha (que no Y são iguais às correntes de fase da carga)
+    Ia = (Van_fonte - Vnn) * Y_a
+    Ib = (Vbn_fonte - Vnn) * Y_b
+    Ic = (Vcn_fonte - Vnn) * Y_c
+    In = Ia + Ib + Ic
+
+    # Tensões de Fase na Carga (Y)
+    VAN_carga = Ia * Za_carga
+    VBN_carga = Ib * Zb_carga
+    VCN_carga = Ic * Zc_carga
+
+    # Tensões de Linha na Carga
+    VAB_carga = VAN_carga - VBN_carga
+    VBC_carga = VBN_carga - VCN_carga
+    VCA_carga = VCN_carga - VAN_carga
+
+    # Potências
+    S_a = VAN_carga * Ia.conjugate()
+    S_b = VBN_carga * Ib.conjugate()
+    S_c = VCN_carga * Ic.conjugate()
+    S_total = S_a + S_b + S_c
+
+    return {
+        'Vab_fonte': Vab_fonte, 'Vbc_fonte': Vbc_fonte, 'Vca_fonte': Vca_fonte,
+        'Van_fonte': Van_fonte, 'Vbn_fonte': Vbn_fonte, 'Vcn_fonte': Vcn_fonte,
+        'Ia': Ia, 'Ib': Ib, 'Ic': Ic, 'In': In,
+        'VAN_carga': VAN_carga, 'VBN_carga': VBN_carga, 'VCN_carga': VCN_carga,
+        'VAB_carga': VAB_carga, 'VBC_carga': VBC_carga, 'VCA_carga': VCA_carga,
+        'S_a': S_a, 'S_b': S_b, 'S_c': S_c, 'S_total': S_total
+    }
+
+@app.route('/calcular_trifasico_deltay', methods=['POST'])
+def calcular_trifasico_deltay():
+    try:
+        data = request.get_json()
+        res = resolver_circuito_dy(data)
+
+        return jsonify({
+            'ia': formatar_complexo(res['Ia']),
+            'ib': formatar_complexo(res['Ib']),
+            'ic': formatar_complexo(res['Ic']),
+            'in': formatar_complexo(res['In']),
+
+            # Correntes/Tensões de Fase e Linha na Carga
+            'van_carga': formatar_complexo(res['VAN_carga']),
+            'vbn_carga': formatar_complexo(res['VBN_carga']),
+            'vcn_carga': formatar_complexo(res['VCN_carga']),
+
+            'vab_carga': formatar_complexo(res['VAB_carga']),
+            'vbc_carga': formatar_complexo(res['VBC_carga']),
+            'vca_carga': formatar_complexo(res['VCA_carga']),
+
+            'vab_fonte': formatar_complexo(res['Vab_fonte']),
+            'vbc_fonte': formatar_complexo(res['Vbc_fonte']),
+            'vca_fonte': formatar_complexo(res['Vca_fonte']),
+
+            # Potências Individuais por Fase (Mod / Real / Imag)
+            'sa': round(abs(res['S_a']), 2),
+            'pa': round(res['S_a'].real, 2),
+            'qa': round(res['S_a'].imag, 2),
+
+            'sb': round(abs(res['S_b']), 2),
+            'pb': round(res['S_b'].real, 2),
+            'qb': round(res['S_b'].imag, 2),
+
+            'sc': round(abs(res['S_c']), 2),
+            'pc': round(res['S_c'].real, 2),
+            'qc': round(res['S_c'].imag, 2),
+
+            # Potência Total
+            'stotal': round(abs(res['S_total']), 2),
+            'ptotal': round(res['S_total'].real, 2),
+            'qtotal': round(res['S_total'].imag, 2)
+        })
+    except Exception as e:
+        return jsonify({'erro': f'Erro no cálculo Delta-Y: {str(e)}'}), 400
+
+@app.route('/graficos_trifasico_deltay', methods=['POST'])
+def graficos_trifasico_deltay():
+    try:
+        data = request.get_json()
+        res = resolver_circuito_dy(data)
+
+        def fasor_dict(c):
+            mod, ang_rad = cmath.polar(c)
+            return {
+                'mod': float(mod),
+                'ang': float(math.degrees(ang_rad)),
+                'real': float(c.real),
+                'imag': float(c.imag)
+            }
+
+        return jsonify({
+            'sucesso': True,
+            'fasores': {
+                'VAB_fonte': fasor_dict(res['Vab_fonte']),
+                'VBC_fonte': fasor_dict(res['Vbc_fonte']),
+                'VCA_fonte': fasor_dict(res['Vca_fonte']),
+                'VAN_carga': fasor_dict(res['VAN_carga']),
+                'VBN_carga': fasor_dict(res['VBN_carga']),
+                'VCN_carga': fasor_dict(res['VCN_carga']),
+                'VAB_carga': fasor_dict(res['VAB_carga']),
+                'VBC_carga': fasor_dict(res['VBC_carga']),
+                'VCA_carga': fasor_dict(res['VCA_carga']),
+                'Ia': fasor_dict(res['Ia']),
+                'Ib': fasor_dict(res['Ib']),
+                'Ic': fasor_dict(res['Ic']),
+                'In': fasor_dict(res['In'])
+            },
+            'potencia': {
+                'P': float(res['S_total'].real),
+                'Q': float(res['S_total'].imag),
+                'S_mod': float(abs(res['S_total']))
+            }
+        })
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)}), 400
+
 
 
 if __name__ == '__main__':

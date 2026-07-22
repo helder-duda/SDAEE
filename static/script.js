@@ -450,17 +450,17 @@ function carregarConteudo(modulo) {
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
                             <label style="width:60px;">Fase A:</label>
                             <input type="text" id="in-zfa-yd" value="0" style="width:40%;" placeholder="Zfa">
-                            <input type="text" id="in-zla-yd" value="1+1i" style="width:40%;" placeholder="ZLa">
+                            <input type="text" id="in-zla-yd" value="0+0i" style="width:40%;" placeholder="ZLa">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
                             <label style="width:60px;">Fase B:</label>
                             <input type="text" id="in-zfb-yd" value="0" style="width:40%;" placeholder="Zfb">
-                            <input type="text" id="in-zlb-yd" value="1+1i" style="width:40%;" placeholder="ZLb">
+                            <input type="text" id="in-zlb-yd" value="0+0i" style="width:40%;" placeholder="ZLb">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
                             <label style="width:60px;">Fase C:</label>
                             <input type="text" id="in-zfc-yd" value="0" style="width:40%;" placeholder="Zfc">
-                            <input type="text" id="in-zlc-yd" value="1+1i" style="width:40%;" placeholder="ZLc">
+                            <input type="text" id="in-zlc-yd" value="0+0i" style="width:40%;" placeholder="ZLc">
                         </div>
                     </div>
 
@@ -557,17 +557,17 @@ function carregarConteudo(modulo) {
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
                             <label style="width:60px;">Fase A:</label>
                             <input type="text" id="in-zfa-dd" value="0" style="width:40%;" placeholder="Zfa">
-                            <input type="text" id="in-zla-dd" value="0.5+0.5i" style="width:40%;" placeholder="ZLa">
+                            <input type="text" id="in-zla-dd" value="0.0+0.0i" style="width:40%;" placeholder="ZLa">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
                             <label style="width:60px;">Fase B:</label>
                             <input type="text" id="in-zfb-dd" value="0" style="width:40%;" placeholder="Zfb">
-                            <input type="text" id="in-zlb-dd" value="0.5+0.5i" style="width:40%;" placeholder="ZLb">
+                            <input type="text" id="in-zlb-dd" value="0.0+0.0i" style="width:40%;" placeholder="ZLb">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
                             <label style="width:60px;">Fase C:</label>
                             <input type="text" id="in-zfc-dd" value="0" style="width:40%;" placeholder="Zfc">
-                            <input type="text" id="in-zlc-dd" value="0.5+0.5i" style="width:40%;" placeholder="ZLc">
+                            <input type="text" id="in-zlc-dd" value="0.0+0.0i" style="width:40%;" placeholder="ZLc">
                         </div>
                     </div>
 
@@ -623,6 +623,118 @@ function carregarConteudo(modulo) {
 
             <div id="container-graficos-trifasico-dd" style="margin-top: 20px;"></div>
         `;
+    } else if (modulo === 'delta-estrela' || modulo === 'delta-y') {
+    painel.innerHTML = `
+        <h2>Circuitos Trifásicos - Delta-Estrela (Δ-Y)</h2>
+
+        <div class="imagens-container" style="display: flex; gap: 20px; margin-bottom: 20px; justify-content: space-between;">
+            <div style="width: 49%; border: 1px solid #ccc; text-align: center; padding: 5px; background:#fff;">
+                <img src="/static/imagens/circuito_deltaestrela.png" alt="Esquema Delta-Estrela" style="max-width: 100%; height: auto;">
+            </div>
+            <div style="width: 49%; border: 1px solid #ccc; text-align: center; padding: 5px; background:#fff;">
+                <img src="/static/imagens/formulas_deltaestrela.png" alt="Fórmulas Delta-Estrela" style="max-width: 100%; height: auto;">
+            </div>
+        </div>
+
+        <fieldset style="margin-bottom: 15px; padding: 15px; border: 1px solid #ccc; background:#fff;">
+            <legend><strong>Entrada de Dados</strong></legend>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div>
+                    <h4 style="margin-bottom:8px; color:#2980b9;">Tensões da Fonte Δ (Mod / Âng°)</h4>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:40px;">VAB:</label>
+                        <input type="number" id="in-vab-mod-dy" value="220" style="width:45%;">
+                        <input type="number" id="in-vab-ang-dy" value="0" style="width:45%;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:40px;">VBC:</label>
+                        <input type="number" id="in-vbc-mod-dy" value="220" style="width:45%;">
+                        <input type="number" id="in-vbc-ang-dy" value="-120" style="width:45%;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:40px;">VCA:</label>
+                        <input type="number" id="in-vca-mod-dy" value="220" style="width:45%;">
+                        <input type="number" id="in-vca-ang-dy" value="120" style="width:45%;">
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias de Fonte e Linha (Ω)</h4>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:60px;">Fase A:</label>
+                        <input type="text" id="in-zfa-dy" value="0" style="width:40%;" placeholder="Zfa">
+                        <input type="text" id="in-zla-dy" value="0.0+0.0i" style="width:40%;" placeholder="ZLa">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:60px;">Fase B:</label>
+                        <input type="text" id="in-zfb-dy" value="0" style="width:40%;" placeholder="Zfb">
+                        <input type="text" id="in-zlb-dy" value="0.0+0.0i" style="width:40%;" placeholder="ZLb">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:60px;">Fase C:</label>
+                        <input type="text" id="in-zfc-dy" value="0" style="width:40%;" placeholder="Zfc">
+                        <input type="text" id="in-zlc-dy" value="0.0+0.0i" style="width:40%;" placeholder="ZLc">
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias da Carga Y (Ω)</h4>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:40px;">ZA:</label>
+                        <input type="text" id="in-za-dy" value="10+5i" style="width:80%;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:40px;">ZB:</label>
+                        <input type="text" id="in-zb-dy" value="10+5i" style="width:80%;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:40px;">ZC:</label>
+                        <input type="text" id="in-zc-dy" value="10+5i" style="width:80%;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <label style="width:40px;">ZN:</label>
+                        <input type="text" id="in-zn-dy" value="0" style="width:80%;">
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Painel de Resultados de 5 Colunas Padronizado -->
+        <fieldset style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc;">
+            <legend><strong>Painel de Resultados</strong></legend>
+            <div class="grid-resultados-trifasico-5col" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+                <div class="col-resultado">
+                    <h4>Correntes de Linha</h4>
+                    <div id="out-i-linha-dy" class="res-bloco">Aguardando...</div>
+                </div>
+                <div class="col-resultado">
+                    <h4>Correntes de Fase (Carga)</h4>
+                    <div id="out-i-fase-dy" class="res-bloco">Aguardando...</div>
+                </div>
+                <div class="col-resultado">
+                    <h4>Tensões de Linha (Carga)</h4>
+                    <div id="out-v-linha-dy" class="res-bloco">Aguardando...</div>
+                </div>
+                <div class="col-resultado">
+                    <h4>Tensões de Fase (Carga)</h4>
+                    <div id="out-v-fase-dy" class="res-bloco">Aguardando...</div>
+                </div>
+                <div class="col-resultado">
+                    <h4>Potências</h4>
+                    <div id="out-potencias-dy" class="res-bloco">Aguardando...</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Botões de Ação -->
+        <div style="margin-top: 20px; display: flex; gap: 20px;">
+            <button class="btn-calc" onclick="calcularTrifasicoDeltaY()" style="padding: 10px 20px; cursor:pointer;">Calcular</button>
+            <button class="btn-graf" onclick="abrirGraficosDeltaY()" style="padding: 10px 20px; cursor:pointer;">Exibir Gráficos</button>
+        </div>
+
+        <!-- Container para Renderização dos Gráficos Plotly -->
+        <div id="container-graficos-trifasico-dy" style="margin-top: 20px;"></div>
+    `;
     }
 }
 
@@ -1861,6 +1973,332 @@ function abrirGraficosDeltaDelta() {
         Plotly.newPlot('grafico-potencia-dd', dadosPotencia, layoutPotencia);
     })
     .catch(err => alert("Erro na requisição dos gráficos Delta-Delta: " + err));
+}
+
+function calcularTrifasicoDeltaY() {
+    const dados = {
+        vab_mod: document.getElementById('in-vab-mod-dy').value,
+        vab_ang: document.getElementById('in-vab-ang-dy').value,
+        vbc_mod: document.getElementById('in-vbc-mod-dy').value,
+        vbc_ang: document.getElementById('in-vbc-ang-dy').value,
+        vca_mod: document.getElementById('in-vca-mod-dy').value,
+        vca_ang: document.getElementById('in-vca-ang-dy').value,
+
+        zfa: document.getElementById('in-zfa-dy').value,
+        zfb: document.getElementById('in-zfb-dy').value,
+        zfc: document.getElementById('in-zfc-dy').value,
+
+        zla: document.getElementById('in-zla-dy').value,
+        zlb: document.getElementById('in-zlb-dy').value,
+        zlc: document.getElementById('in-zlc-dy').value,
+
+        za: document.getElementById('in-za-dy').value,
+        zb: document.getElementById('in-zb-dy').value,
+        zc: document.getElementById('in-zc-dy').value,
+        zn: document.getElementById('in-zn-dy').value
+    };
+
+    fetch('/calcular_trifasico_deltay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.erro) { alert(data.erro); return; }
+
+        const pol = (obj) => (obj && typeof obj === 'object') ? obj.polar : (obj || '-');
+        const ret = (obj) => (obj && typeof obj === 'object') ? obj.retangular : '-';
+
+        // 1. Correntes de Linha (Ia, Ib, Ic)
+        document.getElementById('out-i-linha-dy').innerHTML = `
+            <p><b>I<sub>a</sub>:</b><br>P: ${pol(data.ia)}<br>R: ${ret(data.ia)}</p><br>
+            <p><b>I<sub>b</sub>:</b><br>P: ${pol(data.ib)}<br>R: ${ret(data.ib)}</p><br>
+            <p><b>I<sub>c</sub>:</b><br>P: ${pol(data.ic)}<br>R: ${ret(data.ic)}</p>
+        `;
+
+        // 2. Correntes de Fase na Carga (I_AN, I_BN, I_CN - iguais às de linha no Y)
+        document.getElementById('out-i-fase-dy').innerHTML = `
+            <p><b>I<sub>AN</sub>:</b><br>P: ${pol(data.ia)}<br>R: ${ret(data.ia)}</p><br>
+            <p><b>I<sub>BN</sub>:</b><br>P: ${pol(data.ib)}<br>R: ${ret(data.ib)}</p><br>
+            <p><b>I<sub>CN</sub>:</b><br>P: ${pol(data.ic)}<br>R: ${ret(data.ic)}</p>
+        `;
+
+        // 3. Tensões de Linha na Carga
+        document.getElementById('out-v-linha-dy').innerHTML = `
+            <p><b>V<sub>AB</sub>:</b><br>P: ${pol(data.vab_carga)}<br>R: ${ret(data.vab_carga)}</p><br>
+            <p><b>V<sub>BC</sub>:</b><br>P: ${pol(data.vbc_carga)}<br>R: ${ret(data.vbc_carga)}</p><br>
+            <p><b>V<sub>CA</sub>:</b><br>P: ${pol(data.vca_carga)}<br>R: ${ret(data.vca_carga)}</p>
+        `;
+
+        // 4. Tensões de Fase na Carga
+        document.getElementById('out-v-fase-dy').innerHTML = `
+            <p><b>V<sub>AN</sub>:</b><br>P: ${pol(data.van_carga)}<br>R: ${ret(data.van_carga)}</p><br>
+            <p><b>V<sub>BN</sub>:</b><br>P: ${pol(data.vbn_carga)}<br>R: ${ret(data.vbn_carga)}</p><br>
+            <p><b>V<sub>CN</sub>:</b><br>P: ${pol(data.vcn_carga)}<br>R: ${ret(data.vcn_carga)}</p>
+        `;
+
+        // 5. Potência por Fase e Total
+        document.getElementById('out-potencias-dy').innerHTML = `
+            <p><b>Fase A:</b><br>S: ${data.sa} VA<br>P: ${data.pa} W<br>Q: ${data.qa} VAr</p><br>
+            <p><b>Fase B:</b><br>S: ${data.sb} VA<br>P: ${data.pb} W<br>Q: ${data.qb} VAr</p><br>
+            <p><b>Fase C:</b><br>S: ${data.sc} VA<br>P: ${data.pc} W<br>Q: ${data.qc} VAr</p><br>
+            <p style="border-top:1px solid #ccc; padding-top:4px;"><b>Total:</b><br>S: ${data.stotal} VA<br>P: ${data.ptotal} W<br>Q: ${data.qtotal} VAr</p>
+        `;
+    })
+    .catch(err => alert("Erro ao calcular Delta-Y: " + err));
+}
+
+function abrirGraficosDeltaY() {
+    const dados = {
+        vab_mod: document.getElementById('in-vab-mod-dy').value,
+        vab_ang: document.getElementById('in-vab-ang-dy').value,
+        vbc_mod: document.getElementById('in-vbc-mod-dy').value,
+        vbc_ang: document.getElementById('in-vbc-ang-dy').value,
+        vca_mod: document.getElementById('in-vca-mod-dy').value,
+        vca_ang: document.getElementById('in-vca-ang-dy').value,
+
+        zfa: document.getElementById('in-zfa-dy').value,
+        zfb: document.getElementById('in-zfb-dy').value,
+        zfc: document.getElementById('in-zfc-dy').value,
+
+        zla: document.getElementById('in-zla-dy').value,
+        zlb: document.getElementById('in-zlb-dy').value,
+        zlc: document.getElementById('in-zlc-dy').value,
+
+        za: document.getElementById('in-za-dy').value,
+        zb: document.getElementById('in-zb-dy').value,
+        zc: document.getElementById('in-zc-dy').value,
+        zn: document.getElementById('in-zn-dy').value
+    };
+
+    fetch('/graficos_trifasico_deltay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (!res.sucesso) { alert("Erro nos gráficos: " + res.erro); return; }
+
+        const container = document.getElementById('container-graficos-trifasico-dy');
+        container.innerHTML = `
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div id="plot-fasor-dy" style="width: 48%; height: 400px; border: 1px solid #ccc;"></div>
+                <div id="plot-pot-dy" style="width: 48%; height: 400px; border: 1px solid #ccc;"></div>
+            </div>
+        `;
+
+        // Plot 1: Diagrama Fasorial
+        const fas = res.fasores;
+        const dataFasor = [
+            { type: 'scatterpolar', mode: 'lines+markers', r: [0, fas.Ia.mod], theta: [0, fas.Ia.ang], name: 'Ia' },
+            { type: 'scatterpolar', mode: 'lines+markers', r: [0, fas.Ib.mod], theta: [0, fas.Ib.ang], name: 'Ib' },
+            { type: 'scatterpolar', mode: 'lines+markers', r: [0, fas.Ic.mod], theta: [0, fas.Ic.ang], name: 'Ic' },
+            { type: 'scatterpolar', mode: 'lines+markers', r: [0, fas.VAN_carga.mod], theta: [0, fas.VAN_carga.ang], name: 'VAN' },
+            { type: 'scatterpolar', mode: 'lines+markers', r: [0, fas.VBN_carga.mod], theta: [0, fas.VBN_carga.ang], name: 'VBN' },
+            { type: 'scatterpolar', mode: 'lines+markers', r: [0, fas.VCN_carga.mod], theta: [0, fas.VCN_carga.ang], name: 'VCN' }
+        ];
+
+        Plotly.newPlot('plot-fasor-dy', dataFasor, { title: 'Diagrama Fasorial (Tensão e Corrente)' });
+
+        // Plot 2: Triângulo / Barra de Potência
+        const pot = res.potencia;
+        const dataPot = [{
+            x: ['Ativa (P)', 'Reativa (Q)', 'Aparente (S)'],
+            y: [pot.P, pot.Q, pot.S_mod],
+            type: 'bar',
+            marker: { color: ['#2ecc71', '#e74c3c', '#3498db'] }
+        }];
+
+        Plotly.newPlot('plot-pot-dy', dataPot, { title: 'Potência Total (W, VAr, VA)' });
+    })
+    .catch(err => alert("Erro ao gerar gráficos: " + err));
+}
+function abrirGraficosDeltaY() {
+    const obterTexto = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : "0"; };
+    const obterNumero = (id) => { const el = document.getElementById(id); return el ? Number(el.value) : 0; };
+
+    const payload = {
+        vab_mod: obterNumero("in-vab-mod-dy"), vab_ang: obterNumero("in-vab-ang-dy"),
+        vbc_mod: obterNumero("in-vbc-mod-dy"), vbc_ang: obterNumero("in-vbc-ang-dy"),
+        vca_mod: obterNumero("in-vca-mod-dy"), vca_ang: obterNumero("in-vca-ang-dy"),
+        zfa: obterTexto("in-zfa-dy"), zfb: obterTexto("in-zfb-dy"), zfc: obterTexto("in-zfc-dy"),
+        zla: obterTexto("in-zla-dy"), zlb: obterTexto("in-zlb-dy"), zlc: obterTexto("in-zlc-dy"),
+        za:  obterTexto("in-za-dy"),  zb:  obterTexto("in-zb-dy"),  zc:  obterTexto("in-zc-dy"),
+        zn:  obterTexto("in-zn-dy")
+    };
+
+    fetch('/graficos_trifasico_deltay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(dados => {
+        if (!dados.sucesso) {
+            alert("Erro ao calcular gráficos: " + dados.erro);
+            return;
+        }
+
+        let container = document.getElementById("container-graficos-trifasico-dy");
+        if (!container) {
+            container = document.createElement("div");
+            container.id = "container-graficos-trifasico-dy";
+            container.style = "display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px;";
+            document.getElementById('painel-dinamico').appendChild(container);
+        }
+
+        container.innerHTML = `
+            <!-- Painel Inteligente de Seleção de Visibilidade (Δ-Y) -->
+            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #ddd; font-family: Arial, sans-serif; font-size: 0.9rem; width: 100%; max-width: 1120px; box-sizing: border-box;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <strong style="color:#2c3e50;">Tensões Fonte:</strong>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vab-f-dy" checked> V<sub>AB,f</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vbc-f-dy" checked> V<sub>BC,f</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vca-f-dy" checked> V<sub>CA,f</sub></label>
+                </div>
+                <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <strong style="color:#2c3e50;">Tensões Carga (Fase/Linha):</strong>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-van-c-dy" checked> V<sub>AN</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vbn-c-dy" checked> V<sub>BN</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vcn-c-dy" checked> V<sub>CN</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-vab-c-dy"> V<sub>AB,c</sub></label>
+                </div>
+                <span style="border-left: 1px solid #ccc; margin: 0 5px;"></span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <strong style="color:#2c3e50;">Correntes (Linha / Neutro):</strong>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-ia-dy" checked> I<sub>a</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-ib-dy" checked> I<sub>b</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-ic-dy" checked> I<sub>c</sub></label>
+                    <label style="cursor:pointer;"><input type="checkbox" id="chk-in-dy"> I<sub>n</sub></label>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%;">
+                <div id="grafico-fasores-dy" style="width: 550px; height: 500px; background:#fff; border:1px solid #ddd; border-radius: 4px;"></div>
+                <div id="grafico-potencia-dy" style="width: 550px; height: 500px; background:#fff; border:1px solid #ddd; border-radius: 4px;"></div>
+            </div>
+        `;
+
+        const f = dados.fasores || {};
+
+        const vab_f = f.VAB_fonte || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vbc_f = f.VBC_fonte || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vca_f = f.VCA_fonte || { mod: 0, ang: 0, real: 0, imag: 0 };
+
+        const van_c = f.VAN_carga || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vbn_c = f.VBN_carga || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const vcn_c = f.VCN_carga || { mod: 0, ang: 0, real: 0, imag: 0 };
+
+        const vab_c = f.VAB_carga || { mod: 0, ang: 0, real: 0, imag: 0 };
+
+        const ia = f.Ia || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const ib = f.Ib || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const ic = f.Ic || { mod: 0, ang: 0, real: 0, imag: 0 };
+        const in_f = f.In || { mod: 0, ang: 0, real: 0, imag: 0 };
+
+        const maxV = Math.max(vab_f.mod, vbc_f.mod, vca_f.mod, van_c.mod, vbn_c.mod, vcn_c.mod, 1.0);
+        const maxI = Math.max(ia.mod, ib.mod, ic.mod, in_f.mod, 0.001);
+        const fatorEscalaI = (0.5 * maxV) / maxI;
+        const labelSufixoI = Math.abs(fatorEscalaI - 1.0) > 0.05 ? ` (x${fatorEscalaI.toFixed(1)})` : '';
+
+        function renderizarTracosDeltaY() {
+            const vis = {
+                vab_f: document.getElementById('chk-vab-f-dy')?.checked ?? true,
+                vbc_f: document.getElementById('chk-vbc-f-dy')?.checked ?? true,
+                vca_f: document.getElementById('chk-vca-f-dy')?.checked ?? true,
+                van_c: document.getElementById('chk-van-c-dy')?.checked ?? true,
+                vbn_c: document.getElementById('chk-vbn-c-dy')?.checked ?? true,
+                vcn_c: document.getElementById('chk-vcn-c-dy')?.checked ?? true,
+                vab_c: document.getElementById('chk-vab-c-dy')?.checked ?? false,
+                ia:    document.getElementById('chk-ia-dy')?.checked ?? true,
+                ib:    document.getElementById('chk-ib-dy')?.checked ?? true,
+                ic:    document.getElementById('chk-ic-dy')?.checked ?? true,
+                in_f:  document.getElementById('chk-in-dy')?.checked ?? false
+            };
+
+            function criarTracoVetor(fasor, nome, cor, sufixoUnidade, visivel, scale = 1.0, rotuloExtra = '') {
+                if (!fasor || !visivel) return null;
+                const rx = fasor.real !== undefined ? fasor.real * scale : fasor.mod * Math.cos(fasor.ang * Math.PI / 180) * scale;
+                const ry = fasor.imag !== undefined ? fasor.imag * scale : fasor.mod * Math.sin(fasor.ang * Math.PI / 180) * scale;
+                return {
+                    x: [0, rx],
+                    y: [0, ry],
+                    mode: 'lines+markers',
+                    name: `${nome}: ${fasor.mod.toFixed(1)}${sufixoUnidade}${rotuloExtra} ∠${fasor.ang.toFixed(1)}°`,
+                    line: { color: cor, width: 3 },
+                    marker: { size: [0, 8], symbol: "arrow-bar-up", angleref: "previous" }
+                };
+            }
+
+            const listaFasores = [
+                criarTracoVetor(vab_f, 'VAB,f', '#9b59b6', 'V', vis.vab_f),
+                criarTracoVetor(vbc_f, 'VBC,f', '#f1c40f', 'V', vis.vbc_f),
+                criarTracoVetor(vca_f, 'VCA,f', '#e67e22', 'V', vis.vca_f),
+                criarTracoVetor(van_c, 'VAN,c', '#ff4d4d', 'V', vis.van_c),
+                criarTracoVetor(vbn_c, 'VBN,c', '#2ecc71', 'V', vis.vbn_c),
+                criarTracoVetor(vcn_c, 'VCN,c', '#3498db', 'V', vis.vcn_c),
+                criarTracoVetor(vab_c, 'VAB,c', '#8e44ad', 'V', vis.vab_c),
+                criarTracoVetor(ia,    'Ia',    '#c0392b', 'A', vis.ia,   fatorEscalaI, labelSufixoI),
+                criarTracoVetor(ib,    'Ib',    '#27ae60', 'A', vis.ib,   fatorEscalaI, labelSufixoI),
+                criarTracoVetor(ic,    'Ic',    '#2980b9', 'A', vis.ic,   fatorEscalaI, labelSufixoI),
+                criarTracoVetor(in_f,  'In',    '#7f8c8d', 'A', vis.in_f, fatorEscalaI, labelSufixoI)
+            ].filter(t => t !== null);
+
+            const maxVal = maxV * 1.25;
+
+            const layoutFasores = {
+                title: { text: '<b>Diagrama Fasorial de Tensões e Correntes (Δ-Y)</b>', font: { size: 16 } },
+                xaxis: { range: [-maxVal, maxVal], title: 'Real (Re)', gridcolor: '#eee' },
+                yaxis: { range: [-maxVal, maxVal], title: 'Imaginário (Im)', gridcolor: '#eee', scaleanchor: "x", scaleratio: 1 },
+                showlegend: true,
+                legend: { orientation: "h", y: -0.2 },
+                margin: { l: 50, r: 50, t: 50, b: 100 }
+            };
+
+            Plotly.react('grafico-fasores-dy', listaFasores, layoutFasores);
+        }
+
+        renderizarTracosDeltaY();
+
+        const idsCheckboxes = [
+            'chk-vab-f-dy', 'chk-vbc-f-dy', 'chk-vca-f-dy',
+            'chk-van-c-dy', 'chk-vbn-c-dy', 'chk-vcn-c-dy', 'chk-vab-c-dy',
+            'chk-ia-dy', 'chk-ib-dy', 'chk-ic-dy', 'chk-in-dy'
+        ];
+        idsCheckboxes.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', renderizarTracosDeltaY);
+        });
+
+        // Potência
+        const pot = dados.potencia || {};
+        const p_ativa = pot.P || 0;
+        const q_reativa = pot.Q || 0;
+        const s_aparente = pot.S_mod || 0;
+
+        const dadosPotencia = [
+            { x: [0, p_ativa], y: [0, 0], mode: 'lines+markers', name: `Ativa (P): ${Number(p_ativa).toFixed(1)} W`, line: { color: '#27ae60', width: 4 } },
+            { x: [p_ativa, p_ativa], y: [0, q_reativa], mode: 'lines+markers', name: `Reativa (Q): ${Number(q_reativa).toFixed(1)} var`, line: { color: '#e74c3c', width: 4 } },
+            { x: [0, p_ativa], y: [0, q_reativa], mode: 'lines+markers', name: `Aparente (S): ${Number(s_aparente).toFixed(1)} VA`, line: { color: '#f1c40f', width: 4, dash: 'dash' } }
+        ];
+
+        const maxPot = Math.max(Math.abs(p_ativa), Math.abs(q_reativa), Math.abs(s_aparente), 1.0) * 1.2;
+
+        const layoutPotencia = {
+            title: { text: '<b>Triângulo de Potências Trifásico Total</b>', font: { size: 16 } },
+            xaxis: { range: [p_ativa >= 0 ? -maxPot*0.1 : -maxPot, p_ativa >= 0 ? maxPot : maxPot*0.1], title: 'Potência Ativa (W)', gridcolor: '#eee' },
+            yaxis: { range: [q_reativa >= 0 ? -maxPot*0.1 : -maxPot, q_reativa >= 0 ? maxPot : maxPot*0.1], title: 'Potência Reativa (var)', gridcolor: '#eee', scaleanchor: "x", scaleratio: 1 },
+            showlegend: true,
+            legend: { orientation: "h", y: -0.2 },
+            margin: { l: 50, r: 50, t: 50, b: 100 }
+        };
+
+        Plotly.newPlot('grafico-potencia-dy', dadosPotencia, layoutPotencia);
+    })
+    .catch(err => alert("Erro na requisição dos gráficos Delta-Y: " + err));
 }
 
 // ==========================================
