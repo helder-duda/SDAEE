@@ -12,6 +12,7 @@
     <script src="/static/script.js" defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <body>
 
     <div class="container">
@@ -42,6 +43,7 @@
                         <li><a onclick="carregarConteudo('trifasico-ydelta')">Estrela-Delta (Y-Δ)</a></li>
                         <li><a onclick="carregarConteudo('trifasico-deltadelta')">Delta-Delta (Δ-Δ)</a></li>
                         <a href="#" onclick="carregarConteudo('delta-estrela')">Delta - Estrela (Δ-Y)</a>
+                        <a href="#" onclick="carregarConteudo('correcao-fp')">Correção de FP</a>
                     </ul>
                 </li>
 

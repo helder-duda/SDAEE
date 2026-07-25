@@ -2025,7 +2025,73 @@ def graficos_trifasico_deltay():
     except Exception as e:
         return jsonify({'sucesso': False, 'erro': str(e)}), 400
 
+@app.route('/calcular_correcao_fp', methods=['POST'])
+def calcular_correcao_fp():
+    try:
+        dados = request.get_json()
 
+        # Leitura dos parâmetros de entrada
+        p_total = float(dados.get('p_total', 0))  # Potência ativa em Watts (W)
+        fp_atual = float(dados.get('fp_atual', 0))  # Fator de potência atual
+        vl = float(dados.get('v_linha', 220))  # Tensão de linha (V)
+        f = float(dados.get('frequencia', 60))  # Frequência (Hz)
+        fp_alvo = float(
+            dados.get('fp_alvo', 0.92)
+        )  # FP desejado (padrão >= 0.92)
+
+        # Validações de segurança
+        if fp_atual <= 0 or fp_atual >= 1 or fp_alvo <= 0 or fp_alvo > 1:
+            return jsonify({
+                'sucesso': False,
+                'erro': 'O Fator de Potência deve estar entre 0 e 1.',
+            })
+
+        if fp_atual >= fp_alvo:
+            return jsonify({
+                'sucesso': False,
+                'erro': (
+                    'O FP atual já é maior ou igual ao FP alvo desejado.'
+                ),
+            })
+
+        # Ângulos de fase (em radianos)
+        theta_1 = math.acos(fp_atual)
+        theta_2 = math.acos(fp_alvo)
+
+        # Cálculo das Potências Reativas
+        q1 = p_total * math.tan(theta_1)  # VAr atual
+        q2 = p_total * math.tan(theta_2)  # VAr alvo
+        qc_total = q1 - q2  # VAr capacitivo necessário
+
+        # Potência aparente inicial e final
+        s1 = p_total / fp_atual
+        s2 = p_total / fp_alvo
+
+        # Cálculo da Capacitância (Farais -> microFarads µF)
+        omega = 2 * math.pi * f
+
+        # Para ligação Delta (Δ)
+        c_delta = (qc_total / (3 * omega * (vl**2))) * 1e6
+
+        # Para ligação Estrela (Y)
+        c_estrela = (qc_total / (omega * (vl**2))) * 1e6
+
+        return jsonify({
+            'sucesso': True,
+            'p_total': round(p_total, 2),
+            'fp_atual': round(fp_atual, 3),
+            'fp_alvo': round(fp_alvo, 3),
+            'q1_var': round(q1, 2),
+            'q2_var': round(q2, 2),
+            'qc_total_var': round(qc_total, 2),
+            's1_va': round(s1, 2),
+            's2_va': round(s2, 2),
+            'c_delta_uf': round(c_delta, 2),
+            'c_estrela_uf': round(c_estrela, 2),
+        })
+
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

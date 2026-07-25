@@ -7,61 +7,61 @@ const bancoDeExercicios = {
             "id": 1,
             "tipo": "Normal (RLC)",
             "enunciado": "Um circuito RLC série é alimentado por uma fonte de tensão de $V_s = 220\\angle{0^\\circ}\\text{ V}$. Os valores dos componentes são $R = 15\\ \\Omega$, $X_L = 30\\ \\Omega$ e $X_C = 10\\ \\Omega$. Calcule a impedância total do circuito ($Z_{eq}$) e a corrente total da fonte ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 25\\angle{53,13^\\circ}\\ \\Omega$ ; $I_s = 8,8\\angle{-53,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (15 + j20)\\ \\Omega$ ; $I_s = (5,28 - j7,04)\\text{ A}$"
+            "resposta": "**Forma Polar:** $Z_{eq} = 25\\angle{53{,}13^\\circ}\\ \\Omega$ ; $I_s = 8{,}8\\angle{-53{,}13^\\circ}\\text{ A}$\n**Forma Retangular:** $Z_{eq} = (15 + j20)\\ \\Omega$ ; $I_s = (5{,}28 - j7{,}04)\\text{ A}$"
         },
         {
             "id": 2,
             "tipo": "Normal (RC)",
             "enunciado": "Um resistor de $R = 12\\ \\Omega$ está em paralelo com um capacitor de reatância $X_C = 16\\ \\Omega$. O circuito é alimentado por uma fonte de tensão de $V_s = 48\\angle{30^\\circ}\\text{ V}$. Determine a corrente em cada ramo ($I_R$, $I_C$) e a corrente total ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_R = 4\\angle{30^\\circ}\\text{ A}$ ; $I_C = 3\\angle{120^\\circ}\\text{ A}$ ; $I_s = 5\\angle{66,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $I_R = (3,46 + j2)\\text{ A}$ ; $I_C = (-1,5 + j2,6)\\text{ A}$ ; $I_s = (1,96 + j4,6)\\text{ A}$"
+            "resposta": "**Forma Polar:** $I_R = 4\\angle{30^\\circ}\\text{ A}$ ; $I_C = 3\\angle{120^\\circ}\\text{ A}$ ; $I_s = 5\\angle{66{,}87^\\circ}\\text{ A}$\n**Forma Retangular:** $I_R = (3{,}46 + j2)\\text{ A}$ ; $I_C = (-1{,}5 + j2{,}6)\\text{ A}$ ; $I_s = (1{,}96 + j4{,}6)\\text{ A}$"
         },
         {
             "id": 3,
             "tipo": "Normal (RL)",
             "enunciado": "Um circuito RL série possui uma fonte de tensão de $V_s = 100\\angle{0^\\circ}\\text{ V}$, um resistor de $R = 3\\ \\Omega$ e um indutor com reatância $X_L = 4\\ \\Omega$. Encontre a impedância equivalente total ($Z_{eq}$) do circuito e determine a intensidade da corrente total ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 5\\angle{53,13^\\circ}\\ \\Omega$ ; $I_s = 20\\angle{-53,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (3 + j4)\\ \\Omega$ ; $I_s = (12 - j16)\\text{ A}$"
+            "resposta": "**Forma Polar:** $Z_{eq} = 5\\angle{53{,}13^\\circ}\\ \\Omega$ ; $I_s = 20\\angle{-53{,}13^\\circ}\\text{ A}$\n**Forma Retangular:** $Z_{eq} = (3 + j4)\\ \\Omega$ ; $I_s = (12 - j16)\\text{ A}$"
         },
         {
             "id": 4,
             "tipo": "Normal (RC)",
             "enunciado": "Considere um circuito RC série alimentado por $V_s = 120\\angle{-10^\\circ}\\text{ V}$. Sendo $R = 8\\ \\Omega$ e $X_C = 6\\ \\Omega$, determine a impedância equivalente em formato polar ($Z_{eq}$) e a corrente drenada pelo circuito ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 10\\angle{-36,87^\\circ}\\ \\Omega$ ; $I_s = 12\\angle{26,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (8 - j6)\\ \\Omega$ ; $I_s = (10,7 + j5,42)\\text{ A}$"
+            "resposta": "**Forma Polar:** $Z_{eq} = 10\\angle{-36{,}87^\\circ}\\ \\Omega$ ; $I_s = 12\\angle{26{,}87^\\circ}\\text{ A}$\n**Forma Retangular:** $Z_{eq} = (8 - j6)\\ \\Omega$ ; $I_s = (10{,}7 + j5{,}42)\\text{ A}$"
         },
         {
             "id": 5,
             "tipo": "Normal (RL)",
             "enunciado": "Um circuito composto por um resistor de $R = 30\\ \\Omega$ em paralelo com um indutor de reatância $X_L = 40\\ \\Omega$ é ligado a uma fonte de $V_s = 60\\angle{0^\\circ}\\text{ V}$. Calcule os fasores da corrente no resistor ($I_R$), no indutor ($I_L$) e a corrente global de entrada ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_R = 2\\angle{0^\\circ}\\text{ A}$ ; $I_L = 1,5\\angle{-90^\\circ}\\text{ A}$ ; $I_s = 2,5\\angle{-36,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $I_R = (2 + j0)\\text{ A}$ ; $I_L = (0 - j1,5)\\text{ A}$ ; $I_s = (2 - j1,5)\\text{ A}$"
+            "resposta": "**Forma Polar:** $I_R = 2\\angle{0^\\circ}\\text{ A}$ ; $I_L = 1{,}5\\angle{-90^\\circ}\\text{ A}$ ; $I_s = 2{,}5\\angle{-36{,}87^\\circ}\\text{ A}$\n**Forma Retangular:** $I_R = (2 + j0)\\text{ A}$ ; $I_L = (0 - j1{,}5)\\text{ A}$ ; $I_s = (2 - j1{,}5)\\text{ A}$"
         },
         {
             "id": 6,
             "tipo": "Normal (RLC)",
             "enunciado": "Um circuito RLC série possui uma impedância composta por $R = 40\\ \\Omega$, $X_L = 50\\ \\Omega$ e $X_C = 20\\ \\Omega$. Sabendo que o circuito está conectado a uma fonte de $V_s = 200\\angle{45^\\circ}\\text{ V}$, calcule a impedância equivalente ($Z_{eq}$) e o fasor de corrente ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 50\\angle{36,87^\\circ}\\ \\Omega$ ; $I_s = 4\\angle{8,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (40 + j30)\\ \\Omega$ ; $I_s = (3,96 + j0,57)\\text{ A}$"
+            "resposta": "**Forma Polar:** $Z_{eq} = 50\\angle{36{,}87^\\circ}\\ \\Omega$ ; $I_s = 4\\angle{8{,}13^\\circ}\\text{ A}$\n**Forma Retangular:** $Z_{eq} = (40 + j30)\\ \\Omega$ ; $I_s = (3{,}96 + j0{,}57)\\text{ A}$"
         },
         {
             "id": 7,
             "tipo": "Normal (RLC)",
             "enunciado": "Uma fonte senoidal de $V_s = 100\\angle{0^\\circ}\\text{ V}$ alimenta um circuito RLC paralelo com parâmetros $R = 20\\ \\Omega$, $X_L = 10\\ \\Omega$ e $X_C = 25\\ \\Omega$. Determine a corrente de entrada total ($I_s$) fornecida pela fonte de tensão.",
-            "resposta": "<b>Forma Polar:</b> $I_s = 7,81\\angle{-50,19^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $I_s = (5 - j6)\\text{ A}$"
+            "resposta": "**Forma Polar:** $I_s = 7{,}81\\angle{-50{,}19^\\circ}\\text{ A}$\n**Forma Retangular:** $I_s = (5 - j6)\\text{ A}$"
         },
         {
             "id": 8,
             "tipo": "Normal (RL)",
             "enunciado": "Uma bobina real é representada por um circuito série contendo resistência interna $R = 12\\ \\Omega$ e reatância indutiva $X_L = 5\\ \\Omega$. Se alimentada por uma fonte $V_s = 50\\angle{60^\\circ}\\text{ V}$, quais serão os fasores de impedância total ($Z_{eq}$) e corrente total ($I_s$)?",
-            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 13\\angle{22,62^\\circ}\\ \\Omega$ ; $I_s = 3,85\\angle{37,38^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (12 + j5)\\ \\Omega$ ; $I_s = (3,06 + j2,34)\\text{ A}$"
+            "resposta": "**Forma Polar:** $Z_{eq} = 13\\angle{22{,}62^\\circ}\\ \\Omega$ ; $I_s = 3{,}85\\angle{37{,}38^\\circ}\\text{ A}$\n**Forma Retangular:** $Z_{eq} = (12 + j5)\\ \\Omega$ ; $I_s = (3{,}06 + j2{,}34)\\text{ A}$"
         },
         {
             "id": 9,
             "tipo": "Normal (RC)",
             "enunciado": "Um circuito RC série com $R = 12\\ \\Omega$ e $X_C = 5\\ \\Omega$ é energizado por uma tensão alternada de $V_s = 110\\angle{0^\\circ}\\text{ V}$. Descubra os valores fasoriais correspondentes à impedância equivalente ($Z_{eq}$) e à corrente total do circuito ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 13\\angle{-22,62^\\circ}\\ \\Omega$ ; $I_s = 8,46\\angle{22,62^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (12 - j5)\\ \\Omega$ ; $I_s = (7,81 + j3,25)\\text{ A}$"
+            "resposta": "**Forma Polar:** $Z_{eq} = 13\\angle{-22{,}62^\\circ}\\ \\Omega$ ; $I_s = 8{,}46\\angle{22{,}62^\\circ}\\text{ A}$\n**Forma Retangular:** $Z_{eq} = (12 - j5)\\ \\Omega$ ; $I_s = (7{,}81 + j3{,}25)\\text{ A}$"
         },
         {
             "id": 10,
             "tipo": "Normal (RLC)",
             "enunciado": "Determine a corrente fasorial total ($I_s$) e a impedância de malha ($Z_{eq}$) para um circuito RLC série alimentado por $V_s = 10\\angle{-20^\\circ}\\text{ V}$ cujos parâmetros são $R = 6\\ \\Omega$, $X_L = 15\\ \\Omega$ e $X_C = 7\\ \\Omega$.",
-            "resposta": "<b>Forma Polar:</b> $Z_{eq} = 10\\angle{53,13^\\circ}\\ \\Omega$ ; $I_s = 1\\angle{-73,13^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $Z_{eq} = (6 + j8)\\ \\Omega$ ; $I_s = (0,29 - j0,96)\\text{ A}$"
+            "resposta": "**Forma Polar:** $Z_{eq} = 10\\angle{53{,}13^\\circ}\\ \\Omega$ ; $I_s = 1\\angle{-73{,}13^\\circ}\\text{ A}$\n**Forma Retangular:** $Z_{eq} = (6 + j8)\\ \\Omega$ ; $I_s = (0{,}29 - j0{,}96)\\text{ A}$"
         }
     ],
     "engenharia_reversa": [
@@ -69,61 +69,61 @@ const bancoDeExercicios = {
             "id": 11,
             "tipo": "Normal Engenharia Reversa (RLC)",
             "enunciado": "Um engenheiro analisa um circuito RLC série desconhecido contendo $R = 10\\ \\Omega$, $X_L = 20\\ \\Omega$ e $X_C = 10\\ \\Omega$. Através de uma medição local direta, ele descobre que a tensão sobre o capacitor é de $V_C = 50\\angle{-45^\\circ}\\text{ V}$. Descubra os parâmetros físicos globais do circuito: a corrente da fonte ($I_s$) e a tensão da fonte ($V_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_s = 5\\angle{45^\\circ}\\text{ A}$ ; $V_s = 70,7\\angle{90^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (3,54 + j3,54)\\text{ A}$ ; $V_s = (0 + j70,7)\\text{ V}$"
+            "resposta": "**Forma Polar:** $I_s = 5\\angle{45^\\circ}\\text{ A}$ ; $V_s = 70{,}7\\angle{90^\\circ}\\text{ V}$\n**Forma Retangular:** $I_s = (3{,}54 + j3{,}54)\\text{ A}$ ; $V_s = (0 + j70{,}7)\\text{ V}$"
         },
         {
             "id": 12,
             "tipo": "Engenharia Reversa (RL)",
             "enunciado": "Em um circuito paralelo RL com $R = 20\\ \\Omega$ e $X_L = 15\\ \\Omega$, a corrente medida localmente no ramo do indutor é de $I_L = 8\\angle{-30^\\circ}\\text{ A}$. Realize a engenharia reversa para determinar a tensão nos terminais do circuito ($V_s$) e a corrente total gerada pela fonte de alimentação ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $V_s = 120\\angle{60^\\circ}\\text{ V}$ ; $I_s = 10\\angle{6,87^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (60 + j103,92)\\text{ V}$ ; $I_s = (9,93 + j1,20)\\text{ A}$"
+            "resposta": "**Forma Polar:** $V_s = 120\\angle{60^\\circ}\\text{ V}$ ; $I_s = 10\\angle{6{,}87^\\circ}\\text{ A}$\n**Forma Retangular:** $V_s = (60 + j103{,}92)\\text{ V}$ ; $I_s = (9{,}93 + j1{,}20)\\text{ A}$"
         },
         {
             "id": 13,
             "tipo": "Engenharia Reversa (Misto)",
             "enunciado": "Consulte um circuito misto onde uma fonte de tensão desconhecida alimenta um resistor $R_1 = 5\\ \\Omega$ em série com um paralelo composto por um capacitor de $X_C = 10\\ \\Omega$ e um indutor de $X_L = 10\\ \\Omega$. Sabendo que a corrente medida no capacitor é de $I_C = 4\\angle{90^\\circ}\\text{ A}$, determine a corrente de entrada ($I_s$) e a tensão total da fonte ($V_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_s = 0\\angle{0^\\circ}\\text{ A}$ (Ressonância Paralela) ; $V_s = 40\\angle{0^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (0 + j0)\\text{ A}$ ; $V_s = (40 + j0)\\text{ V}$"
+            "resposta": "**Forma Polar:** $I_s = 0\\angle{0^\\circ}\\text{ A}$ (Ressonância Paralela) ; $V_s = 40\\angle{0^\\circ}\\text{ V}$\n**Forma Retangular:** $I_s = (0 + j0)\\text{ A}$ ; $V_s = (40 + j0)\\text{ V}$"
         },
         {
             "id": 14,
             "tipo": "Engenharia Reversa (RL)",
             "enunciado": "A partir de um circuito RL série desconhecido com $R = 8\\ \\Omega$ e $X_L = 6\\ \\Omega$, mediu-se sobre o resistor uma queda de tensão local de $V_R = 16\\angle{20^\\circ}\\text{ V}$. Por meio de engenharia reversa, deduza a corrente total da malha ($I_s$) e a tensão aplicada pela fonte de alimentação ($V_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_s = 2\\angle{20^\\circ}\\text{ A}$ ; $V_s = 20\\angle{56,87^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (1,88 + j0,68)\\text{ A}$ ; $V_s = (10,93 + j16,75)\\text{ V}$"
+            "resposta": "**Forma Polar:** $I_s = 2\\angle{20^\\circ}\\text{ A}$ ; $V_s = 20\\angle{56{,}87^\\circ}\\text{ V}$\n**Forma Retangular:** $I_s = (1{,}88 + j0{,}68)\\text{ A}$ ; $V_s = (10{,}93 + j16{,}75)\\text{ V}$"
         },
         {
             "id": 15,
             "tipo": "Engenharia Reversa (RC)",
             "enunciado": "No diagnóstico de um circuito RC série onde $R = 15\\ \\Omega$ e $X_C = 20\\ \\Omega$, obteve-se um registro de corrente no capacitor de $I_C = 4\\angle{30^\\circ}\\text{ A}$. Descubra os parâmetros físicos de excitação total do circuito: a corrente da fonte ($I_s$) e a tensão da fonte ($V_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_s = 4\\angle{30^\\circ}\\text{ A}$ ; $V_s = 100\\angle{-23,13^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (3,46 + j2)\\text{ A}$ ; $V_s = (91,96 - j39,28)\\text{ V}$"
+            "resposta": "**Forma Polar:** $I_s = 4\\angle{30^\\circ}\\text{ A}$ ; $V_s = 100\\angle{-23{,}13^\\circ}\\text{ V}$\n**Forma Retangular:** $I_s = (3{,}46 + j2)\\text{ A}$ ; $V_s = (91{,}96 - j39{,}28)\\text{ V}$"
         },
         {
             "id": 16,
             "tipo": "Normal Engenharia Reversa (RC)",
             "enunciado": "Em um circuito paralelo RC composto por $R = 10\\ \\Omega$ e $X_C = 10\\ \\Omega$, o instrumento de teste acusa uma corrente local no resistor de $I_R = 5\\angle{45^\\circ}\\text{ A}$. Calcule fasorialmente a tensão da fonte de alimentação global ($V_s$) e a corrente total consumida pelo circuito ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $V_s = 50\\angle{45^\\circ}\\text{ V}$ ; $I_s = 7,07\\angle{90^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (35,36 + j35,36)\\text{ V}$ ; $I_s = (0 + j7,07)\\text{ A}$"
+            "resposta": "**Forma Polar:** $V_s = 50\\angle{45^\\circ}\\text{ V}$ ; $I_s = 7{,}07\\angle{90^\\circ}\\text{ A}$\n**Forma Retangular:** $V_s = (35{,}36 + j35{,}36)\\text{ V}$ ; $I_s = (0 + j7{,}07)\\text{ A}$"
         },
         {
             "id": 17,
             "tipo": "Engenharia Reversa (RL)",
             "enunciado": "Em uma malha série RL composta por $R = 50\\ \\Omega$ e $X_L = 120\\ \\Omega$, uma ponta de prova acusa que a tensão desenvolvida especificamente nos terminais do indutor vale $V_L = 240\\angle{120^\\circ}\\text{ V}$. Calcule por engenharia reversa a corrente total do circuito ($I_s$) e a tensão fornecida pela fonte principal ($V_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_s = 2\\angle{30^\\circ}\\text{ A}$ ; $V_s = 260\\angle{97,38^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (1,73 + j1)\\text{ A}$ ; $V_s = (-33,40 + j257,85)\\text{ V}$"
+            "resposta": "**Forma Polar:** $I_s = 2\\angle{30^\\circ}\\text{ A}$ ; $V_s = 260\\angle{97{,}38^\\circ}\\text{ V}$\n**Forma Retangular:** $I_s = (1{,}73 + j1)\\text{ A}$ ; $V_s = (-33{,}40 + j257{,}85)\\text{ V}$"
         },
         {
             "id": 18,
             "tipo": "Normal Engenharia Reversa (RLC)",
             "enunciado": "Um circuito série com parâmetros $R = 4\\ \\Omega$, $X_L = 12\\ \\Omega$ e $X_C = 9\\ \\Omega$ é alimentado por uma fonte desconhecida. Um multímetro de bancada afere que a tensão de queda no resistor é $V_R = 12\\angle{-15^\\circ}\\text{ V}$. Encontre a corrente total ($I_s$) e a tensão fasorial da fonte de alimentação ($V_s$).",
-            "resposta": "<b>Forma Polar:</b> $I_s = 3\\angle{-15^\\circ}\\text{ A}$ ; $V_s = 15\\angle{21,87^\\circ}\\text{ V}$<br><b>Forma Retangular:</b> $I_s = (2,90 - j0,78)\\text{ A}$ ; $V_s = (13,92 + j5,59)\\text{ V}$"
+            "resposta": "**Forma Polar:** $I_s = 3\\angle{-15^\\circ}\\text{ A}$ ; $V_s = 15\\angle{21{,}87^\\circ}\\text{ V}$\n**Forma Retangular:** $I_s = (2{,}90 - j0{,}78)\\text{ A}$ ; $V_s = (13{,}92 + j5{,}59)\\text{ V}$"
         },
         {
             "id": 19,
             "tipo": "Normal Engenharia Reversa (RLC)",
             "enunciado": "Um circuito paralelo possui ramos com $R = 30\\ \\Omega$, $X_L = 15\\ \\Omega$ e $X_C = 15\\ \\Omega$. A medição da corrente sobre o indutor revelou o valor $I_L = 10\\angle{-45^\\circ}\\text{ A}$. Determine, empregando conceitos de circuitos ressonantes, a tensão do barramento ($V_s$) e a corrente fornecida pela fonte principal ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $V_s = 150\\angle{45^\\circ}\\text{ V}$ ; $I_s = 5\\angle{45^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (106,07 + j106,07)\\text{ V}$ ; $I_s = (3,54 + j3,54)\\text{ A}$"
+            "resposta": "**Forma Polar:** $V_s = 150\\angle{45^\\circ}\\text{ V}$ ; $I_s = 5\\angle{45^\\circ}\\text{ A}$\n**Forma Retangular:** $V_s = (106{,}07 + j106{,}07)\\text{ V}$ ; $I_s = (3{,}54 + j3{,}54)\\text{ A}$"
         },
         {
             "id": 20,
             "tipo": "Normal Engenharia Reversa (Misto)",
-            "enunciado": "Um circuito possui uma carga indutiva equivalente a $Z_L = 50\\angle{36,87^\\circ}\\ \\Omega$ conectada em paralelo com um capacitor de reatância $X_C = 50\\ \\Omega$ ($Z_C = 50\\angle{-90^\\circ}\\ \\Omega$). A corrente de ramo medida na carga indutiva é $I_{Z} = 2\\angle{0^\\circ}\\text{ A}$. Faça a engenharia reversa para encontrar a tensão de nó ($V_s$) e o fasor de corrente total ($I_s$).",
-            "resposta": "<b>Forma Polar:</b> $V_s = 100\\angle{36,87^\\circ}\\text{ V}$ ; $I_s = 1,79\\angle{63,43^\\circ}\\text{ A}$<br><b>Forma Retangular:</b> $V_s = (80 + j60)\\text{ V}$ ; $I_s = (0,80 + j1,60)\\text{ A}$"
+            "enunciado": "Um circuito possui uma carga indutiva equivalente a $Z_L = 50\\angle{36{,}87^\\circ}\\ \\Omega$ conectada em paralelo com um capacitor de reatância $X_C = 50\\ \\Omega$ ($Z_C = 50\\angle{-90^\\circ}\\ \\Omega$). A corrente de ramo medida na carga indutiva é $I_{Z} = 2\\angle{0^\\circ}\\text{ A}$. Faça a engenharia reversa para encontrar a tensão de nó ($V_s$) e o fasor de corrente total ($I_s$).",
+            "resposta": "**Forma Polar:** $V_s = 100\\angle{36{,}87^\\circ}\\text{ V}$ ; $I_s = 1{,}79\\angle{63{,}43^\\circ}\\text{ A}$\n**Forma Retangular:** $V_s = (80 + j60)\\text{ V}$ ; $I_s = (0{,}80 + j1{,}60)\\text{ A}$"
         }
     ]
 };
@@ -334,7 +334,7 @@ function carregarConteudo(modulo) {
     }
     else if (modulo === 'trifasico-yy') {
         painel.innerHTML = `
-            <h2>Circuitos Trifásicos - Y-Y Aterrado</h2>
+            <h2>Circuitos Trifásicos - Estrela Aterrado (Y-Y)</h2>
             <div class="imagens-container" style="display: flex; gap: 20px; margin-bottom: 20px; justify-content: space-between;">
                 <div style="width: 49%; border: 1px solid #ccc; text-align: center; padding: 5px; background:#fff;">
                     <img src="/static/imagens/circuito_yy.png" alt="Esquema do Circuito Y-Y" style="max-width: 100%; height: auto;">
@@ -412,7 +412,7 @@ function carregarConteudo(modulo) {
         `;
     } else if (modulo === 'trifasico-ydelta') {
         painel.innerHTML = `
-            <h2>Circuitos Trifásicos - Y-Delta</h2>
+            <h2>Circuitos Trifásicos - Estrela-Delta (Y-Δ)</h2>
 
             <div class="imagens-container" style="display: flex; gap: 20px; margin-bottom: 20px; justify-content: space-between;">
                 <div style="width: 49%; border: 1px solid #ccc; text-align: center; padding: 5px; background:#fff;">
@@ -735,6 +735,75 @@ function carregarConteudo(modulo) {
         <!-- Container para Renderização dos Gráficos Plotly -->
         <div id="container-graficos-trifasico-dy" style="margin-top: 20px;"></div>
     `;
+    }else if (modulo === 'correcao-fp') {
+        painel.innerHTML = `
+            <h2>Circuito Trifásico - Correção do Fator de Potência</h2>
+
+            <fieldset style="margin-bottom: 15px; padding: 15px; border: 1px solid #ccc; background:#fff;">
+                <legend><strong>Entrada de Parâmetros</strong></legend>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <div>
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Carga Trifásica</h4>
+                        <div style="margin-bottom:8px;">
+                            <label>Potência Ativa (P em W):</label>
+                            <input type="number" id="in-fp-p" value="50000" style="width:100%;">
+                        </div>
+                        <div>
+                            <label>FP Atual (ex: 0.75):</label>
+                            <input type="number" id="in-fp-atual" step="0.01" value="0.75" style="width:100%;">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Rede Elétrica</h4>
+                        <div style="margin-bottom:8px;">
+                            <label>Tensão de Linha (V<sub>L</sub> em V):</label>
+                            <input type="number" id="in-fp-vl" value="220" style="width:100%;">
+                        </div>
+                        <div>
+                            <label>Frequência (f em Hz):</label>
+                            <input type="number" id="in-fp-freq" value="60" style="width:100%;">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Meta de Correção</h4>
+                        <div>
+                            <label>FP Desejado (≥ 0.92):</label>
+                            <input type="number" id="in-fp-alvo" step="0.01" value="0.92" min="0.92" max="1.0" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc;">
+                <legend><strong>Dimensionamento do Banco de Capacitores</strong></legend>
+                <div class="grid-resultados-trifasico" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                    <div class="col-resultado">
+                        <h4>Triângulo Original</h4>
+                        <div id="out-fp-original" class="res-bloco">Aguardando cálculo...</div>
+                    </div>
+                    <div class="col-resultado">
+                        <h4>Banco Necessário</h4>
+                        <div id="out-fp-banco" class="res-bloco">Aguardando cálculo...</div>
+                    </div>
+                    <div class="col-resultado">
+                        <h4>Capacitância por Fase</h4>
+                        <div id="out-fp-capacitancia" class="res-bloco">Aguardando cálculo...</div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- CONTAINER PARA O GRÁFICO -->
+            <fieldset style="margin-top: 15px; padding: 15px; background-color: #fff; border: 1px solid #ccc;">
+                <legend><strong>Comparativo do Triângulo de Potências (Antes vs. Depois)</strong></legend>
+                <div style="position: relative; height: 320px; width: 100%;">
+                    <canvas id="graficoPotencias"></canvas>
+                </div>
+            </fieldset>
+
+            <div style="margin-top: 20px; display: flex; gap: 20px;">
+                <button class="btn-calc" onclick="calcularCorrecaoFP()" style="padding: 10px 20px; cursor:pointer;">Calcular Banco e Gerar Gráfico</button>
+            </div>
+        `;
     }
 }
 
@@ -815,15 +884,67 @@ function calcularTrifasicoYY() {
 // === RENDERIZADOR INTERNO DE EXERCÍCIOS ====
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("conteudo-exercicios");
-    if (container) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const qtd = parseInt(urlParams.get('qtd')) || 20;
-        const tipo = urlParams.get('tipo') || 'todos';
-        gerarFolhaDeExercicios(container, qtd, tipo);
+    const containerAluno = document.getElementById("container-questoes-aluno") || document.getElementById("conteudo-exercicios");
+    const containerGabarito = document.getElementById("container-questoes-gabarito");
+
+    // Só executa o código se estivermos na página de exercícios
+    if (!containerAluno) return;
+
+    // Garante que o banco de exercícios existe
+    if (typeof bancoDeExercicios === "undefined") {
+        console.error("O objeto bancoDeExercicios não foi encontrado.");
+        return;
+    }
+
+    // Captura os parâmetros da URL (ex: ?qtd=20&tipo=todos)
+    const urlParams = new URLSearchParams(window.location.search);
+    const qtd = parseInt(urlParams.get('qtd')) || 20;
+    const tipo = urlParams.get('tipo') || 'todos';
+
+    // Monta a lista de questões com base no tipo selecionado
+    let pool = [];
+    if (tipo === "normal" && bancoDeExercicios.normal) {
+        pool = [...bancoDeExercicios.normal];
+    } else if (tipo === "reversa" && bancoDeExercicios.engenharia_reversa) {
+        pool = [...bancoDeExercicios.engenharia_reversa];
+    } else {
+        const normais = bancoDeExercicios.normal || [];
+        const reversas = bancoDeExercicios.engenharia_reversa || [];
+        pool = [...normais, ...reversas];
+    }
+
+    // Sorteia aleatoriamente e limita à quantidade desejada
+    pool.sort(() => Math.random() - 0.5);
+    const selecionados = pool.slice(0, Math.min(qtd, pool.length));
+
+    // Limpa os containers antes de inserir
+    containerAluno.innerHTML = "";
+    if (containerGabarito) containerGabarito.innerHTML = "";
+
+    // Renderiza cada questão no HTML
+    selecionados.forEach((item, index) => {
+        // 1. Inserção na Folha do Aluno (Limpa, sem tags grudadas)
+        const divQuestao = document.createElement("div");
+        divQuestao.className = "questao";
+        const textoEnunciado = item.enunciado || item.pergunta || "";
+        divQuestao.innerHTML = `<strong>Questão ${index + 1}:</strong> ${textoEnunciado}`;
+        containerAluno.appendChild(divQuestao);
+
+        // 2. Inserção na Folha do Gabarito
+        if (containerGabarito) {
+            const divGabarito = document.createElement("div");
+            divGabarito.className = "gabarito-item";
+            const textoResposta = item.resposta || item.gabarito || "";
+            divGabarito.innerHTML = `<strong>Questão ${index + 1}:</strong><br>${textoResposta.replace(/\n/g, '<br>')}`;
+            containerGabarito.appendChild(divGabarito);
+        }
+    });
+
+    // 3. Força o MathJax a formatar as equações LaTeX recém-criadas
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
     }
 });
-
 function enviarGerarExercicios() {
     const campoQtd = document.getElementById('num-questoes');
     const qtd = (campoQtd && campoQtd.value) ? campoQtd.value : 20;
@@ -2299,6 +2420,116 @@ function abrirGraficosDeltaY() {
         Plotly.newPlot('grafico-potencia-dy', dadosPotencia, layoutPotencia);
     })
     .catch(err => alert("Erro na requisição dos gráficos Delta-Y: " + err));
+}
+
+// Variável para armazenar a instância do gráfico e evitar sobreposição ao recalcular
+let instanciaGraficoFP = null;
+
+function calcularCorrecaoFP() {
+    const payload = {
+        p_total: Number(document.getElementById('in-fp-p').value),
+        fp_atual: Number(document.getElementById('in-fp-atual').value),
+        v_linha: Number(document.getElementById('in-fp-vl').value),
+        frequencia: Number(document.getElementById('in-fp-freq').value),
+        fp_alvo: Number(document.getElementById('in-fp-alvo').value)
+    };
+
+    fetch('/calcular_correcao_fp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(res => {
+        if (!res.sucesso) {
+            alert("Atenção: " + res.erro);
+            return;
+        }
+
+        // Atualização dos textos de resultado
+        document.getElementById('out-fp-original').innerHTML = `
+            <p><b>Potência Ativa (P):</b> ${res.p_total} W</p>
+            <p><b>FP Atual:</b> ${res.fp_atual}</p>
+            <p><b>Potência Aparente (S<sub>1</sub>):</b> ${res.s1_va} VA</p>
+            <p><b>Potência Reativa (Q<sub>1</sub>):</b> ${res.q1_var} VAr</p>
+        `;
+
+        document.getElementById('out-fp-banco').innerHTML = `
+            <p><b>FP Alvo:</b> ${res.fp_alvo}</p>
+            <p><b>Nova Aparente (S<sub>2</sub>):</b> ${res.s2_va} VA</p>
+            <p><b>Nova Reativa (Q<sub>2</sub>):</b> ${res.q2_var} VAr</p>
+            <p style="color:#c0392b;"><b>Q<sub>C</sub> Necessário Total:</b> ${res.qc_total_var} VAr</p>
+        `;
+
+        document.getElementById('out-fp-capacitancia').innerHTML = `
+            <p><b>Ligação em Delta (&Delta;):</b></p>
+            <p style="color:#27ae60; font-size: 1.1em;"><b>C<sub>&Delta;</sub> = ${res.c_delta_uf} µF / fase</b></p>
+            <hr style="margin: 8px 0; border:0; border-top: 1px dashed #ccc;">
+            <p><b>Ligação em Estrela (Y):</b></p>
+            <p style="color:#2980b9; font-size: 1.1em;"><b>C<sub>Y</sub> = ${res.c_estrela_uf} µF / fase</b></p>
+        `;
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise();
+        }
+
+        // --- RENDERIZAÇÃO DO GRÁFICO (Chart.js) ---
+        renderizarGraficoFP(res.p_total, res.q1_var, res.s1_va, res.q2_var, res.s2_va);
+
+    })
+    .catch(err => alert("Erro ao calcular correção do fator de potência: " + err));
+}
+
+function renderizarGraficoFP(p, q1, s1, q2, s2) {
+    const ctx = document.getElementById('graficoPotencias').getContext('2d');
+
+    // Se o gráfico já existir, destrua-o antes de recriar com novos dados
+    if (instanciaGraficoFP) {
+        instanciaGraficoFP.destroy();
+    }
+
+    instanciaGraficoFP = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Potência Ativa P (W)', 'Potência Reativa Q (VAr)', 'Potência Aparente S (VA)'],
+            datasets: [
+                {
+                    label: 'Antes da Correção (Original)',
+                    data: [p, q1, s1],
+                    backgroundColor: 'rgba(231, 76, 60, 0.7)',
+                    borderColor: 'rgba(231, 76, 60, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Após a Correção (Com Banco C)',
+                    data: [p, q2, s2],
+                    backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                    borderColor: 'rgba(46, 204, 113, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                title: {
+                    display: true,
+                    text: 'Redução da Potência Reativa e Aparente'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Magnitude (W / VAr / VA)'
+                    }
+                }
+            }
+        }
+    });
 }
 
 // ==========================================

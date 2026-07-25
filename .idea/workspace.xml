@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y, YD, DD  OK">
+    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos  OK">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/imagens/formulas_yy.png" beforeDir="false" afterPath="$PROJECT_DIR$/static/imagens/formulas_yy.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/exercicios.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/exercicios.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -237,7 +239,15 @@
       <option name="project" value="LOCAL" />
       <updated>1784687299386</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos  OK">
+      <option name="closed" value="true" />
+      <created>1784695524448</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1784695524448</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -261,6 +271,7 @@
     <MESSAGE value="Ponto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y e YD com 3 cartoes OK" />
     <MESSAGE value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y e YD  OK" />
     <MESSAGE value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y, YD, DD  OK" />
-    <option name="LAST_COMMIT_MESSAGE" value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y, YD, DD  OK" />
+    <MESSAGE value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos  OK" />
+    <option name="LAST_COMMIT_MESSAGE" value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos  OK" />
   </component>
 </project>
