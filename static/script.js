@@ -331,10 +331,10 @@ function carregarConteudo(modulo) {
                 </div>
             </div>
         `;
-    }
-    else if (modulo === 'trifasico-yy') {
+    } else if (modulo === 'trifasico-yy') {
         painel.innerHTML = `
             <h2>Circuitos Trifásicos - Estrela Aterrado (Y-Y)</h2>
+
             <div class="imagens-container" style="display: flex; gap: 20px; margin-bottom: 20px; justify-content: space-between;">
                 <div style="width: 49%; border: 1px solid #ccc; text-align: center; padding: 5px; background:#fff;">
                     <img src="/static/imagens/circuito_yy.png" alt="Esquema do Circuito Y-Y" style="max-width: 100%; height: auto;">
@@ -345,70 +345,102 @@ function carregarConteudo(modulo) {
             </div>
 
             <fieldset style="margin-bottom: 15px; padding: 15px; border: 1px solid #ccc; background:#fff;">
-                <legend><strong>Parâmetros de Entrada (Use 'i' para complexos em impedâncias)</strong></legend>
+                <legend><strong>Entrada de Dados</strong></legend>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
                     <div>
-                        <h4 style="margin-bottom:8px; color:#2980b9;">Tensões de Fase (Módulo / Ângulo°)</h4>
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Tensões da Fonte (Mod / Âng°)</h4>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
-                            <label>Van: </label><input type="number" id="in-van-mod" value="127" style="width:50%;">
-                            <input type="number" id="in-van-ang" value="0" style="width:50%;">
+                            <label style="width:40px;">Van:</label>
+                            <input type="number" id="in-van-mod" value="127" style="width:45%;">
+                            <input type="number" id="in-van-ang" value="0" style="width:45%;">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
-                            <label>Vbn: </label><input type="number" id="in-vbn-mod" value="127" style="width:50%;">
-                            <input type="number" id="in-vbn-ang" value="-120" style="width:50%;">
+                            <label style="width:40px;">Vbn:</label>
+                            <input type="number" id="in-vbn-mod" value="127" style="width:45%;">
+                            <input type="number" id="in-vbn-ang" value="-120" style="width:45%;">
                         </div>
                         <div style="display:flex; gap:5px; margin-bottom:5px;">
-                            <label>Vcn: </label><input type="number" id="in-vcn-mod" value="127" style="width:50%;">
-                            <input type="number" id="in-vcn-ang" value="120" style="width:50%;">
+                            <label style="width:40px;">Vcn:</label>
+                            <input type="number" id="in-vcn-mod" value="127" style="width:45%;">
+                            <input type="number" id="in-vcn-ang" value="120" style="width:45%;">
                         </div>
                     </div>
+
                     <div>
-                        <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias (Fonte e Linha)</h4>
-                        <label>Zfa: </label><input type="text" id="in-zfa" value="0" style="width:90%; margin-bottom:5px;">
-                        <label>Zfb: </label><input type="text" id="in-zfb" value="0" style="width:90%; margin-bottom:5px;">
-                        <label>Zfc: </label><input type="text" id="in-zfc" value="0" style="width:90%; margin-bottom:5px;">
-                        <div style="margin-top:5px;">
-                            <label>ZLa: </label><input type="text" id="in-zla" value="0" style="width:90%; margin-bottom:5px;">
-                            <label>ZLb: </label><input type="text" id="in-zlb" value="0" style="width:90%; margin-bottom:5px;">
-                            <label>ZLc: </label><input type="text" id="in-zlc" value="0" style="width:90%; margin-bottom:5px;">
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias de Fonte e Linha (Ω)</h4>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label style="width:60px;">Fase A:</label>
+                            <input type="text" id="in-zfa" value="0" style="width:40%;" placeholder="Zfa">
+                            <input type="text" id="in-zla" value="0" style="width:40%;" placeholder="ZLa">
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label style="width:60px;">Fase B:</label>
+                            <input type="text" id="in-zfb" value="0" style="width:40%;" placeholder="Zfb">
+                            <input type="text" id="in-zlb" value="0" style="width:40%;" placeholder="ZLb">
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label style="width:60px;">Fase C:</label>
+                            <input type="text" id="in-zfc" value="0" style="width:40%;" placeholder="Zfc">
+                            <input type="text" id="in-zlc" value="0" style="width:40%;" placeholder="ZLc">
                         </div>
                     </div>
-                    <div style="margin-bottom: 15px;">
-                        <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias de Carga e Neutro</h4>
-                        <label>ZA: </label><input type="text" id="in-za" value="10+3i" style="width:90%; margin-bottom:5px;">
-                        <label>ZB: </label><input type="text" id="in-zb" value="10+3i" style="width:90%; margin-bottom:5px;">
-                        <label>ZC: </label><input type="text" id="in-zc" value="10+3i" style="width:90%; margin-bottom:5px;">
-                        <label>Zo: </label><input type="text" id="in-zo" value="0+0i" style="width:90%; margin-bottom:5px;">
+
+                    <div>
+                        <h4 style="margin-bottom:8px; color:#2980b9;">Impedâncias da Carga e Neutro (Ω)</h4>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label style="width:40px;">ZA:</label>
+                            <input type="text" id="in-za" value="10+3i" style="width:80%;">
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label style="width:40px;">ZB:</label>
+                            <input type="text" id="in-zb" value="10+3i" style="width:80%;">
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label style="width:40px;">ZC:</label>
+                            <input type="text" id="in-zc" value="10+3i" style="width:80%;">
+                        </div>
+                        <div style="display:flex; gap:5px; margin-bottom:5px;">
+                            <label style="width:40px;">Zo:</label>
+                            <input type="text" id="in-zo" value="0+0i" style="width:80%;">
+                        </div>
                     </div>
                 </div>
             </fieldset>
 
+            <!-- Painel de Resultados Padronizado em 5 Colunas -->
             <fieldset style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc;">
                 <legend><strong>Painel de Resultados Otimizado</strong></legend>
-                <div class="grid-resultados-trifasico">
+                <div class="grid-resultados-trifasico-5col">
                     <div class="col-resultado">
-                        <h4>Correntes de Fase/Linha</h4>
-                        <div id="out-correntes" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Correntes de Linha</h4>
+                        <div id="out-correntes-linha" class="res-bloco">Aguardando...</div>
                     </div>
                     <div class="col-resultado">
-                        <h4>Tensões de Fase na Carga</h4>
-                        <div id="out-tensoes-fase" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Corrente de Neutro</h4>
+                        <div id="out-corrente-neutro" class="res-bloco">Aguardando...</div>
                     </div>
                     <div class="col-resultado">
-                        <h4>Tensões de Linha na Carga</h4>
-                        <div id="out-tensoes-linha" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Tensões de Fase</h4>
+                        <div id="out-tensoes-fase" class="res-bloco">Aguardando...</div>
                     </div>
                     <div class="col-resultado">
-                        <h4>Potências Modais (Carga)</h4>
-                        <div id="out-potencias" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Tensões de Linha</h4>
+                        <div id="out-tensoes-linha" class="res-bloco">Aguardando...</div>
+                    </div>
+                    <div class="col-resultado">
+                        <h4>Potências</h4>
+                        <div id="out-potencias" class="res-bloco">Aguardando...</div>
                     </div>
                 </div>
             </fieldset>
 
             <div style="margin-top: 20px; display: flex; gap: 20px;">
-                <button class="btn-calc" onclick="calcularTrifasicoYY()" style="padding: 10px 20px;">Calcular</button>
-                <button class="btn-graf" onclick="abrirGraficosTrifasico()" style="padding: 10px 20px;">Exibir Gráficos</button>
+                <button class="btn-calc" onclick="calcularTrifasicoYY()" style="padding: 10px 20px; cursor:pointer;">Calcular</button>
+                <button class="btn-graf" onclick="abrirGraficosTrifasico()" style="padding: 10px 20px; cursor:pointer;">Exibir Gráficos</button>
             </div>
+
+            <!-- Div Destino dos Gráficos Plotly -->
+            <div id="container-graficos-trifasico" style="margin-top: 20px;"></div>
         `;
     } else if (modulo === 'trifasico-ydelta') {
         painel.innerHTML = `
@@ -842,39 +874,41 @@ function calcularTrifasicoYY() {
         return response.json();
     })
     .then(res => {
-        const v = (val) => {
-            if (val === undefined || val === null) return '-';
-            if (typeof val === 'object') return val.polar || val.retangular || '-';
-            return val;
-        };
+        const pol = (val) => (val && typeof val === 'object') ? val.polar : (val || '-');
+        const ret = (val) => (val && typeof val === 'object') ? val.retangular : '-';
 
-        const getPolar = (obj) => (obj && typeof obj === 'object') ? obj.polar : null;
-        const getRet = (obj) => (obj && typeof obj === 'object') ? obj.retangular : null;
-
-        document.getElementById("out-correntes").innerHTML = `
-            <p><b>I<sub>AN</sub>:</b><br> P: ${v(getPolar(res.ian) || res.ian_pol || res.ian)}<br> R: ${v(getRet(res.ian) || res.ian_ret)}</p><br>
-            <p><b>I<sub>BN</sub>:</b><br> P: ${v(getPolar(res.ibn) || res.ibn_pol || res.ibn)}<br> R: ${v(getRet(res.ibn) || res.ibn_ret)}</p><br>
-            <p><b>I<sub>CN</sub>:</b><br> P: ${v(getPolar(res.icn) || res.icn_pol || res.icn)}<br> R: ${v(getRet(res.icn) || res.icn_ret)}</p><br>
-            <p><b>I<sub>N</sub>:</b><br> P: ${v(getPolar(res.in_n) || getPolar(res.in) || res.in_pol || res.in)}<br> R: ${v(getRet(res.in_n) || getRet(res.in) || res.in_ret)}</p>
+        // 1. Correntes de Linha
+        document.getElementById("out-correntes-linha").innerHTML = `
+            <p><b>I<sub>a</sub>:</b><br>P: ${pol(res.ian)}<br>R: ${ret(res.ian)}</p><br>
+            <p><b>I<sub>b</sub>:</b><br>P: ${pol(res.ibn)}<br>R: ${ret(res.ibn)}</p><br>
+            <p><b>I<sub>c</sub>:</b><br>P: ${pol(res.icn)}<br>R: ${ret(res.icn)}</p>
         `;
 
+        // 2. Corrente de Neutro
+        document.getElementById("out-corrente-neutro").innerHTML = `
+            <p><b>I<sub>N</sub>:</b><br>P: ${pol(res.in_n || res.in)}<br>R: ${ret(res.in_n || res.in)}</p>
+        `;
+
+        // 3. Tensões de Fase
         document.getElementById("out-tensoes-fase").innerHTML = `
-            <p><b>V<sub>AN</sub>:</b><br> P: ${v(getPolar(res.van_c) || res.van_c_pol || res.van)}<br> R: ${v(getRet(res.van_c) || res.van_c_ret)}</p><br>
-            <p><b>V<sub>BN</sub>:</b><br> P: ${v(getPolar(res.vbn_c) || res.vbn_c_pol || res.vbn)}<br> R: ${v(getRet(res.vbn_c) || res.vbn_c_ret)}</p><br>
-            <p><b>V<sub>CN</sub>:</b><br> P: ${v(getPolar(res.vcn_c) || res.vcn_c_pol || res.vcn)}<br> R: ${v(getRet(res.vcn_c) || res.vcn_c_ret)}</p>
+            <p><b>V<sub>AN</sub>:</b><br>P: ${pol(res.van_c || res.van)}<br>R: ${ret(res.van_c)}</p><br>
+            <p><b>V<sub>BN</sub>:</b><br>P: ${pol(res.vbn_c || res.vbn)}<br>R: ${ret(res.vbn_c)}</p><br>
+            <p><b>V<sub>CN</sub>:</b><br>P: ${pol(res.vcn_c || res.vcn)}<br>R: ${ret(res.vcn_c)}</p>
         `;
 
+        // 4. Tensões de Linha
         document.getElementById("out-tensoes-linha").innerHTML = `
-            <p><b>V<sub>AB</sub>:</b><br> P: ${v(getPolar(res.vab) || res.vab_pol || res.vab)}<br> R: ${v(getRet(res.vab) || res.vab_ret)}</p><br>
-            <p><b>V<sub>BC</sub>:</b><br> P: ${v(getPolar(res.vbc) || res.vbc_pol || res.vbc)}<br> R: ${v(getRet(res.vbc) || res.vbc_ret)}</p><br>
-            <p><b>V<sub>CA</sub>:</b><br> P: ${v(getPolar(res.vca) || res.vca_pol || res.vca)}<br> R: ${v(getRet(res.vca) || res.vca_ret)}</p>
+            <p><b>V<sub>AB</sub>:</b><br>P: ${pol(res.vab)}<br>R: ${ret(res.vab)}</p><br>
+            <p><b>V<sub>BC</sub>:</b><br>P: ${pol(res.vbc)}<br>R: ${ret(res.vbc)}</p><br>
+            <p><b>V<sub>CA</sub>:</b><br>P: ${pol(res.vca)}<br>R: ${ret(res.vca)}</p>
         `;
 
+        // 5. Potências
         document.getElementById("out-potencias").innerHTML = `
-            <p><b>Fase A:</b><br> S: ${v(res.sa)} VA<br> P: ${v(res.pa)} W<br> Q: ${v(res.qa)} VAr</p><br>
-            <p><b>Fase B:</b><br> S: ${v(res.sb)} VA<br> P: ${v(res.pb)} W<br> Q: ${v(res.qb)} VAr</p><br>
-            <p><b>Fase C:</b><br> S: ${v(res.sc)} VA<br> P: ${v(res.pc)} W<br> Q: ${v(res.qc)} VAr</p><br>
-            <p style="border-top: 1px solid #ccc; padding-top: 5px; margin-top: 5px;"><b>Total Trifásico:</b><br> S: ${v(res.stotal)} VA<br> P: ${v(res.ptotal)} W<br> Q: ${v(res.qtotal)} VAr</p>
+            <p><b>Fase A:</b><br>S: ${res.sa} VA<br>P: ${res.pa} W<br>Q: ${res.qa} VAr</p><br>
+            <p><b>Fase B:</b><br>S: ${res.sb} VA<br>P: ${res.pb} W<br>Q: ${res.qb} VAr</p><br>
+            <p><b>Fase C:</b><br>S: ${res.sc} VA<br>P: ${res.pc} W<br>Q: ${res.qc} VAr</p><br>
+            <p style="border-top: 1px solid #ccc; padding-top: 4px; margin-top: 4px;"><b>Total:</b><br>S: ${res.stotal} VA<br>P: ${res.ptotal} W<br>Q: ${res.qtotal} VAr</p>
         `;
     })
     .catch(error => alert("Erro ao calcular circuito trifásico: " + error.message));
@@ -2431,7 +2465,7 @@ function calcularCorrecaoFP() {
         fp_atual: Number(document.getElementById('in-fp-atual').value),
         v_linha: Number(document.getElementById('in-fp-vl').value),
         frequencia: Number(document.getElementById('in-fp-freq').value),
-        fp_alvo: Number(document.getElementById('in-fp-alvo').value)
+        fp_alvo: Number(document.getElementById('in-fp-alvcfo').value)
     };
 
     fetch('/calcular_correcao_fp', {
