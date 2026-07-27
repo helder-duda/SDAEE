@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP, mudei nome do projeto SDAEE  OK">
+    <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP,Imagem nova Inicio SDAEE  OK">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -297,7 +297,15 @@
       <option name="project" value="LOCAL" />
       <updated>1785168392202</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP,Imagem nova Inicio SDAEE  OK">
+      <option name="closed" value="true" />
+      <created>1785174416033</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1785174416033</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -324,6 +332,7 @@
     <MESSAGE value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos  OK" />
     <MESSAGE value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos e correção de FP  OK" />
     <MESSAGE value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP, mudei nome do projeto SDAEE  OK" />
-    <option name="LAST_COMMIT_MESSAGE" value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP, mudei nome do projeto SDAEE  OK" />
+    <MESSAGE value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP,Imagem nova Inicio SDAEE  OK" />
+    <option name="LAST_COMMIT_MESSAGE" value="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP,Imagem nova Inicio SDAEE  OK" />
   </component>
 </project>

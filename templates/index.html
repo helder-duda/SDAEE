@@ -6,7 +6,16 @@
     <title>Plataforma de Engenharia Elétrica</title>
     <!-- 1. Adicione a CDN do Plotly aqui: -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-
+    <!-- Configuração e biblioteca do MathJax 3 -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+      };
+    </script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- Suas outras importações de CSS/JS (como o MathJax e o script.js) -->
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="/static/script.js" defer></script>
