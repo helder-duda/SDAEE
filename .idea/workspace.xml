@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP, mudei nome do projeto SDAEE  OK">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
