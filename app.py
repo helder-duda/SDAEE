@@ -2036,68 +2036,89 @@ def calcular_correcao_fp():
     try:
         dados = request.get_json()
 
-        # Leitura dos parâmetros de entrada
-        p_total = float(dados.get('p_total', 0))  # Potência ativa em Watts (W)
-        fp_atual = float(dados.get('fp_atual', 0))  # Fator de potência atual
-        vl = float(dados.get('v_linha', 220))  # Tensão de linha (V)
-        f = float(dados.get('frequencia', 60))  # Frequência (Hz)
-        fp_alvo = float(
-            dados.get('fp_alvo', 0.92)
-        )  # FP desejado (padrão >= 0.92)
+        # 1. Leitura dos parâmetros alinhados exatamente com o JSON do script.js
+        vrms = float(dados.get('vrms', 220))  # Tensão RMS (V)
+        f = float(dados.get('freq', 60))  # Frequência (Hz)
+        p_kw = float(dados.get('p_kw', 0))  # Potência Ativa (kW)
+        fp_atual = float(dados.get('fp_atual', 0.70))  # FP Atual
+        fp_alvo = float(dados.get('fp_alvo', 0.95))  # FP Alvo
+        tipo_fp_atual = dados.get('tipo_fp_atual', 'indutivo')
 
-        # Validações de segurança
+        # 2. Conversão da Potência em Watts
+        p_w = p_kw * 1000  # Converte kW para W
+
+        # 3. Validações de Segurança
         if fp_atual <= 0 or fp_atual >= 1 or fp_alvo <= 0 or fp_alvo > 1:
-            return jsonify({
-                'sucesso': False,
-                'erro': 'O Fator de Potência deve estar entre 0 e 1.',
-            })
+            return (
+                jsonify({
+                    'sucesso': False,
+                    'erro': 'O Fator de Potência deve estar entre 0 e 1.',
+                }),
+                400,
+            )
 
         if fp_atual >= fp_alvo:
-            return jsonify({
-                'sucesso': False,
-                'erro': (
-                    'O FP atual já é maior ou igual ao FP alvo desejado.'
-                ),
-            })
+            return (
+                jsonify({
+                    'sucesso': False,
+                    'erro': 'O FP atual já é maior ou igual ao FP alvo.',
+                }),
+                400,
+            )
 
-        # Ângulos de fase (em radianos)
+        # 4. Cálculos das Potências e Correntes Atuais
         theta_1 = math.acos(fp_atual)
+        q1_var = p_w * math.tan(theta_1)
+        if tipo_fp_atual == 'capacitivo':
+            q1_var = -q1_var  # Inverte o sinal caso seja capacitivo
+
+        s1_va = p_w / fp_atual
+        i1_a = s1_va / vrms if vrms > 0 else 0
+
+        # 5. Cálculos das Potências e Correntes Alvo
         theta_2 = math.acos(fp_alvo)
+        q2_var = p_w * math.tan(theta_2)
+        s2_va = p_w / fp_alvo
+        i2_a = s2_va / vrms if vrms > 0 else 0
 
-        # Cálculo das Potências Reativas
-        q1 = p_total * math.tan(theta_1)  # VAr atual
-        q2 = p_total * math.tan(theta_2)  # VAr alvo
-        qc_total = q1 - q2  # VAr capacitivo necessário
+        # 6. Banco de Capacitores e Corrente do Capacitor
+        qc_var = q1_var - q2_var
+        ic_a = qc_var / vrms if vrms > 0 else 0
 
-        # Potência aparente inicial e final
-        s1 = p_total / fp_atual
-        s2 = p_total / fp_alvo
-
-        # Cálculo da Capacitância (Farais -> microFarads µF)
+        # 7. Cálculo da Capacitância (C = Qc / (2 * pi * f * V^2)) em µF
         omega = 2 * math.pi * f
+        c_farads = (
+            qc_var / (omega * (vrms**2)) if (omega > 0 and vrms > 0) else 0
+        )
+        c_uf = c_farads * 1e6
 
-        # Para ligação Delta (Δ)
-        c_delta = (qc_total / (3 * omega * (vl**2))) * 1e6
+        # 8. Redução de Corrente
+        delta_i = i1_a - i2_a
+        reducao_i_porcent = (delta_i / i1_a * 100) if i1_a > 0 else 0
 
-        # Para ligação Estrela (Y)
-        c_estrela = (qc_total / (omega * (vl**2))) * 1e6
-
+        # 9. Retorno com os exatos nomes esperados pelo script.js
         return jsonify({
             'sucesso': True,
-            'p_total': round(p_total, 2),
-            'fp_atual': round(fp_atual, 3),
-            'fp_alvo': round(fp_alvo, 3),
-            'q1_var': round(q1, 2),
-            'q2_var': round(q2, 2),
-            'qc_total_var': round(qc_total, 2),
-            's1_va': round(s1, 2),
-            's2_va': round(s2, 2),
-            'c_delta_uf': round(c_delta, 2),
-            'c_estrela_uf': round(c_estrela, 2),
+            'p_w': round(p_w, 2),
+            # Situação Atual
+            's_atual': round(s1_va / 1000, 2),  # em kVA
+            'q_atual': round(q1_var / 1000, 2),  # em kVAr
+            'i_atual': round(i1_a, 2),  # em A
+            # Situação Corrigida (Alvo)
+            's_alvo': round(s2_va / 1000, 2),  # em kVA
+            'q_alvo': round(q2_var / 1000, 2),  # em kVAr
+            'i_alvo': round(i2_a, 2),  # em A
+            # Banco de Capacitores
+            'qc': round(qc_var / 1000, 2),  # em kVAr
+            'c_uf': round(c_uf, 2),  # em µF
+            'ic': round(ic_a, 2),  # em A
+            # Ganhos
+            'delta_i': round(delta_i, 2),
+            'reducao_i_porcent': round(reducao_i_porcent, 2),
         })
 
     except Exception as e:
-        return jsonify({'sucesso': False, 'erro': str(e)})
+        return jsonify({'sucesso': False, 'erro': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

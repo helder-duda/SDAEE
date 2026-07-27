@@ -1,3 +1,5 @@
+window.instanciaGraficoFP = window.instanciaGraficoFP || null;
+
 // ==========================================
 // BANCO DE DADOS DE EXERCÍCIOS (20 QUESTÕES)
 // ==========================================
@@ -767,73 +769,73 @@ function carregarConteudo(modulo) {
         <!-- Container para Renderização dos Gráficos Plotly -->
         <div id="container-graficos-trifasico-dy" style="margin-top: 20px;"></div>
     `;
-    }else if (modulo === 'correcao-fp') {
+    } else if (modulo === 'correcao-fp') {
         painel.innerHTML = `
-            <h2>Circuito Trifásico - Correção do Fator de Potência</h2>
+            <h2>Correção do Fator de Potência</h2>
 
             <fieldset style="margin-bottom: 15px; padding: 15px; border: 1px solid #ccc; background:#fff;">
-                <legend><strong>Entrada de Parâmetros</strong></legend>
+                <legend><strong>Parâmetros da Carga e Alvo</strong></legend>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
                     <div>
-                        <h4 style="margin-bottom:8px; color:#2980b9;">Carga Trifásica</h4>
-                        <div style="margin-bottom:8px;">
-                            <label>Potência Ativa (P em W):</label>
-                            <input type="number" id="in-fp-p" value="50000" style="width:100%;">
-                        </div>
-                        <div>
-                            <label>FP Atual (ex: 0.75):</label>
-                            <input type="number" id="in-fp-atual" step="0.01" value="0.75" style="width:100%;">
-                        </div>
+                        <label style="display:block; margin-bottom:5px;"><b>Tensão RMS (V):</b></label>
+                        <input type="number" id="in-vrms-fp" value="220" style="width:100%;">
                     </div>
                     <div>
-                        <h4 style="margin-bottom:8px; color:#2980b9;">Rede Elétrica</h4>
-                        <div style="margin-bottom:8px;">
-                            <label>Tensão de Linha (V<sub>L</sub> em V):</label>
-                            <input type="number" id="in-fp-vl" value="220" style="width:100%;">
-                        </div>
-                        <div>
-                            <label>Frequência (f em Hz):</label>
-                            <input type="number" id="in-fp-freq" value="60" style="width:100%;">
-                        </div>
+                        <label style="display:block; margin-bottom:5px;"><b>Frequência (Hz):</b></label>
+                        <input type="number" id="in-freq-fp" value="60" style="width:100%;">
                     </div>
                     <div>
-                        <h4 style="margin-bottom:8px; color:#2980b9;">Meta de Correção</h4>
-                        <div>
-                            <label>FP Desejado (≥ 0.92):</label>
-                            <input type="number" id="in-fp-alvo" step="0.01" value="0.92" min="0.92" max="1.0" style="width:100%;">
-                        </div>
+                        <label style="display:block; margin-bottom:5px;"><b>Potência Ativa P (kW):</b></label>
+                        <input type="number" id="in-p-fp" value="10" style="width:100%;">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:5px;"><b>FP Atual:</b></label>
+                        <input type="number" step="0.01" id="in-fp-atual" value="0.70" style="width:100%;">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:5px;"><b>Tipo do FP Atual:</b></label>
+                        <select id="in-tipo-fp-atual" style="width:100%; padding: 4px;">
+                            <option value="indutivo" selected>Indutivo (Atrasado)</option>
+                            <option value="capacitivo">Capacitivo (Adiantado)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:5px;"><b>FP Desejado (Alvo):</b></label>
+                        <input type="number" step="0.01" id="in-fp-alvo" value="0.92" style="width:100%;">
                     </div>
                 </div>
             </fieldset>
 
+            <!-- Painel de Resultados Padronizado -->
             <fieldset style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc;">
-                <legend><strong>Dimensionamento do Banco de Capacitores</strong></legend>
-                <div class="grid-resultados-trifasico" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <legend><strong>Resultados da Correção</strong></legend>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
                     <div class="col-resultado">
-                        <h4>Triângulo Original</h4>
-                        <div id="out-fp-original" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Situação Atual</h4>
+                        <div id="out-fp-atual-res" class="res-bloco">Aguardando...</div>
                     </div>
                     <div class="col-resultado">
-                        <h4>Banco Necessário</h4>
-                        <div id="out-fp-banco" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Situação Corrigida</h4>
+                        <div id="out-fp-corrigido-res" class="res-bloco">Aguardando...</div>
                     </div>
                     <div class="col-resultado">
-                        <h4>Capacitância por Fase</h4>
-                        <div id="out-fp-capacitancia" class="res-bloco">Aguardando cálculo...</div>
+                        <h4>Banco Capacitivo</h4>
+                        <div id="out-banco-capacitores" class="res-bloco">Aguardando...</div>
+                    </div>
+                    <div class="col-resultado">
+                        <h4>Redução de Corrente</h4>
+                        <div id="out-reducao-corrente" class="res-bloco">Aguardando...</div>
                     </div>
                 </div>
             </fieldset>
 
-            <!-- CONTAINER PARA O GRÁFICO -->
-            <fieldset style="margin-top: 15px; padding: 15px; background-color: #fff; border: 1px solid #ccc;">
-                <legend><strong>Comparativo do Triângulo de Potências (Antes vs. Depois)</strong></legend>
-                <div style="position: relative; height: 320px; width: 100%;">
-                    <canvas id="graficoPotencias"></canvas>
-                </div>
-            </fieldset>
+            <div style="margin-top: 20px;">
+                <button class="btn-calc" onclick="calcularCorrecaoFP()" style="padding: 10px 25px; cursor:pointer; font-weight:bold;">Calcular Correção</button>
+            </div>
 
-            <div style="margin-top: 20px; display: flex; gap: 20px;">
-                <button class="btn-calc" onclick="calcularCorrecaoFP()" style="padding: 10px 20px; cursor:pointer;">Calcular Banco e Gerar Gráfico</button>
+            <!-- Canvas para renderizar o Chart.js sem quebrar a execução -->
+            <div style="margin-top: 25px; background: #fff; padding: 15px; border: 1px solid #ccc; height: 350px;">
+                <canvas id="graficoPotencias"></canvas>
             </div>
         `;
     }
@@ -2460,12 +2462,18 @@ function abrirGraficosDeltaY() {
 let instanciaGraficoFP = null;
 
 function calcularCorrecaoFP() {
+    const obterNumero = (id) => {
+        const el = document.getElementById(id);
+        return el ? Number(el.value) : 0;
+    };
+
     const payload = {
-        p_total: Number(document.getElementById('in-fp-p').value),
-        fp_atual: Number(document.getElementById('in-fp-atual').value),
-        v_linha: Number(document.getElementById('in-fp-vl').value),
-        frequencia: Number(document.getElementById('in-fp-freq').value),
-        fp_alvo: Number(document.getElementById('in-fp-alvcfo').value)
+        vrms: obterNumero("in-vrms-fp"),
+        freq: obterNumero("in-freq-fp"),
+        p_kw: obterNumero("in-p-fp"),
+        fp_atual: obterNumero("in-fp-atual"),
+        tipo_fp_atual: document.getElementById("in-tipo-fp-atual") ? document.getElementById("in-tipo-fp-atual").value : "indutivo",
+        fp_alvo: obterNumero("in-fp-alvo")
     };
 
     fetch('/calcular_correcao_fp', {
@@ -2473,56 +2481,62 @@ function calcularCorrecaoFP() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
-    .then(response => response.json())
-    .then(res => {
-        if (!res.sucesso) {
-            alert("Atenção: " + res.erro);
-            return;
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.erro || "Erro na requisição"); });
         }
-
-        // Atualização dos textos de resultado
-        document.getElementById('out-fp-original').innerHTML = `
-            <p><b>Potência Ativa (P):</b> ${res.p_total} W</p>
-            <p><b>FP Atual:</b> ${res.fp_atual}</p>
-            <p><b>Potência Aparente (S<sub>1</sub>):</b> ${res.s1_va} VA</p>
-            <p><b>Potência Reativa (Q<sub>1</sub>):</b> ${res.q1_var} VAr</p>
-        `;
-
-        document.getElementById('out-fp-banco').innerHTML = `
-            <p><b>FP Alvo:</b> ${res.fp_alvo}</p>
-            <p><b>Nova Aparente (S<sub>2</sub>):</b> ${res.s2_va} VA</p>
-            <p><b>Nova Reativa (Q<sub>2</sub>):</b> ${res.q2_var} VAr</p>
-            <p style="color:#c0392b;"><b>Q<sub>C</sub> Necessário Total:</b> ${res.qc_total_var} VAr</p>
-        `;
-
-        document.getElementById('out-fp-capacitancia').innerHTML = `
-            <p><b>Ligação em Delta (&Delta;):</b></p>
-            <p style="color:#27ae60; font-size: 1.1em;"><b>C<sub>&Delta;</sub> = ${res.c_delta_uf} µF / fase</b></p>
-            <hr style="margin: 8px 0; border:0; border-top: 1px dashed #ccc;">
-            <p><b>Ligação em Estrela (Y):</b></p>
-            <p style="color:#2980b9; font-size: 1.1em;"><b>C<sub>Y</sub> = ${res.c_estrela_uf} µF / fase</b></p>
-        `;
-
-        if (window.MathJax && window.MathJax.typesetPromise) {
-            window.MathJax.typesetPromise();
-        }
-
-        // --- RENDERIZAÇÃO DO GRÁFICO (Chart.js) ---
-        renderizarGraficoFP(res.p_total, res.q1_var, res.s1_va, res.q2_var, res.s2_va);
-
+        return response.json();
     })
-    .catch(err => alert("Erro ao calcular correção do fator de potência: " + err));
+    .then(res => {
+        // Exibir dados nos blocos
+        document.getElementById("out-fp-atual-res").innerHTML = `
+            <p><b>S:</b> ${res.s_atual} kVA</p>
+            <p><b>Q:</b> ${res.q_atual} kVAr</p>
+            <p><b>I RMS:</b> ${res.i_atual} A</p>
+        `;
+
+        document.getElementById("out-fp-corrigido-res").innerHTML = `
+            <p><b>S:</b> ${res.s_alvo} kVA</p>
+            <p><b>Q:</b> ${res.q_alvo} kVAr</p>
+            <p><b>I RMS:</b> ${res.i_alvo} A</p>
+        `;
+
+        document.getElementById("out-banco-capacitores").innerHTML = `
+            <p><b>Qc:</b> ${res.qc} kVAr</p>
+            <p><b>C:</b> ${res.c_uf} µF</p>
+            <p><b>Ic:</b> ${res.ic} A</p>
+        `;
+
+        document.getElementById("out-reducao-corrente").innerHTML = `
+            <p><b>Redução I:</b> ${res.reducao_i_porcent}%</p>
+            <p><b>ΔI:</b> ${res.delta_i} A</p>
+        `;
+
+        // Renderiza o gráfico se os valores existirem
+        // Convertemos os valores em kW/kVAr/kVA para W/VAr/VA (* 1000) se necessário
+        const p_w = payload.p_kw * 1000;
+        const q1_var = res.q_atual * 1000;
+        const s1_va = res.s_atual * 1000;
+        const q2_var = res.q_alvo * 1000;
+        const s2_va = res.s_alvo * 1000;
+
+        renderizarGraficoFP(p_w, q1_var, s1_va, q2_var, s2_va);
+    })
+    .catch(error => {
+        console.error("Erro ao calcular FP:", error);
+        alert("Erro no cálculo do Fator de Potência: " + error.message);
+    });
 }
 
 function renderizarGraficoFP(p, q1, s1, q2, s2) {
     const ctx = document.getElementById('graficoPotencias').getContext('2d');
 
-    // Se o gráfico já existir, destrua-o antes de recriar com novos dados
-    if (instanciaGraficoFP) {
-        instanciaGraficoFP.destroy();
+    // Se o gráfico já existir, destrói a instância anterior
+    if (window.instanciaGraficoFP) {
+        window.instanciaGraficoFP.destroy();
     }
 
-    instanciaGraficoFP = new Chart(ctx, {
+    window.instanciaGraficoFP = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['Potência Ativa P (W)', 'Potência Reativa Q (VAr)', 'Potência Aparente S (VA)'],
