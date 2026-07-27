@@ -1,3 +1,9 @@
+import matplotlib
+matplotlib.use('Agg')  # Configura o Matplotlib para rodar em modo servidor (sem Tkinter)
+
+# Seus outros imports continuam abaixo normalmente...
+import matplotlib.pyplot as plt
+from flask import Flask
 import base64
 import io
 import math

@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2db04aa7-3527-4266-b532-818eaf258c56" name="Changes" comment="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP, mudei nome do projeto SDAEE  OK">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -271,7 +272,23 @@
       <option name="project" value="LOCAL" />
       <updated>1784952679862</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP, mudei nome do projeto SDAEE  OK">
+      <option name="closed" value="true" />
+      <created>1785113515538</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1785113515538</updated>
+    </task>
+    <task id="LOCAL-00023" summary="onto Perfeito - Menus início, Análise CA - Circuito Com Login de acesso, RL, RC e RLC (com graficos iterativos), Exercicios com 20 Questoes, Y-Y,YD,DD e DY completos, correção de FP, mudei nome do projeto SDAEE  OK">
+      <option name="closed" value="true" />
+      <created>1785114066360</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1785114066360</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
